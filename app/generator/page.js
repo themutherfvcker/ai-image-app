@@ -4,6 +4,8 @@
 import { useEffect, useRef, useState } from "react"
 import Script from "next/script"
 import Link from "next/link"
+import { useAuth } from "../contexts/AuthContext"
+import SignInModal from "../components/SignInModal"
 
 const STYLE_CHIPS = [
   { label: "Photorealistic", text: "ultra realistic, natural lighting, 50mm lens, high detail" },
@@ -25,6 +27,10 @@ const ASPECTS = [
 export default function GeneratorPage() {
   const [balance, setBalance] = useState(null)
   const [activeTab, setActiveTab] = useState("text") // "text" | "image"
+  const [showSignInModal, setShowSignInModal] = useState(false)
+  
+  // Auth context
+  const { isAuthenticated, credits, refreshCredits } = useAuth()
 
   // Generation inputs
   const [prompt, setPrompt] = useState("a cinematic banana astronaut on the moon, 35mm film look")
@@ -59,14 +65,12 @@ export default function GeneratorPage() {
 
   // Credits
   useEffect(() => {
-    ;(async () => {
-      try {
-        const r = await fetch("/api/session", { cache: "no-store" })
-        const j = await r.json()
-        if (typeof j?.balance === "number") setBalance(j.balance)
-      } catch {}
-    })()
-  }, [])
+    if (isAuthenticated && credits !== null) {
+      setBalance(credits)
+    } else if (!isAuthenticated) {
+      setBalance(null)
+    }
+  }, [isAuthenticated, credits])
 
   // Cleanup preview URL
   useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl) }, [previewUrl])
@@ -178,6 +182,13 @@ export default function GeneratorPage() {
     setError("")
     setResultUrl("")
     try {
+      // Check authentication first
+      if (!isAuthenticated) {
+        setShowSignInModal(true)
+        setBusy(false)
+        return
+      }
+      
       if (!prompt.trim()) throw new Error("Please enter a prompt.")
 
       const meta = { aspect, strength }
@@ -236,7 +247,7 @@ export default function GeneratorPage() {
             <div className="flex items-center gap-4">
               <Link href="/pricing" className="text-sm text-gray-700 hover:text-gray-900">Pricing</Link>
               <div className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
-                Credits: {balance ?? "—"}
+                {isAuthenticated ? `Credits: ${balance ?? "—"}` : "Sign in required"}
               </div>
             </div>
           </div>
@@ -482,6 +493,12 @@ export default function GeneratorPage() {
             </div>
           </section>
         </main>
+        
+        {/* Sign In Modal */}
+        <SignInModal 
+          open={showSignInModal} 
+          onClose={() => setShowSignInModal(false)} 
+        />
       </div>
     </>
   )

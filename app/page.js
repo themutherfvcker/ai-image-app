@@ -3,11 +3,28 @@
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import Link from "next/link";
+import { useAuth } from "./contexts/AuthContext";
+import SignInModal from "./components/SignInModal";
 
 export default function HomePage() {
   // -------- Vanta / Lib init --------
   const vantaRef = useRef(null);
   const vantaInstance = useRef(null);
+  
+  // -------- Auth state --------
+  const { isAuthenticated, user } = useAuth();
+  const [showSignInModal, setShowSignInModal] = useState(false);
+
+  // Handle Try Now button click
+  const handleTryNow = () => {
+    if (isAuthenticated) {
+      // User is authenticated, scroll to generator
+      document.getElementById('generator')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // User not authenticated, show sign in modal
+      setShowSignInModal(true);
+    }
+  };
 
   useEffect(() => {
     // Ensure AOS CSS
@@ -112,12 +129,12 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="flex items-center">
-              <a
-                href="#generator"
+              <button
+                onClick={handleTryNow}
                 className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
               >
                 Try Now
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -138,12 +155,12 @@ export default function HomePage() {
                 Edit with plain text prompts while preserving faces, identities, and details. Nano Banana makes hard edits feel easy.
               </p>
               <div className="mt-6 flex gap-3">
-                <a
-                  href="#generator"
+                <button
+                  onClick={handleTryNow}
                   className="inline-flex items-center px-6 py-3 rounded-md text-yellow-700 bg-white border border-transparent shadow hover:bg-gray-50"
                 >
                   Get Started
-                </a>
+                </button>
                 <a
                   href="#features"
                   className="inline-flex items-center px-6 py-3 rounded-md text-white bg-yellow-600/70 hover:bg-yellow-600"
@@ -228,12 +245,12 @@ export default function HomePage() {
           </div>
 
           <div className="mt-10 text-center">
-            <a
-              href="#generator"
+            <button
+              onClick={handleTryNow}
               className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
             >
               Try the Generator
-            </a>
+            </button>
           </div>
         </div>
       </section>
@@ -319,12 +336,12 @@ export default function HomePage() {
             Join creators using Nano Banana for fast, consistent edits.
           </p>
           <div className="mt-8">
-            <a
-              href="#generator"
+            <button
+              onClick={handleTryNow}
               className="inline-flex items-center px-6 py-3 rounded-md text-yellow-700 bg-white hover:bg-gray-50"
             >
               Try Nano Banana Now
-            </a>
+            </button>
           </div>
         </div>
       </section>
@@ -375,6 +392,12 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Sign In Modal */}
+      <SignInModal 
+        open={showSignInModal} 
+        onClose={() => setShowSignInModal(false)} 
+      />
     </>
   );
 }
@@ -389,21 +412,28 @@ function HomeGeneratorSection() {
   const [resultUrl, setResultUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState(null);
+  const [showSignInModal, setShowSignInModal] = useState(false);
+  
+  // Auth context
+  const { isAuthenticated, credits, refreshCredits } = useAuth();
 
   useEffect(() => {
-    (async () => {
-      try {
-        const r = await fetch("/api/session", { cache: "no-store" });
-        const j = await r.json();
-        if (typeof j?.balance === "number") setBalance(j.balance);
-      } catch {
-        /* noop */
-      }
-    })();
-  }, []);
+    if (isAuthenticated && credits !== null) {
+      setBalance(credits);
+    } else if (!isAuthenticated) {
+      setBalance(null);
+    }
+  }, [isAuthenticated, credits]);
 
   async function runGenerate() {
     if (loading) return;
+    
+    // Check authentication first
+    if (!isAuthenticated) {
+      setShowSignInModal(true);
+      return;
+    }
+    
     const p = (prompt || "").trim();
     if (!p) {
       alert("Please enter a prompt");
@@ -479,7 +509,11 @@ function HomeGeneratorSection() {
             Try the Editor
           </p>
           <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-            Credits: <span className="font-semibold">{balance ?? "—"}</span>
+            {isAuthenticated ? (
+              <>Credits: <span className="font-semibold">{balance ?? "—"}</span></>
+            ) : (
+              <>Sign in to start generating images</>
+            )}
           </p>
           <div className="mt-2 flex items-center gap-2 justify-center">
             <Link href="/pricing" className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-yellow-600 text-white hover:bg-yellow-700">
@@ -637,6 +671,12 @@ function HomeGeneratorSection() {
           </div>
         </div>
       </div>
+      
+      {/* Sign In Modal */}
+      <SignInModal 
+        open={showSignInModal} 
+        onClose={() => setShowSignInModal(false)} 
+      />
     </section>
   );
 }
