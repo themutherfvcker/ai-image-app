@@ -125,16 +125,16 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
         <div className="lg:text-center">
           <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">AI Image Editor</h2>
           <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Try the Editor</p>
-          <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+          <p className="mt-4 max-w-2xl text-lg sm:text-xl text-gray-600 lg:mx-auto">
             {isAuthed ? (
               <>Credits: <span className="font-semibold">{balance}</span></>
             ) : (
               <>Sign in to start generating images</>
             )}
           </p>
-          <div className="mt-2 flex items-center gap-2 justify-center">
-            <Link href="/pricing" className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-yellow-600 text-white hover:bg-yellow-700">Buy 100 credits ($5)</Link>
-            <button onClick={startSubscription} className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-gray-900 text-white hover:bg-black">Subscribe $5/mo</button>
+          <div className="mt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 justify-center">
+            <Link href="/pricing" className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-3 text-sm font-medium rounded-md bg-yellow-600 text-white hover:bg-yellow-700">Buy 100 credits ($5)</Link>
+            <button onClick={startSubscription} className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-3 text-sm font-medium rounded-md bg-gray-900 text-white hover:bg-black">Subscribe $5/mo</button>
           </div>
         </div>
 
@@ -142,22 +142,22 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
           {/* Left: Tabs and Inputs */}
           <section className="lg:col-span-5">
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex justify-start mb-6">
+              <div className="flex justify-start mb-6 gap-0 w-full">
                 <button
                   onClick={() => setActiveTab("i2i")}
-                  className={`px-4 py-2 rounded-l-md text-sm font-medium ${activeTab === "i2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-700 border"}`}
+                  className={`w-1/2 sm:w-auto px-4 py-2 rounded-l-md text-sm font-medium ${activeTab === "i2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-800 border"}`}
                 >
                   Image to Image
                 </button>
                 <button
                   onClick={() => setActiveTab("t2i")}
-                  className={`px-4 py-2 rounded-r-md text-sm font-medium ${activeTab === "t2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-700 border"}`}
+                  className={`w-1/2 sm:w-auto px-4 py-2 rounded-r-md text-sm font-medium ${activeTab === "t2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-800 border"}`}
                 >
                   Text to Image
                 </button>
               </div>
 
-              {error && <div className="mb-4 text-red-600">{error}</div>}
+              {error && <div className="mb-4 text-red-600 text-sm">{error}</div>}
 
               {activeTab === "i2i" && (
                 <div className="space-y-4">
@@ -180,8 +180,8 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                         }}
                       />
                     </label>
-                    <p className="pl-1">or drag and drop</p>
-                    <p className="text-xs text-gray-500">PNG, JPG up to 10 MB</p>
+                    <p className="pl-1 text-gray-600">or drag and drop</p>
+                    <p className="text-xs text-gray-600">PNG, JPG up to 10 MB</p>
                     {previewUrl && (
                       <img src={previewUrl} alt="Preview" className="mx-auto max-h-48 rounded-md border mt-3" />
                     )}
@@ -189,7 +189,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                   </div>
                   <textarea
                     rows="4"
-                    className="w-full rounded-md border-gray-300 focus:ring-yellow-500 focus:border-yellow-500"
+                    className="w-full rounded-md border-gray-300 focus:ring-yellow-600 focus:border-yellow-600"
                     placeholder="Describe the edit you want to apply…"
                     value={i2iPrompt}
                     onChange={(e) => setI2iPrompt(e.target.value)}
@@ -197,7 +197,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                   <button
                     onClick={handleGenerate}
                     disabled={loading}
-                    className="w-full px-4 py-2 rounded-md text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50"
+                    className="w-full px-4 py-3 rounded-md text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50"
                   >
                     {loading ? "Generating..." : "Apply Edits (−1 credit)"}
                   </button>
@@ -208,7 +208,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                 <div className="space-y-4">
                   <textarea
                     rows="4"
-                    className="w-full rounded-md border-gray-300 focus:ring-yellow-500 focus:border-yellow-500"
+                    className="w-full rounded-md border-gray-300 focus:ring-yellow-600 focus:border-yellow-600"
                     placeholder="A cinematic banana astronaut on the moon, 35mm film look"
                     value={t2iPrompt}
                     onChange={(e) => setT2iPrompt(e.target.value)}
@@ -216,7 +216,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                   <button
                     onClick={handleGenerate}
                     disabled={loading}
-                    className="w-full px-4 py-2 rounded-md text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50"
+                    className="w-full px-4 py-3 rounded-md text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50"
                   >
                     {loading ? "Generating..." : "Generate (−1 credit)"}
                   </button>
