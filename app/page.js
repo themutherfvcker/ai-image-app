@@ -1,4 +1,4 @@
-"use client";
+// page has a server shell; client islands are used where needed
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -39,17 +39,10 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
 
   const fetchBalance = async () => {
     try {
-      const supabase = getSupabase();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setIsAuthed(true);
-        const { data, error } = await supabase.from("credits").select("balance").eq("user_id", user.id).single();
-        if (error) throw error;
-        setBalance(data.balance);
-      } else {
-        setIsAuthed(false);
-        setBalance(0);
-      }
+      // Pre-seed a uid cookie session and balance server-side to avoid client fetch flash
+      const r = await fetch("/api/session", { cache: "no-store" });
+      const j = await r.json();
+      if (typeof j?.balance === "number") setBalance(j.balance);
     } catch (e) {
       console.error("Error fetching balance:", e.message);
       setBalance(0);
@@ -118,7 +111,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
   }
 
   return (
-    <section id="generator" className="py-12 bg-gray-50" data-aos="fade-up">
+    <section id="generator" className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="lg:text-center">
           <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">AI Image Editor</h2>
@@ -233,52 +226,28 @@ export default function HomePage() {
   const vantaInstance = useRef(null);
   const [showSignIn, setShowSignIn] = useState(false);
 
+  // Remove AOS progressive animations and setInterval polling
   useEffect(() => {
-    // Ensure AOS CSS
-    const AOS_HREF = "https://unpkg.com/aos@2.3.1/dist/aos.css";
-    if (!document.querySelector(`link[href="${AOS_HREF}"]`)) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = AOS_HREF;
-      document.head.appendChild(link);
-    }
-
-    // Wait for libs, then init
-    const tryInit = () => {
+    if (window.feather) window.feather.replace();
+    if (!vantaInstance.current && window.VANTA && window.THREE && vantaRef.current) {
       try {
-        if (window.AOS) window.AOS.init({ duration: 800, easing: "ease-in-out", once: true });
-        if (window.feather) window.feather.replace();
-
-        if (!vantaInstance.current && window.VANTA && window.THREE && vantaRef.current) {
-          vantaInstance.current = window.VANTA.GLOBE({
-            el: vantaRef.current,
-            THREE: window.THREE,
-            mouseControls: true,
-            touchControls: true,
-            gyroControls: false,
-            minHeight: 200.0,
-            minWidth: 200.0,
-            scale: 1.0,
-            scaleMobile: 1.0,
-            color: 0xffc107,
-            backgroundColor: 0xf6d365,
-            size: 0.8,
-          });
-        }
-      } catch {
-        /* noop */
-      }
-    };
-
-    const t = setInterval(() => {
-      if (window.THREE && window.VANTA && window.AOS && window.feather) {
-        clearInterval(t);
-        tryInit();
-      }
-    }, 200);
-
+        vantaInstance.current = window.VANTA.GLOBE({
+          el: vantaRef.current,
+          THREE: window.THREE,
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.0,
+          minWidth: 200.0,
+          scale: 1.0,
+          scaleMobile: 1.0,
+          color: 0xffc107,
+          backgroundColor: 0xf6d365,
+          size: 0.8,
+        });
+      } catch {}
+    }
     return () => {
-      clearInterval(t);
       if (vantaInstance.current?.destroy) {
         vantaInstance.current.destroy();
         vantaInstance.current = null;
@@ -288,12 +257,9 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Tailwind via CDN (keeps things simple) */}
-      <Script src="https://cdn.tailwindcss.com" strategy="afterInteractive" />
-      {/* Order matters: THREE -> VANTA -> AOS -> feather */}
+      {/* Load only the minimal scripts after interactive; Tailwind via CSS build */}
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" strategy="afterInteractive" />
       <Script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js" strategy="afterInteractive" />
-      <Script src="https://unpkg.com/aos@2.3.1/dist/aos.js" strategy="afterInteractive" />
       <Script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" strategy="afterInteractive" />
 
       {/* Minimal custom styles for hero + banana float */}
@@ -396,7 +362,7 @@ export default function HomePage() {
       <HomeGeneratorSection showSignIn={showSignIn} onShowSignIn={setShowSignIn} />
 
       {/* FEATURES */}
-      <section id="features" className="py-12 bg-white" data-aos="fade-up">
+      <section id="features" className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
             <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Why Choose Nano Banana?</h2>
@@ -434,7 +400,7 @@ export default function HomePage() {
       </section>
 
       {/* SHOWCASE */}
-      <section id="showcase" className="py-12 bg-gray-50" data-aos="fade-up">
+      <section id="showcase" className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
             <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Lightning-Fast AI Creations</h2>
@@ -498,7 +464,7 @@ export default function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-12 bg-gray-50" data-aos="fade-up">
+      <section id="faq" className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
             <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Help Center</h2>
@@ -537,7 +503,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="py-12 bg-yellow-600" data-aos="fade-up">
+      <section className="py-12 bg-yellow-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
             Ready to revolutionize your image editing?
