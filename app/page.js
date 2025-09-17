@@ -13,6 +13,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
   const [t2iPrompt, setT2iPrompt] = useState("");
   const [i2iPrompt, setI2iPrompt] = useState("");
   const [i2iFile, setI2iFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [resultUrl, setResultUrl] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -100,6 +101,13 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
     }
   };
 
+  // Revoke preview URL on unmount/change to avoid memory leaks
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
   async function startSubscription() {
     try {
       const res = await fetch("/api/subscription", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) });
@@ -156,11 +164,28 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                   <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
                     <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-yellow-600 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
                       <span>Upload a file</span>
-                      <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={(e) => setI2iFile(e.target.files[0])} />
+                      <input
+                        id="file-upload"
+                        name="file-upload"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        className="sr-only"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) {
+                            setI2iFile(f);
+                            if (previewUrl) URL.revokeObjectURL(previewUrl);
+                            setPreviewUrl(URL.createObjectURL(f));
+                          }
+                        }}
+                      />
                     </label>
                     <p className="pl-1">or drag and drop</p>
                     <p className="text-xs text-gray-500">PNG, JPG up to 10 MB</p>
-                    {i2iFile && <p className="text-sm text-gray-700 mt-2">Selected file: {i2iFile.name}</p>}
+                    {previewUrl && (
+                      <img src={previewUrl} alt="Preview" className="mx-auto max-h-48 rounded-md border mt-3" />
+                    )}
+                    {i2iFile && <p className="text-sm text-gray-700 mt-2 truncate">Selected file: {i2iFile.name}</p>}
                   </div>
                   <textarea
                     rows="4"
