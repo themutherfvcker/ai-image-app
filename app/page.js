@@ -7,7 +7,7 @@ import Link from "next/link";
 import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
 
-function HomeGeneratorSection() {
+function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
   const [activeTab, setActiveTab] = useState("t2i");
   const [t2iPrompt, setT2iPrompt] = useState("");
   const [i2iPrompt, setI2iPrompt] = useState("");
@@ -16,7 +16,6 @@ function HomeGeneratorSection() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState(0);
-  const [showSignIn, setShowSignIn] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
   const router = useRouter();
 
@@ -30,7 +29,9 @@ function HomeGeneratorSection() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthed(!!session?.user);
       if (session?.user) {
-        setShowSignIn(false);
+        onShowSignIn(false);
+        // After sign-in, take users to Account so they can see credits/subscription
+        router.push("/account");
       }
     });
     return () => subscription?.unsubscribe();
@@ -59,7 +60,7 @@ function HomeGeneratorSection() {
     const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      setShowSignIn(true);
+      onShowSignIn(true);
       return;
     }
 
@@ -222,7 +223,6 @@ function HomeGeneratorSection() {
           )}
         </div>
       </div>
-      <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </section>
   );
 }
@@ -231,6 +231,7 @@ export default function HomePage() {
   // -------- Vanta / Lib init --------
   const vantaRef = useRef(null);
   const vantaInstance = useRef(null);
+  const [showSignIn, setShowSignIn] = useState(false);
 
   useEffect(() => {
     // Ensure AOS CSS
@@ -333,6 +334,9 @@ export default function HomePage() {
               <Link href="/pricing" className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-yellow-500">
                 Pricing
               </Link>
+              <Link href="/account" className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-yellow-500">
+                Account
+              </Link>
             </div>
             <div className="flex items-center">
               <button
@@ -389,7 +393,7 @@ export default function HomePage() {
       </div>
 
       {/* GENERATOR (inline) */}
-      <HomeGeneratorSection />
+      <HomeGeneratorSection showSignIn={showSignIn} onShowSignIn={setShowSignIn} />
 
       {/* FEATURES */}
       <section id="features" className="py-12 bg-white" data-aos="fade-up">
@@ -583,6 +587,7 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+      <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </>
   );
 }
