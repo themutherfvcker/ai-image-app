@@ -130,91 +130,121 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
           </div>
         </div>
 
-        <div className="mt-10 max-w-3xl mx-auto bg-gray-50 p-6 rounded-lg shadow-lg">
-          <div className="flex justify-center mb-6">
-            <button
-              onClick={() => setActiveTab("i2i")}
-              className={`px-4 py-2 rounded-l-md text-sm font-medium ${activeTab === "i2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-700 border"}`}
-            >
-              Image to Image
-            </button>
-            <button
-              onClick={() => setActiveTab("t2i")}
-              className={`px-4 py-2 rounded-r-md text-sm font-medium ${activeTab === "t2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-700 border"}`}
-            >
-              Text to Image
-            </button>
-          </div>
-
-          {error && <div className="mb-4 text-red-600 text-center">{error}</div>}
-
-          {activeTab === "t2i" && (
-            <div className="space-y-4">
-              <textarea
-                rows="4"
-                className="w-full rounded-md border-gray-300 focus:ring-yellow-500 focus:border-yellow-500"
-                placeholder="A cinematic banana astronaut on the moon, 35mm film look"
-                value={t2iPrompt}
-                onChange={(e) => setT2iPrompt(e.target.value)}
-              ></textarea>
-              <button
-                onClick={handleGenerate}
-                disabled={loading}
-                className="w-full px-4 py-2 rounded-md text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50"
-              >
-                {loading ? "Generating..." : "Generate"}
-              </button>
-            </div>
-          )}
-
-          {activeTab === "i2i" && (
-            <div className="space-y-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
-                <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-yellow-600 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
-                  <span>Upload a file</span>
-                  <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={(e) => setI2iFile(e.target.files[0])} />
-                </label>
-                <p className="pl-1">or drag and drop</p>
-                <p className="text-xs text-gray-500">PNG, JPG up to 10 MB</p>
-                {i2iFile && <p className="text-sm text-gray-700 mt-2">Selected file: {i2iFile.name}</p>}
+        <div className="mt-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left: Tabs and Inputs */}
+          <section className="lg:col-span-5">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex justify-start mb-6">
+                <button
+                  onClick={() => setActiveTab("i2i")}
+                  className={`px-4 py-2 rounded-l-md text-sm font-medium ${activeTab === "i2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-700 border"}`}
+                >
+                  Image to Image
+                </button>
+                <button
+                  onClick={() => setActiveTab("t2i")}
+                  className={`px-4 py-2 rounded-r-md text-sm font-medium ${activeTab === "t2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-700 border"}`}
+                >
+                  Text to Image
+                </button>
               </div>
-              <textarea
-                rows="4"
-                className="w-full rounded-md border-gray-300 focus:ring-yellow-500 focus:border-yellow-500"
-                placeholder="An astronaut riding a banana on the moon, photorealistic"
-                value={i2iPrompt}
-                onChange={(e) => setI2iPrompt(e.target.value)}
-              ></textarea>
-              <button
-                onClick={handleGenerate}
-                disabled={loading}
-                className="w-full px-4 py-2 rounded-md text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50"
-              >
-                {loading ? "Generating..." : "Generate"}
-              </button>
-            </div>
-          )}
 
-          {resultUrl && (
-            <div className="mt-6 text-center">
-              <h3 className="text-lg font-medium text-gray-900">Output</h3>
-              <img src={resultUrl} alt="Generated Image" className="mt-4 mx-auto rounded-md shadow-md max-w-full h-auto" />
-              <a
-                href={resultUrl}
-                download="nano-banana-image.png"
-                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-              >
-                Download Image
-              </a>
-            </div>
-          )}
+              {error && <div className="mb-4 text-red-600">{error}</div>}
 
-          {!resultUrl && !loading && (
-            <div className="mt-6 text-center text-gray-500">
-              <h3 className="text-lg font-medium text-gray-900">Output</h3>
-              <p className="mt-2">No image yet. Enter a prompt and generate.</p>
+              {activeTab === "i2i" && (
+                <div className="space-y-4">
+                  <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
+                    <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-yellow-600 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
+                      <span>Upload a file</span>
+                      <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={(e) => setI2iFile(e.target.files[0])} />
+                    </label>
+                    <p className="pl-1">or drag and drop</p>
+                    <p className="text-xs text-gray-500">PNG, JPG up to 10 MB</p>
+                    {i2iFile && <p className="text-sm text-gray-700 mt-2">Selected file: {i2iFile.name}</p>}
+                  </div>
+                  <textarea
+                    rows="4"
+                    className="w-full rounded-md border-gray-300 focus:ring-yellow-500 focus:border-yellow-500"
+                    placeholder="Describe the edit you want to apply…"
+                    value={i2iPrompt}
+                    onChange={(e) => setI2iPrompt(e.target.value)}
+                  ></textarea>
+                  <button
+                    onClick={handleGenerate}
+                    disabled={loading}
+                    className="w-full px-4 py-2 rounded-md text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50"
+                  >
+                    {loading ? "Generating..." : "Apply Edits (−1 credit)"}
+                  </button>
+                </div>
+              )}
+
+              {activeTab === "t2i" && (
+                <div className="space-y-4">
+                  <textarea
+                    rows="4"
+                    className="w-full rounded-md border-gray-300 focus:ring-yellow-500 focus:border-yellow-500"
+                    placeholder="A cinematic banana astronaut on the moon, 35mm film look"
+                    value={t2iPrompt}
+                    onChange={(e) => setT2iPrompt(e.target.value)}
+                  ></textarea>
+                  <button
+                    onClick={handleGenerate}
+                    disabled={loading}
+                    className="w-full px-4 py-2 rounded-md text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50"
+                  >
+                    {loading ? "Generating..." : "Generate (−1 credit)"}
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </section>
+
+          {/* Right: Output */}
+          <section className="lg:col-span-7">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-semibold text-gray-900">Output</h3>
+                {resultUrl && (
+                  <div className="flex gap-3">
+                    <a
+                      href={resultUrl}
+                      download="nano-banana-image.png"
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-gray-900 text-white hover:bg-black"
+                    >
+                      Download PNG
+                    </a>
+                    <button
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50"
+                      onClick={() => setResultUrl(null)}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {!resultUrl && (
+                <div className="h-72 border rounded-md grid place-items-center text-gray-500">
+                  {loading ? (
+                    <div className="flex items-center gap-3">
+                      <svg className="animate-spin h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10" strokeWidth="4" className="opacity-25"></circle>
+                        <path d="M4 12a8 8 0 018-8" strokeWidth="4" className="opacity-75"></path>
+                      </svg>
+                      <span>Generating…</span>
+                    </div>
+                  ) : (
+                    <span>No image yet. Enter a prompt and generate.</span>
+                  )}
+                </div>
+              )}
+
+              {resultUrl && (
+                <img src={resultUrl} alt="Generated Image" className="w-full h-auto rounded-md border" />
+              )}
+            </div>
+          </section>
         </div>
       </div>
     </section>
