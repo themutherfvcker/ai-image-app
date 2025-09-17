@@ -17,6 +17,7 @@ function HomeGeneratorSection() {
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState(0);
   const [showSignIn, setShowSignIn] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -27,9 +28,9 @@ function HomeGeneratorSection() {
   useEffect(() => {
     const supabase = getSupabase();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthed(!!session?.user);
       if (session?.user) {
         setShowSignIn(false);
-        router.push("/generator");
       }
     });
     return () => subscription?.unsubscribe();
@@ -40,10 +41,12 @@ function HomeGeneratorSection() {
       const supabase = getSupabase();
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        setIsAuthed(true);
         const { data, error } = await supabase.from("credits").select("balance").eq("user_id", user.id).single();
         if (error) throw error;
         setBalance(data.balance);
       } else {
+        setIsAuthed(false);
         setBalance(0);
       }
     } catch (e) {
@@ -102,6 +105,17 @@ function HomeGeneratorSection() {
     }
   };
 
+  async function startSubscription() {
+    try {
+      const res = await fetch("/api/subscription", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) });
+      const j = await res.json();
+      if (res.ok && j?.url) window.location.href = j.url;
+      else throw new Error(j?.error || "Subscription failed");
+    } catch (e) {
+      setError(e?.message || "Subscription failed");
+    }
+  }
+
   return (
     <section id="generator" className="py-12 bg-white" data-aos="fade-up">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -109,9 +123,16 @@ function HomeGeneratorSection() {
           <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">AI Image Editor</h2>
           <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Try the Editor</p>
           <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-            Credits: {balance}
-            <Link href="/pricing" className="ml-2 text-yellow-600 hover:text-yellow-500">Buy 100 credits ($5)</Link>
+            {isAuthed ? (
+              <>Credits: <span className="font-semibold">{balance}</span></>
+            ) : (
+              <>Sign in to start generating images</>
+            )}
           </p>
+          <div className="mt-2 flex items-center gap-2 justify-center">
+            <Link href="/pricing" className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-yellow-600 text-white hover:bg-yellow-700">Buy 100 credits ($5)</Link>
+            <button onClick={startSubscription} className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-gray-900 text-white hover:bg-black">Subscribe $5/mo</button>
+          </div>
         </div>
 
         <div className="mt-10 max-w-3xl mx-auto bg-gray-50 p-6 rounded-lg shadow-lg">
