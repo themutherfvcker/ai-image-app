@@ -117,7 +117,7 @@ function HomeGeneratorSection() {
   }
 
   return (
-    <section id="generator" className="py-12 bg-white" data-aos="fade-up">
+    <section id="generator" className="py-12 bg-gray-50" data-aos="fade-up">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="lg:text-center">
           <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">AI Image Editor</h2>
