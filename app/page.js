@@ -9,7 +9,7 @@ import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
 
 function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
-  const [activeTab, setActiveTab] = useState("t2i");
+  const [activeTab, setActiveTab] = useState("i2i");
   const [t2iPrompt, setT2iPrompt] = useState("");
   const [i2iPrompt, setI2iPrompt] = useState("");
   const [i2iFile, setI2iFile] = useState(null);
@@ -133,16 +133,16 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
         <div className="mt-10 max-w-3xl mx-auto bg-gray-50 p-6 rounded-lg shadow-lg">
           <div className="flex justify-center mb-6">
             <button
-              onClick={() => setActiveTab("t2i")}
-              className={`px-4 py-2 rounded-l-md text-sm font-medium ${activeTab === "t2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-700 border"}`}
-            >
-              Text to Image
-            </button>
-            <button
               onClick={() => setActiveTab("i2i")}
-              className={`px-4 py-2 rounded-r-md text-sm font-medium ${activeTab === "i2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-700 border"}`}
+              className={`px-4 py-2 rounded-l-md text-sm font-medium ${activeTab === "i2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-700 border"}`}
             >
               Image to Image
+            </button>
+            <button
+              onClick={() => setActiveTab("t2i")}
+              className={`px-4 py-2 rounded-r-md text-sm font-medium ${activeTab === "t2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-700 border"}`}
+            >
+              Text to Image
             </button>
           </div>
 
