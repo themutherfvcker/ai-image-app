@@ -70,35 +70,60 @@ function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
 
 function ExamplesSection() {
   function tryExample(tab, prompt) {
-    window.dispatchEvent(new CustomEvent("nb-try-example", { detail: { tab, prompt } }));
-    const el = document.getElementById("generator");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    const u = new URL(location.origin + "/generator")
+    u.searchParams.set("tab", tab)
+    u.searchParams.set("prompt", prompt)
+    window.location.href = u.toString()
   }
 
   const cards = [
     {
       title: "Remove background",
       desc: "Cut out your subject while preserving edges and hair.",
-      before: "https://picsum.photos/seed/nb-before1/800/450",
-      after: "https://picsum.photos/seed/nb-after1/800/450",
+      before: "https://picsum.photos/seed/nb-before1/1600/900",
+      after: "https://picsum.photos/seed/nb-after1/1600/900",
       tab: "i2i",
       prompt: "Remove the background and place the subject on a clean white background.",
     },
     {
       title: "Change clothing color",
       desc: "Recolor garments without losing texture.",
-      before: "https://picsum.photos/seed/nb-before2/800/450",
-      after: "https://picsum.photos/seed/nb-after2/800/450",
+      before: "https://picsum.photos/seed/nb-before2/1600/900",
+      after: "https://picsum.photos/seed/nb-after2/1600/900",
       tab: "i2i",
       prompt: "Change the jacket to a deep navy blue while keeping fabric texture.",
     },
     {
       title: "Product ad",
       desc: "Create lifestyle scenes from a studio shot.",
-      before: "https://picsum.photos/seed/nb-before3/800/450",
-      after: "https://picsum.photos/seed/nb-after3/800/450",
+      before: "https://picsum.photos/seed/nb-before3/1600/900",
+      after: "https://picsum.photos/seed/nb-after3/1600/900",
       tab: "t2i",
       prompt: "A premium product photo on a marble countertop with soft morning light.",
+    },
+    {
+      title: "Storyboard",
+      desc: "Generate sequential images to tell a short visual story.",
+      before: "https://picsum.photos/seed/nb-before4/1600/900",
+      after: "https://picsum.photos/seed/nb-after4/1600/900",
+      tab: "t2i",
+      prompt: "Four cinematic stills of a traveler boarding a train at sunrise, consistent character and outfit.",
+    },
+    {
+      title: "Age transformation",
+      desc: "See a younger or older version while keeping identity consistent.",
+      before: "https://picsum.photos/seed/nb-before5/1600/900",
+      after: "https://picsum.photos/seed/nb-after5/1600/900",
+      tab: "i2i",
+      prompt: "Make the person appear about 10 years older, keep skin details and hair line realistic.",
+    },
+    {
+      title: "Artistic style transfer",
+      desc: "Turn photos into painterly images.",
+      before: "https://picsum.photos/seed/nb-before6/1600/900",
+      after: "https://picsum.photos/seed/nb-after6/1600/900",
+      tab: "i2i",
+      prompt: "Render this image in the style of an oil painting with visible brush strokes and warm tones.",
     },
   ];
 
@@ -110,7 +135,7 @@ function ExamplesSection() {
           <p className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">Before and after examples</p>
           <p className="mt-2 text-gray-600">Move the handle to compare. Click “Try this” to prefill the editor.</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           {cards.map((c, i) => (
             <div key={i} className="bg-white rounded-xl shadow hover:shadow-lg transition">
               <BeforeAfter beforeSrc={c.before} afterSrc={c.after} altBefore={`${c.title} before`} altAfter={`${c.title} after`} />
