@@ -121,6 +121,20 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
   return (
     <section id="generator" className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* FAQ schema for the homepage FAQ */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              { "@type": "Question", "name": "What is Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "A text-based photo editor that understands complex instructions and preserves the details you care about." } },
+              { "@type": "Question", "name": "How does it work?", "acceptedAnswer": { "@type": "Answer", "text": "Upload an image (or start from text), describe your edit, and generate. No manual masking required." } },
+              { "@type": "Question", "name": "Is it better than other tools?", "acceptedAnswer": { "@type": "Answer", "text": "We focus on identity and scene preservation so results look consistent across edits and versions." } },
+              { "@type": "Question", "name": "Can I use it commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—great for UGC, social, and marketing where brand/identity consistency matters." } }
+            ]
+          }) }}
+        />
         <div className="lg:text-center">
           <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">AI Image Editor</h2>
           <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Try the Editor</p>
