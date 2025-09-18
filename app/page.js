@@ -8,6 +8,127 @@ import Link from "next/link";
 import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
 
+function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
+  const containerRef = useRef(null);
+  const [percent, setPercent] = useState(50);
+
+  function clamp(v) { return Math.max(0, Math.min(100, v)); }
+
+  function setFromX(clientX) {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = clientX - rect.left;
+    setPercent(clamp((x / rect.width) * 100));
+  }
+
+  function onPointerDown(e) {
+    e.preventDefault();
+    const move = (ev) => setFromX(ev.clientX ?? ev.touches?.[0]?.clientX ?? 0);
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("touchmove", move);
+      window.removeEventListener("touchend", up);
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("touchmove", move, { passive: true });
+    window.addEventListener("touchend", up);
+  }
+
+  function onKeyDown(e) {
+    if (e.key === "ArrowLeft") setPercent((p) => clamp(p - 5));
+    if (e.key === "ArrowRight") setPercent((p) => clamp(p + 5));
+  }
+
+  return (
+    <div ref={containerRef} className="relative w-full overflow-hidden rounded-xl shadow before-after" style={{ aspectRatio: "16/9" }}>
+      <img src={beforeSrc} alt={altBefore} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute inset-0 overflow-hidden" style={{ width: `${percent}%` }}>
+        <img src={afterSrc} alt={altAfter} loading="lazy" className="w-full h-full object-cover" />
+      </div>
+      <button
+        type="button"
+        className="absolute top-1/2 left-[var(--x,50%)] -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow flex items-center justify-center border"
+        style={{ left: `calc(${percent}% )` }}
+        onPointerDown={onPointerDown}
+        onKeyDown={onKeyDown}
+        role="slider"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(percent)}
+        aria-label="Reveal after image"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" fill="none" className="text-gray-700">
+          <path d="M8 12h8M10 9l-3 3 3 3M14 15l3-3-3-3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+function ExamplesSection() {
+  function tryExample(tab, prompt) {
+    window.dispatchEvent(new CustomEvent("nb-try-example", { detail: { tab, prompt } }));
+    const el = document.getElementById("generator");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  }
+
+  const cards = [
+    {
+      title: "Remove background",
+      desc: "Cut out your subject while preserving edges and hair.",
+      before: "https://picsum.photos/seed/nb-before1/800/450",
+      after: "https://picsum.photos/seed/nb-after1/800/450",
+      tab: "i2i",
+      prompt: "Remove the background and place the subject on a clean white background.",
+    },
+    {
+      title: "Change clothing color",
+      desc: "Recolor garments without losing texture.",
+      before: "https://picsum.photos/seed/nb-before2/800/450",
+      after: "https://picsum.photos/seed/nb-after2/800/450",
+      tab: "i2i",
+      prompt: "Change the jacket to a deep navy blue while keeping fabric texture.",
+    },
+    {
+      title: "Product ad",
+      desc: "Create lifestyle scenes from a studio shot.",
+      before: "https://picsum.photos/seed/nb-before3/800/450",
+      after: "https://picsum.photos/seed/nb-after3/800/450",
+      tab: "t2i",
+      prompt: "A premium product photo on a marble countertop with soft morning light.",
+    },
+  ];
+
+  return (
+    <section className="py-12 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="lg:text-center mb-8">
+          <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">See real edits</h2>
+          <p className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">Before and after examples</p>
+          <p className="mt-2 text-gray-600">Move the handle to compare. Click “Try this” to prefill the editor.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {cards.map((c, i) => (
+            <div key={i} className="bg-white rounded-xl shadow hover:shadow-lg transition">
+              <BeforeAfter beforeSrc={c.before} afterSrc={c.after} altBefore={`${c.title} before`} altAfter={`${c.title} after`} />
+              <div className="p-4">
+                <h3 className="text-lg font-semibold text-gray-900">{c.title}</h3>
+                <p className="text-sm text-gray-600 mt-1">{c.desc}</p>
+                <button onClick={() => tryExample(c.tab, c.prompt)} className="mt-3 inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border hover:bg-gray-50">
+                  Try this
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
   const [activeTab, setActiveTab] = useState("i2i");
   const [t2iPrompt, setT2iPrompt] = useState("");
@@ -106,6 +227,19 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
+
+  // Listen for “Try this” examples to prefill editor state
+  useEffect(() => {
+    function onTry(e) {
+      const { tab, prompt } = e.detail || {};
+      if (tab === "i2i") setActiveTab("i2i"); else if (tab === "t2i") setActiveTab("t2i");
+      if (typeof prompt === "string") {
+        if (tab === "i2i") setI2iPrompt(prompt); else setT2iPrompt(prompt);
+      }
+    }
+    window.addEventListener("nb-try-example", onTry);
+    return () => window.removeEventListener("nb-try-example", onTry);
+  }, []);
 
   async function startSubscription() {
     try {
@@ -431,6 +565,9 @@ export default function HomePage() {
 
       {/* GENERATOR (inline) */}
       <HomeGeneratorSection showSignIn={showSignIn} onShowSignIn={setShowSignIn} />
+
+      {/* EXAMPLES (Before/After) */}
+      <ExamplesSection />
 
       {/* FEATURES */}
       <section id="features" className="py-12 bg-white">
