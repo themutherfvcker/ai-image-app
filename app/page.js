@@ -32,8 +32,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
       setIsAuthed(!!session?.user);
       if (session?.user) {
         onShowSignIn(false);
-        // After sign-in, take users to Account so they can see credits/subscription
-        router.push("/account");
+        // Do not redirect; keep users on the current page
       }
     });
     return () => subscription?.unsubscribe();
