@@ -662,8 +662,6 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Tailwind via CDN for reliability in prod build */}
-      <Script src="https://cdn.tailwindcss.com" strategy="beforeInteractive" />
       {/* Load only the minimal scripts after interactive */}
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" strategy="afterInteractive" />
       <Script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js" strategy="afterInteractive" />

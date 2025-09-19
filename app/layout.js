@@ -1,4 +1,5 @@
 import "./globals.css";
+import { Inter } from "next/font/google";
 
 export const metadata = {
   title: "Nano Banana – AI Image Editor for Text-based Photo Editing",
@@ -24,8 +25,9 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const inter = Inter({ subsets: ["latin"], display: "swap" });
   return (
-    <html lang="en">
+    <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -46,7 +48,7 @@ export default function RootLayout({ children }) {
           }) }}
         />
       </head>
-      <body>{children}</body>
+      <body className={`${inter.className} antialiased h-full`}>{children}</body>
     </html>
   );
 }
