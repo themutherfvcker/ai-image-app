@@ -166,6 +166,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
   const [balance, setBalance] = useState(0);
   const [isAuthed, setIsAuthed] = useState(false);
   const [pendingImageDataUrl, setPendingImageDataUrl] = useState("");
+  const uploadInputRef = useRef(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -239,6 +240,13 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                 }
               })();
             }
+          }
+          // If user asked to upload before auth, trigger file picker now
+          const ask = sessionStorage.getItem("nb_home_ask_upload");
+          if (ask === '1') {
+            sessionStorage.removeItem("nb_home_ask_upload");
+            setActiveTab("i2i");
+            setTimeout(() => { try { uploadInputRef.current?.click(); } catch {} }, 250);
           }
         } catch {}
       }
@@ -425,6 +433,22 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
     }
   }
 
+  async function handleUploadClick(e) {
+    try {
+      const supabase = getSupabase();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        sessionStorage.setItem("nb_home_ask_upload", '1');
+        sessionStorage.setItem("nb_home_pending_generate", JSON.stringify({ tab: "i2i", prompt: i2iPrompt || "" }));
+        onShowSignIn(true);
+        return;
+      }
+      uploadInputRef.current?.click();
+    } catch {
+      uploadInputRef.current?.click();
+    }
+  }
+
   return (
     <section id="generator" className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -482,35 +506,29 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
               {activeTab === "i2i" && (
                 <div className="space-y-4">
                   <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
-                    <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-yellow-600 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
-                      <span>Upload a file</span>
-                      <input
-                        id="file-upload"
-                        name="file-upload"
-                        type="file"
-                        accept="image/png,image/jpeg,image/webp"
-                        className="sr-only"
-                        onClick={async (e) => {
-                          try {
-                            const supabase = getSupabase();
-                            const { data: { user } } = await supabase.auth.getUser();
-                            if (!user) {
-                              e.preventDefault();
-                              sessionStorage.setItem("nb_home_pending_generate", JSON.stringify({ tab: "i2i", prompt: i2iPrompt || "" }));
-                              onShowSignIn(true);
-                            }
-                          } catch {}
-                        }}
-                        onChange={(e) => {
-                          const f = e.target.files?.[0];
-                          if (f) {
-                            setI2iFile(f);
-                            if (previewUrl) URL.revokeObjectURL(previewUrl);
-                            setPreviewUrl(URL.createObjectURL(f));
-                          }
-                        }}
-                      />
-                    </label>
+                    <button
+                      type="button"
+                      onClick={handleUploadClick}
+                      className="relative cursor-pointer bg-white rounded-md font-medium text-yellow-600 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 px-4 py-2"
+                    >
+                      Upload a file
+                    </button>
+                    <input
+                      ref={uploadInputRef}
+                      id="file-upload"
+                      name="file-upload"
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      className="sr-only"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) {
+                          setI2iFile(f);
+                          if (previewUrl) URL.revokeObjectURL(previewUrl);
+                          setPreviewUrl(URL.createObjectURL(f));
+                        }
+                      }}
+                    />
                     <p className="pl-1 text-gray-600">or drag and drop</p>
                     <p className="text-xs text-gray-600">PNG, JPG up to 10 MB</p>
                     {previewUrl && (
