@@ -22,15 +22,16 @@ export default function SignInModal({ open, onClose }) {
       })
       if (error) throw error
       if (data?.url) {
-        const w = window.open(data.url, "nb-auth", "width=480,height=720")
-        const supa = getSupabase()
-        const { data: { subscription } } = supa.auth.onAuthStateChange((_e, session) => {
-          if (session?.user) {
+        const features = "width=480,height=720,menubar=no,toolbar=no,location=no,status=no"
+        const w = window.open(data.url, "nb-auth", features)
+        // Listener to close the popup when callback notifies
+        const onMessage = (ev) => {
+          if (ev?.data?.type === "NB_AUTH_COMPLETE") {
             try { w?.close() } catch {}
+            window.removeEventListener("message", onMessage)
           }
-        })
-        // Safety timeout to close popup after 2 minutes
-        setTimeout(() => { try { subscription?.unsubscribe(); w?.close() } catch {} }, 120000)
+        }
+        window.addEventListener("message", onMessage)
       }
     } catch (e) {
       setError(e?.message || "Authentication failed")
