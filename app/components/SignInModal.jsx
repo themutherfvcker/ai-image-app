@@ -15,11 +15,26 @@ export default function SignInModal({ open, onClose }) {
   async function signInWithGoogle() {
     setError("")
     const supabase = getSupabase()
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: callbackUrl }
-    })
-    if (error) setError(error.message)
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: callbackUrl, skipBrowserRedirect: true }
+      })
+      if (error) throw error
+      if (data?.url) {
+        const w = window.open(data.url, "nb-auth", "width=480,height=720")
+        const supa = getSupabase()
+        const { data: { subscription } } = supa.auth.onAuthStateChange((_e, session) => {
+          if (session?.user) {
+            try { w?.close() } catch {}
+          }
+        })
+        // Safety timeout to close popup after 2 minutes
+        setTimeout(() => { try { subscription?.unsubscribe(); w?.close() } catch {} }, 120000)
+      }
+    } catch (e) {
+      setError(e?.message || "Authentication failed")
+    }
   }
 
   async function signInWithEmail(e) {

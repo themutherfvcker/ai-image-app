@@ -77,6 +77,17 @@ export default function GeneratorPage() {
   // Prefill from query params (e.g., /generator?tab=i2i&prompt=...)
   useEffect(() => {
     if (typeof window === "undefined") return
+    // Restore any pending state saved before auth redirect
+    try {
+      const pending = sessionStorage.getItem("nb_pending_generate")
+      if (pending) {
+        const parsed = JSON.parse(pending)
+        if (parsed?.activeTab === "image") setActiveTab("image")
+        if (typeof parsed?.prompt === "string") setPrompt(parsed.prompt)
+        // we cannot restore the File object; preview URL will be gone by browser design
+        sessionStorage.removeItem("nb_pending_generate")
+      }
+    } catch {}
     const sp = new URLSearchParams(window.location.search)
     const tab = sp.get("tab") || ""
     const qp = sp.get("prompt") || ""
@@ -202,6 +213,10 @@ export default function GeneratorPage() {
       const supabase = getSupabase()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
+        // Persist pending state so we can restore after auth
+        try {
+          sessionStorage.setItem("nb_pending_generate", JSON.stringify({ activeTab, prompt }))
+        } catch {}
         setShowSignIn(true)
         return
       }
