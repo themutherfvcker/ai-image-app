@@ -16,23 +16,12 @@ export default function SignInModal({ open, onClose }) {
     setError("")
     const supabase = getSupabase()
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: callbackUrl, skipBrowserRedirect: true }
+        options: { redirectTo: callbackUrl }
       })
       if (error) throw error
-      if (data?.url) {
-        const features = "width=480,height=720,menubar=no,toolbar=no,location=no,status=no"
-        const w = window.open(data.url, "nb-auth", features)
-        // Listener to close the popup when callback notifies
-        const onMessage = (ev) => {
-          if (ev?.data?.type === "NB_AUTH_COMPLETE") {
-            try { w?.close() } catch {}
-            window.removeEventListener("message", onMessage)
-          }
-        }
-        window.addEventListener("message", onMessage)
-      }
+      // Browser will redirect; nothing else to do here
     } catch (e) {
       setError(e?.message || "Authentication failed")
     }
