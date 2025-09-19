@@ -246,6 +246,70 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
     return () => subscription?.unsubscribe();
   }, [router]);
 
+  // On mount after redirect: if already authenticated, resume pending
+  useEffect(() => {
+    (async () => {
+      try {
+        const supabase = getSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const raw = sessionStorage.getItem("nb_home_pending_generate");
+        if (!raw) return;
+        const pending = JSON.parse(raw);
+        if (pending?.tab === "i2i") {
+          setActiveTab("i2i");
+          if (typeof pending.prompt === "string") setI2iPrompt(pending.prompt);
+          if (typeof pending.imageDataUrl === "string" && pending.imageDataUrl) {
+            setPendingImageDataUrl(pending.imageDataUrl);
+            setPreviewUrl(pending.imageDataUrl);
+            setLoading(true);
+            setError("");
+            setResultUrl(null);
+            try {
+              const resp = await fetch("/api/vertex/edit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: pending.prompt || "", imageDataUrl: pending.imageDataUrl })
+              });
+              const data = await resp.json();
+              if (!resp.ok || !data?.ok) throw new Error(data?.error || `HTTP ${resp.status}`);
+              setResultUrl(data.dataUrl);
+              fetchBalance();
+            } catch (e) {
+              setError(e?.message || "Failed to generate image.");
+            } finally {
+              setLoading(false);
+              setPendingImageDataUrl("");
+              sessionStorage.removeItem("nb_home_pending_generate");
+            }
+          }
+        } else if (pending?.tab === "t2i") {
+          setActiveTab("t2i");
+          if (typeof pending.prompt === "string") setT2iPrompt(pending.prompt);
+          setLoading(true);
+          setError("");
+          setResultUrl(null);
+          try {
+            const resp = await fetch("/api/vertex/imagine", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ prompt: pending.prompt || "" })
+            });
+            const data = await resp.json();
+            if (!resp.ok) throw new Error(data?.error || `HTTP ${resp.status}`);
+            setResultUrl(data.dataUrl);
+            fetchBalance();
+          } catch (e) {
+            setError(e?.message || "Failed to generate image.");
+          } finally {
+            setLoading(false);
+            sessionStorage.removeItem("nb_home_pending_generate");
+          }
+        }
+      } catch {}
+    })();
+  }, []);
+
   // Helper: read file as data URL (basic; no compression)
   function fileToDataUrl(file) {
     return new Promise((resolve, reject) => {
