@@ -4,6 +4,8 @@
 import { useEffect, useRef, useState } from "react"
 import Script from "next/script"
 import Link from "next/link"
+import { getSupabase } from "@/lib/supabaseClient"
+import SignInModal from "@/app/components/SignInModal"
 
 const STYLE_CHIPS = [
   { label: "Photorealistic", text: "ultra realistic, natural lighting, 50mm lens, high detail" },
@@ -36,6 +38,7 @@ export default function GeneratorPage() {
   const [error, setError] = useState("")
   const [resultUrl, setResultUrl] = useState("")
   const [history, setHistory] = useState([]) // [{url, at, prompt, mode, aspect}]
+  const [showSignIn, setShowSignIn] = useState(false)
 
   // Upload state (image→image)
   const [previewUrl, setPreviewUrl] = useState(null)
@@ -80,6 +83,15 @@ export default function GeneratorPage() {
     if (tab === "i2i") setActiveTab("image")
     if (tab === "t2i") setActiveTab("text")
     if (qp) setPrompt(qp)
+  }, [])
+
+  // Close sign-in modal on successful auth
+  useEffect(() => {
+    const supabase = getSupabase()
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) setShowSignIn(false)
+    })
+    return () => subscription?.unsubscribe()
   }, [])
 
   // Compression helper (JSON-safe)
@@ -185,6 +197,15 @@ export default function GeneratorPage() {
 
   // Generate
   async function onGenerate() {
+    // Require auth
+    try {
+      const supabase = getSupabase()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        setShowSignIn(true)
+        return
+      }
+    } catch {}
     setBusy(true)
     setError("")
     setResultUrl("")
@@ -494,6 +515,7 @@ export default function GeneratorPage() {
           </section>
         </main>
       </div>
+      <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </>
   )
 }
