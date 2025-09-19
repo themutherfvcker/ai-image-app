@@ -165,24 +165,96 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState(0);
   const [isAuthed, setIsAuthed] = useState(false);
+  const [pendingImageDataUrl, setPendingImageDataUrl] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     fetchBalance();
   }, []);
 
-  // After the user authenticates (Google/Email), redirect to the full generator page
+  // After the user authenticates (Google/Email), close modal and (if pending) auto-generate
   useEffect(() => {
     const supabase = getSupabase();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthed(!!session?.user);
       if (session?.user) {
         onShowSignIn(false);
-        // Do not redirect; keep users on the current page
+        // Resume pending generate if any
+        try {
+          const raw = sessionStorage.getItem("nb_home_pending_generate");
+          if (raw) {
+            const pending = JSON.parse(raw);
+            if (pending?.tab === "i2i") {
+              setActiveTab("i2i");
+              if (typeof pending.prompt === "string") setI2iPrompt(pending.prompt);
+              if (typeof pending.imageDataUrl === "string" && pending.imageDataUrl) {
+                setPendingImageDataUrl(pending.imageDataUrl);
+                setPreviewUrl(pending.imageDataUrl);
+                // Auto-generate using JSON endpoint
+                (async () => {
+                  try {
+                    setLoading(true);
+                    setError("");
+                    setResultUrl(null);
+                    const resp = await fetch("/api/vertex/edit", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ prompt: pending.prompt || "", imageDataUrl: pending.imageDataUrl })
+                    });
+                    const data = await resp.json();
+                    if (!resp.ok || !data?.ok) throw new Error(data?.error || `HTTP ${resp.status}`);
+                    setResultUrl(data.dataUrl);
+                    fetchBalance();
+                  } catch (e) {
+                    setError(e?.message || "Failed to generate image.");
+                  } finally {
+                    setLoading(false);
+                    setPendingImageDataUrl("");
+                    sessionStorage.removeItem("nb_home_pending_generate");
+                  }
+                })();
+              }
+            } else if (pending?.tab === "t2i") {
+              setActiveTab("t2i");
+              if (typeof pending.prompt === "string") setT2iPrompt(pending.prompt);
+              (async () => {
+                try {
+                  setLoading(true);
+                  setError("");
+                  setResultUrl(null);
+                  const resp = await fetch("/api/vertex/imagine", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: pending.prompt || "" })
+                  });
+                  const data = await resp.json();
+                  if (!resp.ok) throw new Error(data?.error || `HTTP ${resp.status}`);
+                  setResultUrl(data.dataUrl);
+                  fetchBalance();
+                } catch (e) {
+                  setError(e?.message || "Failed to generate image.");
+                } finally {
+                  setLoading(false);
+                  sessionStorage.removeItem("nb_home_pending_generate");
+                }
+              })();
+            }
+          }
+        } catch {}
       }
     });
     return () => subscription?.unsubscribe();
   }, [router]);
+
+  // Helper: read file as data URL (basic; no compression)
+  function fileToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = () => reject(new Error("Could not read image"));
+      r.readAsDataURL(file);
+    });
+  }
 
   const fetchBalance = async () => {
     try {
@@ -200,6 +272,18 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
     const supabase = getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
+      // Save pending state and open sign-in
+      try {
+        if (activeTab === "t2i") {
+          sessionStorage.setItem("nb_home_pending_generate", JSON.stringify({ tab: "t2i", prompt: t2iPrompt }));
+        } else {
+          let imageDataUrl = "";
+          if (i2iFile) {
+            try { imageDataUrl = String(await fileToDataUrl(i2iFile)); } catch {}
+          }
+          sessionStorage.setItem("nb_home_pending_generate", JSON.stringify({ tab: "i2i", prompt: i2iPrompt, imageDataUrl }));
+        }
+      } catch {}
       onShowSignIn(true);
       return;
     }
