@@ -45,6 +45,7 @@ export default function GeneratorPage() {
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef(null)
   const dropRef = useRef(null)
+  const [pendingImageDataUrl, setPendingImageDataUrl] = useState("")
 
   // --- Tailwind / libs (CDN) ---
   useEffect(() => {
@@ -84,7 +85,11 @@ export default function GeneratorPage() {
         const parsed = JSON.parse(pending)
         if (parsed?.activeTab === "image") setActiveTab("image")
         if (typeof parsed?.prompt === "string") setPrompt(parsed.prompt)
-        // we cannot restore the File object; preview URL will be gone by browser design
+        if (typeof parsed?.imageDataUrl === "string" && parsed.imageDataUrl) {
+          setPendingImageDataUrl(parsed.imageDataUrl)
+          setPreviewUrl(parsed.imageDataUrl)
+        }
+        // we cannot restore the File object; this uses a data URL snapshot
         sessionStorage.removeItem("nb_pending_generate")
       }
     } catch {}
@@ -96,14 +101,39 @@ export default function GeneratorPage() {
     if (qp) setPrompt(qp)
   }, [])
 
-  // Close sign-in modal on successful auth
+  // Close sign-in modal on successful auth; if we have pending image data URL, auto-generate
   useEffect(() => {
     const supabase = getSupabase()
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) setShowSignIn(false)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        setShowSignIn(false)
+        if (pendingImageDataUrl && activeTab === "image" && prompt.trim()) {
+          try {
+            setBusy(true)
+            setError("")
+            setResultUrl("")
+            const resp = await fetch("/api/vertex/edit", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ prompt: prompt.trim(), imageDataUrl: pendingImageDataUrl, meta: { aspect, strength } }),
+              cache: "no-store",
+            })
+            const j = await safeReadJson(resp)
+            if (!resp.ok || !j?.ok) throw new Error(j?.error || `HTTP ${resp.status}`)
+            setResultUrl(j.dataUrl || "")
+            setBalance(typeof j.balance === "number" ? j.balance : balance)
+            setHistory((h) => [{ url: j.dataUrl, at: Date.now(), prompt, mode: "image", aspect }, ...h].slice(0, 40))
+          } catch (e) {
+            setError(e?.message || "Generation failed")
+          } finally {
+            setBusy(false)
+            setPendingImageDataUrl("")
+          }
+        }
+      }
     })
     return () => subscription?.unsubscribe()
-  }, [])
+  }, [pendingImageDataUrl, activeTab, prompt, aspect, strength, balance])
 
   // Compression helper (JSON-safe)
   async function fileToDataUrlCompressed(file, maxDim = 1536, jpegQuality = 0.9) {
@@ -215,7 +245,16 @@ export default function GeneratorPage() {
       if (!user) {
         // Persist pending state so we can restore after auth
         try {
-          sessionStorage.setItem("nb_pending_generate", JSON.stringify({ activeTab, prompt }))
+          let imageDataUrl = ""
+          if (activeTab === "image") {
+            const file = fileInputRef.current?.files?.[0] || null
+            if (file) {
+              try {
+                imageDataUrl = await fileToDataUrlCompressed(file, 1536, 0.9)
+              } catch {}
+            }
+          }
+          sessionStorage.setItem("nb_pending_generate", JSON.stringify({ activeTab, prompt, imageDataUrl }))
         } catch {}
         setShowSignIn(true)
         return
