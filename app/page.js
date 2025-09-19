@@ -490,6 +490,17 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                         type="file"
                         accept="image/png,image/jpeg,image/webp"
                         className="sr-only"
+                        onClick={async (e) => {
+                          try {
+                            const supabase = getSupabase();
+                            const { data: { user } } = await supabase.auth.getUser();
+                            if (!user) {
+                              e.preventDefault();
+                              sessionStorage.setItem("nb_home_pending_generate", JSON.stringify({ tab: "i2i", prompt: i2iPrompt || "" }));
+                              onShowSignIn(true);
+                            }
+                          } catch {}
+                        }}
                         onChange={(e) => {
                           const f = e.target.files?.[0];
                           if (f) {
