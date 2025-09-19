@@ -2,7 +2,6 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { useSearchParams } from "next/navigation"
 import Script from "next/script"
 import Link from "next/link"
 
@@ -73,15 +72,14 @@ export default function GeneratorPage() {
   useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl) }, [previewUrl])
 
   // Prefill from query params (e.g., /generator?tab=i2i&prompt=...)
-  const searchParams = useSearchParams()
   useEffect(() => {
-    const tab = searchParams?.get("tab") || ""
-    const qp = searchParams?.get("prompt") || ""
+    if (typeof window === "undefined") return
+    const sp = new URLSearchParams(window.location.search)
+    const tab = sp.get("tab") || ""
+    const qp = sp.get("prompt") || ""
     if (tab === "i2i") setActiveTab("image")
     if (tab === "t2i") setActiveTab("text")
     if (qp) setPrompt(qp)
-    // run only once on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Compression helper (JSON-safe)
