@@ -185,7 +185,8 @@ export async function POST(req) {
       }
     }
 
-    // 3) Short tx: decrement credits + ledger
+    const startedAt = Date.now()
+    // 3) Short tx: decrement credits + ledger + job log
     const out = await prisma.$transaction(async (tx) => {
       const fresh = await tx.user.findUnique({ where: { id } })
       if (!fresh || fresh.credits < 1) {
@@ -201,6 +202,17 @@ export async function POST(req) {
         reason: 'image_generation',
         meta: { modelName: env.model, prompt },
       })
+      try {
+        await tx.generationJob.create({
+          data: {
+            userId: id,
+            prompt,
+            mode: 'text',
+            latencyMs: Math.max(0, Date.now() - startedAt),
+            success: true,
+          },
+        })
+      } catch {}
       return { balance: updated.credits }
     }, { timeout: 15000 })
 

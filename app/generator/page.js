@@ -4,6 +4,8 @@
 import { useEffect, useRef, useState } from "react"
 import Script from "next/script"
 import Link from "next/link"
+import { getSupabase } from "@/lib/supabaseClient"
+import SignInModal from "@/app/components/SignInModal"
 
 const STYLE_CHIPS = [
   { label: "Photorealistic", text: "ultra realistic, natural lighting, 50mm lens, high detail" },
@@ -36,12 +38,14 @@ export default function GeneratorPage() {
   const [error, setError] = useState("")
   const [resultUrl, setResultUrl] = useState("")
   const [history, setHistory] = useState([]) // [{url, at, prompt, mode, aspect}]
+  const [showSignIn, setShowSignIn] = useState(false)
 
   // Upload state (image→image)
   const [previewUrl, setPreviewUrl] = useState(null)
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef(null)
   const dropRef = useRef(null)
+  const [pendingImageDataUrl, setPendingImageDataUrl] = useState("")
 
   // --- Tailwind / libs (CDN) ---
   useEffect(() => {
@@ -70,6 +74,66 @@ export default function GeneratorPage() {
 
   // Cleanup preview URL
   useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl) }, [previewUrl])
+
+  // Prefill from query params (e.g., /generator?tab=i2i&prompt=...)
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    // Restore any pending state saved before auth redirect
+    try {
+      const pending = sessionStorage.getItem("nb_pending_generate")
+      if (pending) {
+        const parsed = JSON.parse(pending)
+        if (parsed?.activeTab === "image") setActiveTab("image")
+        if (typeof parsed?.prompt === "string") setPrompt(parsed.prompt)
+        if (typeof parsed?.imageDataUrl === "string" && parsed.imageDataUrl) {
+          setPendingImageDataUrl(parsed.imageDataUrl)
+          setPreviewUrl(parsed.imageDataUrl)
+        }
+        // we cannot restore the File object; this uses a data URL snapshot
+        sessionStorage.removeItem("nb_pending_generate")
+      }
+    } catch {}
+    const sp = new URLSearchParams(window.location.search)
+    const tab = sp.get("tab") || ""
+    const qp = sp.get("prompt") || ""
+    if (tab === "i2i") setActiveTab("image")
+    if (tab === "t2i") setActiveTab("text")
+    if (qp) setPrompt(qp)
+  }, [])
+
+  // Close sign-in modal on successful auth; if we have pending image data URL, auto-generate
+  useEffect(() => {
+    const supabase = getSupabase()
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        setShowSignIn(false)
+        if (pendingImageDataUrl && activeTab === "image" && prompt.trim()) {
+          try {
+            setBusy(true)
+            setError("")
+            setResultUrl("")
+            const resp = await fetch("/api/vertex/edit", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ prompt: prompt.trim(), imageDataUrl: pendingImageDataUrl, meta: { aspect, strength } }),
+              cache: "no-store",
+            })
+            const j = await safeReadJson(resp)
+            if (!resp.ok || !j?.ok) throw new Error(j?.error || `HTTP ${resp.status}`)
+            setResultUrl(j.dataUrl || "")
+            setBalance(typeof j.balance === "number" ? j.balance : balance)
+            setHistory((h) => [{ url: j.dataUrl, at: Date.now(), prompt, mode: "image", aspect }, ...h].slice(0, 40))
+          } catch (e) {
+            setError(e?.message || "Generation failed")
+          } finally {
+            setBusy(false)
+            setPendingImageDataUrl("")
+          }
+        }
+      }
+    })
+    return () => subscription?.unsubscribe()
+  }, [pendingImageDataUrl, activeTab, prompt, aspect, strength, balance])
 
   // Compression helper (JSON-safe)
   async function fileToDataUrlCompressed(file, maxDim = 1536, jpegQuality = 0.9) {
@@ -174,6 +238,28 @@ export default function GeneratorPage() {
 
   // Generate
   async function onGenerate() {
+    // Require auth
+    try {
+      const supabase = getSupabase()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        // Persist pending state so we can restore after auth
+        try {
+          let imageDataUrl = ""
+          if (activeTab === "image") {
+            const file = fileInputRef.current?.files?.[0] || null
+            if (file) {
+              try {
+                imageDataUrl = await fileToDataUrlCompressed(file, 1536, 0.9)
+              } catch {}
+            }
+          }
+          sessionStorage.setItem("nb_pending_generate", JSON.stringify({ activeTab, prompt, imageDataUrl }))
+        } catch {}
+        setShowSignIn(true)
+        return
+      }
+    } catch {}
     setBusy(true)
     setError("")
     setResultUrl("")
@@ -483,6 +569,7 @@ export default function GeneratorPage() {
           </section>
         </main>
       </div>
+      <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </>
   )
 }

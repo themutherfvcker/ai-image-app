@@ -46,6 +46,16 @@ function CallbackInner() {
           return;
         }
 
+        // If this page is opened as a popup, notify opener and close
+        try {
+          if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({ type: "NB_AUTH_COMPLETE" }, "*");
+            window.close();
+            return;
+          }
+        } catch {}
+
+        // Fallback: navigate normally if not a popup
         setTimeout(() => {
           if (!isMounted) return;
           router.replace("/");

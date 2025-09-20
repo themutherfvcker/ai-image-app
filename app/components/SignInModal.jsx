@@ -15,11 +15,16 @@ export default function SignInModal({ open, onClose }) {
   async function signInWithGoogle() {
     setError("")
     const supabase = getSupabase()
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: callbackUrl }
-    })
-    if (error) setError(error.message)
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: callbackUrl }
+      })
+      if (error) throw error
+      // Browser will redirect; nothing else to do here
+    } catch (e) {
+      setError(e?.message || "Authentication failed")
+    }
   }
 
   async function signInWithEmail(e) {
