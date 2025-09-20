@@ -2,8 +2,8 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 
 export const metadata = {
-  title: "Nano Banana – AI Image Editor for Text-based Photo Editing",
-  description: "Change anything. Keep what matters. Text-based photo edits that preserve faces, identities, and details.",
+  title: "Nano Banana – Text-Based Photo Editor · Change Anything. Keep What Matters.",
+  description: "Edit images with plain-English prompts. Preserve faces, identity and scene while changing anything else. Try free.",
   metadataBase: new URL("https://www.nanobanana-ai.dev"),
   alternates: { canonical: "/" },
   openGraph: {
@@ -18,8 +18,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nano Banana – AI Image Editor",
-    description: "Change anything. Keep what matters.",
+    title: "Nano Banana – Text-Based Photo Editor",
+    description: "Edit images with plain-English prompts. Preserve faces, identity and scene.",
     images: ["/og/home.png"],
   },
 };
@@ -45,6 +45,19 @@ export default function RootLayout({ children }) {
             "sameAs": [
               "https://x.com/", "https://github.com/"
             ]
+          }) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "Nano Banana – Text-Based Photo Editor",
+            "description": "Edit images with plain-English prompts while preserving faces, identity and scene.",
+            "brand": { "@type": "Brand", "name": "Nano Banana" },
+            "url": "https://www.nanobanana-ai.dev/",
+            "image": "https://www.nanobanana-ai.dev/og/home.png",
+            "offers": { "@type": "Offer", "price": "5", "priceCurrency": "USD", "availability": "https://schema.org/InStock" }
           }) }}
         />
       </head>
