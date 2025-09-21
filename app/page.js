@@ -690,24 +690,13 @@ export default function HomePage() {
               </div>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:items-center">
-              <a href="#features" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">
-                Features
-              </a>
-              <a href="#showcase" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">
-                Showcase
-              </a>
-              <a href="#reviews" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">
-                Reviews
-              </a>
-              <a href="#faq" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">
-                FAQ
-              </a>
-              <Link href="/pricing" className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-yellow-500">
-                Pricing
-              </Link>
-              <Link href="/account" className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-yellow-500">
-                Account
-              </Link>
+              <Link href="/generator" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Image Editor</Link>
+              <Link href="/showcase" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Showcase</Link>
+              <Link href="/pricing" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Pricing</Link>
+              <Link href="/developers" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">API</Link>
+              <a href="#faq" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">FAQ</a>
+              <Link href="/toolbox" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Toolbox</Link>
+              <Link href="/account" className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-yellow-500">Account</Link>
             </div>
             <div className="flex items-center">
               <button
@@ -950,9 +939,11 @@ export default function HomePage() {
             <div>
               <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Company</h3>
               <ul role="list" className="mt-4 space-y-4">
+                <li><a href="/about" className="text-base text-gray-300 hover:text-white">About</a></li>
+                <li><a href="/contact" className="text-base text-gray-300 hover:text-white">Contact</a></li>
+                <li><a href="/refunds" className="text-base text-gray-300 hover:text-white">Refunds</a></li>
                 <li><a href="/terms" className="text-base text-gray-300 hover:text-white">Terms</a></li>
                 <li><a href="/privacy" className="text-base text-gray-300 hover:text-white">Privacy</a></li>
-                <li><a href="#faq" className="text-base text-gray-300 hover:text-white">FAQ</a></li>
               </ul>
             </div>
           </div>
