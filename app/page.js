@@ -723,7 +723,7 @@ export default function HomePage() {
                 <span className="block text-white">Change Anything.</span>
                 <span className="block text-white">Keep What Matters.</span>
               </h1>
-              <p className="mt-4 text-base text-gray-800 sm:text-lg md:text-xl max-w-xl">
+              <p className="mt-3 md:mt-4 mb-0 text-base text-gray-800 sm:text-lg md:text-xl max-w-xl">
                 Edit with plain text prompts while preserving faces, identities, and details. Nano Banana makes hard edits feel easy.
               </p>
               
