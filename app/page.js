@@ -468,7 +468,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
         />
         <div className="lg:text-center">
           <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">AI Image Editor</h2>
-          <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Try the Editor</p>
+          <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Try the Nano Banana Editor</p>
           <p className="mt-4 max-w-2xl text-lg sm:text-xl text-gray-600 lg:mx-auto">
             {isAuthed ? (
               <>Credits: <span className="font-semibold">{balance}</span></>
