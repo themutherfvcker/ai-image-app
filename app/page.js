@@ -726,20 +726,7 @@ export default function HomePage() {
               <p className="mt-4 text-base text-gray-800 sm:text-lg md:text-xl max-w-xl">
                 Edit with plain text prompts while preserving faces, identities, and details. Nano Banana makes hard edits feel easy.
               </p>
-              <div className="mt-6 flex gap-3">
-                <button
-                  onClick={() => setShowSignIn(true)}
-                  className="inline-flex items-center px-6 py-3 rounded-md text-yellow-700 bg-white border border-transparent shadow hover:bg-gray-50"
-                >
-                  Get Started
-                </button>
-            <a
-              href="#features"
-              className="inline-flex items-center px-6 py-3 rounded-md text-white bg-yellow-600/70 hover:bg-yellow-600"
-            >
-              Learn More
-            </a>
-              </div>
+              
             </div>
 
             {/* Banana visual (stacks on mobile; absolute only on lg+) */}
