@@ -718,8 +718,8 @@ export default function HomePage() {
             {/* Copy */}
             <div className="relative z-10">
               <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-                <span className="block">Text-based photo editor.</span>
-                <span className="block text-white">Change anything. Keep what matters.</span>
+                <span className="block">Nano Banana – Text-Based AI Photo Editor</span>
+                <span className="block text-white">Change Anything. Keep What Matters.</span>
               </h1>
               <p className="mt-4 text-base text-gray-800 sm:text-lg md:text-xl max-w-xl">
                 Edit with plain text prompts while preserving faces, identities, and details. Nano Banana makes hard edits feel easy.
