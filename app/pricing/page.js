@@ -56,11 +56,19 @@ export default function PricingPage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <section className="max-w-5xl mx-auto px-6 py-16">
-        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">Pricing</h1>
-        <p className="mt-3 text-lg text-gray-600">Start generating instantly. Credits never expire.</p>
+      {/* Hero */}
+      <section className="bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
+          <div className="lg:text-center">
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900">Simple, Transparent Pricing</h1>
+            <p className="mt-3 text-lg text-gray-600 max-w-2xl lg:mx-auto">Start generating instantly. Credits never expire. Upgrade anytime.</p>
+          </div>
+        </div>
+      </section>
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Plans */}
+      <section className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-2xl shadow p-8 border">
             <h2 className="text-2xl font-bold">Starter</h2>
             <p className="text-gray-500 mt-1">For testing and light use</p>
@@ -105,9 +113,62 @@ export default function PricingPage() {
           </div>
         </div>
 
-        <p className="mt-8 text-sm text-gray-500">
-          Taxes/VAT may apply at checkout. Payments are processed by Stripe.
-        </p>
+        <p className="mt-8 text-sm text-gray-500">Taxes/VAT may apply at checkout. Payments are processed by Stripe.</p>
+      </section>
+
+      {/* FAQ */}
+      <section className="bg-white py-12">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="lg:text-center">
+            <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Help Center</h2>
+            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Pricing FAQ</p>
+          </div>
+          <div className="mt-10 max-w-3xl mx-auto">
+            <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12">
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Do credits expire?</dt>
+                <dd className="mt-2 text-base text-gray-500">No. Purchased credits do not expire.</dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Can I cancel anytime?</dt>
+                <dd className="mt-2 text-base text-gray-500">Yes. Manage your plan via the Billing Portal.</dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">How many credits per generate?</dt>
+                <dd className="mt-2 text-base text-gray-500">1 credit per generation or edit.</dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Is there a free trial?</dt>
+                <dd className="mt-2 text-base text-gray-500">We occasionally grant bonus credits for new users.</dd>
+              </div>
+            </dl>
+          </div>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": [
+                { "@type": "Question", "name": "Do credits expire?", "acceptedAnswer": { "@type": "Answer", "text": "No. Purchased credits do not expire." } },
+                { "@type": "Question", "name": "Can I cancel anytime?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Manage your plan via the Billing Portal." } },
+                { "@type": "Question", "name": "How many credits per generate?", "acceptedAnswer": { "@type": "Answer", "text": "1 credit per generation or edit." } },
+                { "@type": "Question", "name": "Is there a free trial?", "acceptedAnswer": { "@type": "Answer", "text": "We occasionally grant bonus credits for new users." } }
+              ]
+            }) }}
+          />
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-12 bg-yellow-600">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Ready to get started?</h2>
+          <p className="mt-3 max-w-2xl mx-auto text-lg text-yellow-100 sm:mt-4">Choose a plan and start editing in seconds.</p>
+          <div className="mt-8 flex gap-3 justify-center">
+            <button onClick={onBuy} disabled={loading} className="inline-flex items-center px-6 py-3 rounded-md text-yellow-700 bg-white hover:bg-gray-50 disabled:opacity-60">Buy 100 credits</button>
+            <button onClick={onSubscribe} disabled={loading} className="inline-flex items-center px-6 py-3 rounded-md text-white bg-gray-900 hover:bg-black disabled:opacity-60">Subscribe</button>
+          </div>
+        </div>
       </section>
     </main>
   )
