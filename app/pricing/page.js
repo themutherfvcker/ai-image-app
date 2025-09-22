@@ -114,7 +114,7 @@ export default function PricingPage() {
         {mode === "credits" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Starter (Credits) */}
-            <div className="bg-white rounded-2xl shadow p-8 border">
+            <div className="bg-white rounded-2xl shadow p-8 border flex flex-col">
               <h2 className="text-2xl font-bold">Starter</h2>
               <p className="text-gray-500 mt-1">For testing and light use</p>
               <div className="mt-6">
@@ -154,7 +154,7 @@ export default function PricingPage() {
               <ul className="mt-6 space-y-2 text-sm text-gray-700">
                 {[
                   "100 monthly credits included",
-                  "Up to ~50 high‑quality images per month",
+                  "Up to 50 high‑quality images per month",
                   "Access to all style templates",
                   "Standard generation speed",
                   "Basic email support",
@@ -167,14 +167,14 @@ export default function PricingPage() {
               <button
                 onClick={() => onSubscribePlan('BASIC')}
                 disabled={loading}
-                className="mt-8 w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-gray-900 hover:bg-black disabled:opacity-60"
+                className="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-700 hover:bg-yellow-800 disabled:opacity-60"
               >
                 {loading ? "Redirecting…" : "Subscribe $8.99/mo"}
               </button>
             </div>
 
             {/* Standard (Most Popular) */}
-            <div className="relative bg-white rounded-2xl shadow p-8 border ring-1 ring-yellow-300">
+            <div className="relative bg-white rounded-2xl shadow p-8 border ring-1 ring-yellow-300 flex flex-col">
               <div className="absolute -top-3 right-6"><span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-300">Most Popular</span></div>
               <h2 className="text-2xl font-bold">Standard</h2>
               <p className="text-gray-500 mt-1">For regular creators</p>
@@ -185,7 +185,7 @@ export default function PricingPage() {
               <ul className="mt-6 space-y-2 text-sm text-gray-700">
                 {[
                   "400 monthly credits included",
-                  "Up to ~250 high‑quality images per month",
+                  "Up to 250 high‑quality images per month",
                   "All style templates + advanced controls",
                   "Priority generation speed",
                   "Standard support (email + queue)",
@@ -198,14 +198,14 @@ export default function PricingPage() {
               <button
                 onClick={() => onSubscribePlan('STANDARD')}
                 disabled={loading}
-                className="mt-8 w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-gray-900 hover:bg-black disabled:opacity-60"
+                className="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-700 hover:bg-yellow-800 disabled:opacity-60"
               >
                 {loading ? "Redirecting…" : "Subscribe $27.99/mo"}
               </button>
             </div>
 
             {/* Premium */}
-            <div className="bg-white rounded-2xl shadow p-8 border">
+            <div className="bg-white rounded-2xl shadow p-8 border flex flex-col">
               <h2 className="text-2xl font-bold">Premium</h2>
               <p className="text-gray-500 mt-1">For teams and power users</p>
               <div className="mt-6">
@@ -215,7 +215,7 @@ export default function PricingPage() {
               <ul className="mt-6 space-y-2 text-sm text-gray-700">
                 {[
                   "1200 monthly credits included",
-                  "Up to ~800 high‑quality images per month",
+                  "Up to 800 high‑quality images per month",
                   "All templates + premium features & team seats",
                   "Top‑priority generation speed",
                   "Priority support (fast response)",
@@ -228,7 +228,7 @@ export default function PricingPage() {
               <button
                 onClick={() => onSubscribePlan('PREMIUM')}
                 disabled={loading}
-                className="mt-8 w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-gray-900 hover:bg-black disabled:opacity-60"
+                className="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-700 hover:bg-yellow-800 disabled:opacity-60"
               >
                 {loading ? "Redirecting…" : "Subscribe $77.99/mo"}
               </button>
