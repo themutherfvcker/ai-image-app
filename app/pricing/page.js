@@ -86,7 +86,7 @@ export default function PricingPage() {
       <section className="bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
           <div className="lg:text-center">
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900">Simple, Transparent Pricing</h1>
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900">Choose Your Nano Banana AI Image Generation Plan</h1>
             <p className="mt-3 text-lg text-gray-600 max-w-2xl lg:mx-auto">Start generating instantly. Credits never expire. Upgrade anytime.</p>
           </div>
         </div>
@@ -153,10 +153,13 @@ export default function PricingPage() {
               </div>
               <ul className="mt-6 space-y-2 text-sm text-gray-700">
                 {[
-                  "Unlimited generates (fair use)",
-                  "Standard processing",
-                  "Email support",
-                  "Commercial use",
+                  "100 monthly credits included",
+                  "Up to ~50 high‑quality images per month",
+                  "Access to all style templates",
+                  "Standard generation speed",
+                  "Basic email support",
+                  "JPG and PNG downloads",
+                  "Unused credits roll over to next billing cycle",
                 ].map((t) => (
                   <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
                 ))}
