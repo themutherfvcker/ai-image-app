@@ -184,11 +184,13 @@ export default function PricingPage() {
               </div>
               <ul className="mt-6 space-y-2 text-sm text-gray-700">
                 {[
-                  "Unlimited generates (higher limits)",
-                  "Priority processing",
-                  "Early access to new features",
-                  "Email support",
-                  "Commercial use",
+                  "400 monthly credits included",
+                  "Up to ~200 high‑quality images per month",
+                  "All style templates + advanced controls",
+                  "Priority generation speed",
+                  "Standard support (email + queue)",
+                  "JPG and PNG downloads",
+                  "Unused credits roll over to next billing cycle",
                 ].map((t) => (
                   <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
                 ))}
@@ -212,11 +214,13 @@ export default function PricingPage() {
               </div>
               <ul className="mt-6 space-y-2 text-sm text-gray-700">
                 {[
-                  "Unlimited generates (highest limits)",
-                  "Top priority processing",
-                  "Priority support",
-                  "Team-friendly usage",
-                  "Commercial use",
+                  "1200 monthly credits included",
+                  "Up to ~600 high‑quality images per month",
+                  "All templates + premium features & team seats",
+                  "Top‑priority generation speed",
+                  "Priority support (fast response)",
+                  "JPG and PNG downloads",
+                  "Unused credits roll over to next billing cycle",
                 ].map((t) => (
                   <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
                 ))}
