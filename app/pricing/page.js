@@ -185,7 +185,7 @@ export default function PricingPage() {
               <ul className="mt-6 space-y-2 text-sm text-gray-700">
                 {[
                   "400 monthly credits included",
-                  "Up to ~200 high‑quality images per month",
+                  "Up to ~250 high‑quality images per month",
                   "All style templates + advanced controls",
                   "Priority generation speed",
                   "Standard support (email + queue)",
@@ -215,7 +215,7 @@ export default function PricingPage() {
               <ul className="mt-6 space-y-2 text-sm text-gray-700">
                 {[
                   "1200 monthly credits included",
-                  "Up to ~600 high‑quality images per month",
+                  "Up to ~800 high‑quality images per month",
                   "All templates + premium features & team seats",
                   "Top‑priority generation speed",
                   "Priority support (fast response)",
