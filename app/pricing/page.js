@@ -116,6 +116,60 @@ export default function PricingPage() {
         <p className="mt-8 text-sm text-gray-500">Taxes/VAT may apply at checkout. Payments are processed by Stripe.</p>
       </section>
 
+      {/* Comparison Table */}
+      <section className="bg-white py-12">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">Compare plans</h2>
+          <div className="mt-6 overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Feature</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Starter</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pro</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200 text-sm">
+                {[
+                  ["Price", "$5 one-time", "$5/mo"],
+                  ["Credits", "100 credits", "Unlimited while active"],
+                  ["Generation cost", "1 credit per generate", "Included"],
+                  ["Queue priority", "Fast", "Fast"],
+                  ["Commercial use", "Yes", "Yes"],
+                  ["Billing portal", "—", "Included"],
+                ].map(([k, v1, v2]) => (
+                  <tr key={k}>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-700">{k}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-900">{v1}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-900">{v2}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust badges */}
+      <section className="py-10 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 items-center text-center">
+            <div className="p-4 bg-white rounded-lg border">
+              <span className="text-sm font-medium text-gray-700">Powered by Google</span>
+            </div>
+            <div className="p-4 bg-white rounded-lg border">
+              <span className="text-sm font-medium text-gray-700">Stripe Payments</span>
+            </div>
+            <div className="p-4 bg-white rounded-lg border">
+              <span className="text-sm font-medium text-gray-700">Secure SSL</span>
+            </div>
+            <div className="p-4 bg-white rounded-lg border">
+              <span className="text-sm font-medium text-gray-700">Privacy First</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="bg-white py-12">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
