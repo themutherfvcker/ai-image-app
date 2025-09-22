@@ -55,6 +55,31 @@ export default function PricingPage() {
     }
   }
 
+  async function onSubscribePlan(planKey) {
+    setLoading(true)
+    setError("")
+    try {
+      const r = await fetch("/api/subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          success_url: `${location.origin}/success`,
+          cancel_url: `${location.origin}/cancel`,
+          plan: String(planKey || "").toUpperCase(),
+        }),
+      })
+      const j = await r.json()
+      if (!r.ok || !j?.url) {
+        throw new Error(j?.error || `HTTP ${r.status}`)
+      }
+      window.location.href = j.url
+    } catch (e) {
+      setError(e.message || "Checkout failed")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero */}
@@ -86,63 +111,121 @@ export default function PricingPage() {
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Starter (Credits) */}
-          <div className={`bg-white rounded-2xl shadow p-8 border ${mode === "subscription" ? "opacity-60" : ""}`}>
-            <h2 className="text-2xl font-bold">Starter</h2>
-            <p className="text-gray-500 mt-1">For testing and light use</p>
-            <div className="mt-6">
-              <div className="text-5xl font-extrabold">$5<span className="text-2xl align-top ml-1">AUD</span></div>
-              <div className="text-gray-500 mt-1">100 credits</div>
+        {mode === "credits" ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Starter (Credits) */}
+            <div className="bg-white rounded-2xl shadow p-8 border">
+              <h2 className="text-2xl font-bold">Starter</h2>
+              <p className="text-gray-500 mt-1">For testing and light use</p>
+              <div className="mt-6">
+                <div className="text-5xl font-extrabold">$5<span className="text-2xl align-top ml-1">AUD</span></div>
+                <div className="text-gray-500 mt-1">100 credits</div>
+              </div>
+              <ul className="mt-6 space-y-2 text-sm text-gray-700">
+                {[
+                  "1 credit per generate",
+                  "Fast queue",
+                  "Email support",
+                  "Commercial use",
+                ].map((t) => (
+                  <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
+                ))}
+              </ul>
+              <button
+                onClick={onBuy}
+                disabled={loading}
+                className="mt-8 w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-60"
+              >
+                {loading ? "Redirecting…" : "Buy 100 credits ($5)"}
+              </button>
+              {error && <p className="mt-3 text-sm text-red-600">Error: {error}</p>}
             </div>
-            <ul className="mt-6 space-y-2 text-sm text-gray-700">
-              {[
-                "1 credit per generate",
-                "Fast queue",
-                "Email support",
-                "Commercial use",
-              ].map((t) => (
-                <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
-              ))}
-            </ul>
-            <button
-              onClick={onBuy}
-              disabled={loading}
-              className="mt-8 w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-60"
-            >
-              {loading ? "Redirecting…" : "Buy 100 credits ($5)"}
-            </button>
-            {error && <p className="mt-3 text-sm text-red-600">Error: {error}</p>}
           </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Basic */}
+            <div className="bg-white rounded-2xl shadow p-8 border">
+              <h2 className="text-2xl font-bold">Basic</h2>
+              <p className="text-gray-500 mt-1">Great for getting started</p>
+              <div className="mt-6">
+                <div className="text-5xl font-extrabold">$8.99<span className="text-2xl align-top ml-1">/mo</span></div>
+                <div className="text-gray-500 mt-1">Personal use</div>
+              </div>
+              <ul className="mt-6 space-y-2 text-sm text-gray-700">
+                {[
+                  "Unlimited generates while subscribed",
+                  "Cancel anytime in Billing Portal",
+                  "Email support",
+                  "Commercial use",
+                ].map((t) => (
+                  <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
+                ))}
+              </ul>
+              <button
+                onClick={() => onSubscribePlan('BASIC')}
+                disabled={loading}
+                className="mt-8 w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-gray-900 hover:bg-black disabled:opacity-60"
+              >
+                {loading ? "Redirecting…" : "Subscribe $8.99/mo"}
+              </button>
+            </div>
 
-          {/* Pro (Subscription) */}
-          <div className={`relative bg-white rounded-2xl shadow p-8 border ${mode === "credits" ? "opacity-60" : ""}`}>
-            <div className="absolute -top-3 right-6"><span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-300">Most Popular</span></div>
-            <h2 className="text-2xl font-bold">Pro</h2>
-            <p className="text-gray-500 mt-1">Monthly subscription for regular use</p>
-            <div className="mt-6">
-              <div className="text-5xl font-extrabold">$5<span className="text-2xl align-top ml-1">/mo</span></div>
-              <div className="text-gray-500 mt-1">Unlimited access while active</div>
+            {/* Standard (Most Popular) */}
+            <div className="relative bg-white rounded-2xl shadow p-8 border ring-1 ring-yellow-300">
+              <div className="absolute -top-3 right-6"><span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-300">Most Popular</span></div>
+              <h2 className="text-2xl font-bold">Standard</h2>
+              <p className="text-gray-500 mt-1">For regular creators</p>
+              <div className="mt-6">
+                <div className="text-5xl font-extrabold">$27.99<span className="text-2xl align-top ml-1">/mo</span></div>
+                <div className="text-gray-500 mt-1">Priority features</div>
+              </div>
+              <ul className="mt-6 space-y-2 text-sm text-gray-700">
+                {[
+                  "Unlimited generates while subscribed",
+                  "Priority for upcoming features",
+                  "Email support",
+                  "Commercial use",
+                ].map((t) => (
+                  <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
+                ))}
+              </ul>
+              <button
+                onClick={() => onSubscribePlan('STANDARD')}
+                disabled={loading}
+                className="mt-8 w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-gray-900 hover:bg-black disabled:opacity-60"
+              >
+                {loading ? "Redirecting…" : "Subscribe $27.99/mo"}
+              </button>
             </div>
-            <ul className="mt-6 space-y-2 text-sm text-gray-700">
-              {[
-                "Unlimited generates while subscribed",
-                "Cancel anytime in Billing Portal",
-                "Priority for upcoming pro features",
-                "Commercial use",
-              ].map((t) => (
-                <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
-              ))}
-            </ul>
-            <button
-              onClick={onSubscribe}
-              disabled={loading}
-              className="mt-8 w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-gray-900 hover:bg-black disabled:opacity-60"
-            >
-              {loading ? "Redirecting…" : "Subscribe $5/mo"}
-            </button>
+
+            {/* Premium */}
+            <div className="bg-white rounded-2xl shadow p-8 border">
+              <h2 className="text-2xl font-bold">Premium</h2>
+              <p className="text-gray-500 mt-1">For teams and power users</p>
+              <div className="mt-6">
+                <div className="text-5xl font-extrabold">$77.99<span className="text-2xl align-top ml-1">/mo</span></div>
+                <div className="text-gray-500 mt-1">Best value</div>
+              </div>
+              <ul className="mt-6 space-y-2 text-sm text-gray-700">
+                {[
+                  "Unlimited generates while subscribed",
+                  "Priority for upcoming features",
+                  "Priority support",
+                  "Commercial use",
+                ].map((t) => (
+                  <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
+                ))}
+              </ul>
+              <button
+                onClick={() => onSubscribePlan('PREMIUM')}
+                disabled={loading}
+                className="mt-8 w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-gray-900 hover:bg-black disabled:opacity-60"
+              >
+                {loading ? "Redirecting…" : "Subscribe $77.99/mo"}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         <p className="mt-8 text-sm text-gray-500">Taxes/VAT may apply at checkout. Payments are processed by Stripe.</p>
       </section>

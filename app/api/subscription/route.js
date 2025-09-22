@@ -9,10 +9,9 @@ export async function POST(req) {
   try {
     const { default: Stripe } = await import('stripe');
     const secret = process.env.STRIPE_SECRET_KEY;
-    const priceId = process.env.STRIPE_PRICE_ID_SUB; // recurring $5/month
-    if (!secret || !priceId) {
+    if (!secret) {
       return NextResponse.json(
-        { ok: false, error: 'Missing STRIPE_SECRET_KEY or STRIPE_PRICE_ID_SUB' },
+        { ok: false, error: 'Missing STRIPE_SECRET_KEY' },
         { status: 500 }
       );
     }
@@ -31,7 +30,25 @@ export async function POST(req) {
     const proto = hdrs.get('x-forwarded-proto') || 'https';
     const origin = `${proto}://${host}`;
 
-    const { success_url, cancel_url } = await req.json().catch(() => ({ success_url: null, cancel_url: null }));
+    const body = await req.json().catch(() => ({}));
+    const { success_url, cancel_url, priceId: bodyPriceId, plan } = body || {};
+
+    // Resolve priceId: prefer explicit priceId, then by plan env, else default env
+    let priceId = typeof bodyPriceId === 'string' && bodyPriceId ? bodyPriceId : '';
+    if (!priceId && typeof plan === 'string' && plan) {
+      const key = plan.toUpperCase();
+      const envKey = `STRIPE_PRICE_ID_${key}`; // e.g., STRIPE_PRICE_ID_BASIC
+      priceId = process.env[envKey] || '';
+    }
+    if (!priceId) {
+      priceId = process.env.STRIPE_PRICE_ID_SUB || '';
+    }
+    if (!priceId) {
+      return NextResponse.json(
+        { ok: false, error: 'Missing Stripe price ID. Provide body.priceId or set STRIPE_PRICE_ID_SUB (or STRIPE_PRICE_ID_{PLAN}).' },
+        { status: 500 }
+      );
+    }
 
     const stripe = new Stripe(secret);
     const session = await stripe.checkout.sessions.create({
