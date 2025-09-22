@@ -2,7 +2,6 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import Script from "next/script"
 import Link from "next/link"
 import { getSupabase } from "@/lib/supabaseClient"
 import SignInModal from "@/app/components/SignInModal"
@@ -47,19 +46,7 @@ export default function GeneratorPage() {
   const dropRef = useRef(null)
   const [pendingImageDataUrl, setPendingImageDataUrl] = useState("")
 
-  // --- Tailwind / libs (CDN) ---
-  useEffect(() => {
-    const AOS_HREF = "https://unpkg.com/aos@2.3.1/dist/aos.css"
-    if (!document.querySelector(`link[href="${AOS_HREF}"]`)) {
-      const link = document.createElement("link")
-      link.rel = "stylesheet"
-      link.href = AOS_HREF
-      document.head.appendChild(link)
-    }
-  }, [])
-  useEffect(() => {
-    if (window.AOS) window.AOS.init({ duration: 600, easing: "ease-out", once: true })
-  }, [resultUrl, history, activeTab])
+// Using build-time Tailwind via globals.css; removed AOS/CDN usage
 
   // Credits
   useEffect(() => {
@@ -305,28 +292,44 @@ export default function GeneratorPage() {
 
   return (
     <>
-      {/* Tailwind via CDN */}
-      <Script src="https://cdn.tailwindcss.com" strategy="afterInteractive" />
-      <Script src="https://unpkg.com/aos@2.3.1/dist/aos.js" strategy="afterInteractive" />
-
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="border-b bg-white sticky top-0 z-40">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <img className="h-8 w-auto" src="/banana-decoration.png" alt="Nano Banana" />
-              <Link href="/" className="text-lg font-semibold text-gray-900">Nano Banana</Link>
-              <span className="text-gray-300">/</span>
-              <span className="text-gray-600">Generator</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link href="/pricing" className="text-sm text-gray-700 hover:text-gray-900">Pricing</Link>
-              <div className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
-                Credits: {balance ?? "—"}
+        {/* NAV (match homepage) */}
+        <nav className="bg-white shadow-sm sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 flex items-center">
+                  <img
+                    className="h-8 w-auto"
+                    src="https://nanobanana.ai/_next/image?url=%2Fbanana-decoration.png&w=640&q=75"
+                    alt="Nano Banana"
+                  />
+                  <span className="ml-2 text-xl font-bold text-gray-900">Nano Banana</span>
+                </div>
+              </div>
+              <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                <Link href="/generator" className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-yellow-500">Image Editor</Link>
+                <Link href="/showcase" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Showcase</Link>
+                <Link href="/pricing" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Pricing</Link>
+                <Link href="/developers" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">API</Link>
+                <a href="#faq" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">FAQ</a>
+                <Link href="/toolbox" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Toolbox</Link>
+                <Link href="/account" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Account</Link>
+              </div>
+              <div className="flex items-center">
+                <div className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full mr-3">
+                  Credits: {balance ?? "—"}
+                </div>
+                <button
+                  onClick={() => setShowSignIn(true)}
+                  className="ml-1 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                >
+                  Try Now
+                </button>
               </div>
             </div>
           </div>
-        </header>
+        </nav>
 
         {/* Main */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -521,7 +524,7 @@ export default function GeneratorPage() {
               )}
 
               {resultUrl && (
-                <div className="space-y-3" data-aos="fade-in">
+                <div className="space-y-3">
                   <img src={resultUrl} alt="Result" className="w-full h-auto rounded-md border" />
                 </div>
               )}
