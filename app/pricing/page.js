@@ -5,6 +5,7 @@ import { useState } from "react"
 export default function PricingPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [mode, setMode] = useState("credits") // "credits" | "subscription"
 
   async function onSubscribe() {
     setLoading(true)
@@ -68,8 +69,26 @@ export default function PricingPage() {
 
       {/* Plans */}
       <section className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
+        {/* Plan selector */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex rounded-full border bg-white p-1">
+            <button
+              onClick={() => setMode("credits")}
+              className={`px-4 py-2 text-sm font-medium rounded-full ${mode === "credits" ? "bg-yellow-600 text-white" : "text-gray-700"}`}
+            >
+              Credits
+            </button>
+            <button
+              onClick={() => setMode("subscription")}
+              className={`px-4 py-2 text-sm font-medium rounded-full ${mode === "subscription" ? "bg-yellow-600 text-white" : "text-gray-700"}`}
+            >
+              Subscription
+            </button>
+          </div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl shadow p-8 border">
+          {/* Starter (Credits) */}
+          <div className={`bg-white rounded-2xl shadow p-8 border ${mode === "subscription" ? "opacity-60" : ""}`}>
             <h2 className="text-2xl font-bold">Starter</h2>
             <p className="text-gray-500 mt-1">For testing and light use</p>
             <div className="mt-6">
@@ -77,9 +96,14 @@ export default function PricingPage() {
               <div className="text-gray-500 mt-1">100 credits</div>
             </div>
             <ul className="mt-6 space-y-2 text-sm text-gray-700">
-              <li>• 1 credit per generate</li>
-              <li>• Fast queue</li>
-              <li>• Email support</li>
+              {[
+                "1 credit per generate",
+                "Fast queue",
+                "Email support",
+                "Commercial use",
+              ].map((t) => (
+                <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
+              ))}
             </ul>
             <button
               onClick={onBuy}
@@ -91,7 +115,9 @@ export default function PricingPage() {
             {error && <p className="mt-3 text-sm text-red-600">Error: {error}</p>}
           </div>
 
-          <div className="bg-white rounded-2xl shadow p-8 border">
+          {/* Pro (Subscription) */}
+          <div className={`relative bg-white rounded-2xl shadow p-8 border ${mode === "credits" ? "opacity-60" : ""}`}>
+            <div className="absolute -top-3 right-6"><span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-300">Most Popular</span></div>
             <h2 className="text-2xl font-bold">Pro</h2>
             <p className="text-gray-500 mt-1">Monthly subscription for regular use</p>
             <div className="mt-6">
@@ -99,9 +125,14 @@ export default function PricingPage() {
               <div className="text-gray-500 mt-1">Unlimited access while active</div>
             </div>
             <ul className="mt-6 space-y-2 text-sm text-gray-700">
-              <li>• Subscription billed monthly via Stripe</li>
-              <li>• Cancel anytime in Billing Portal</li>
-              <li>• Supports future pro-only features</li>
+              {[
+                "Unlimited generates while subscribed",
+                "Cancel anytime in Billing Portal",
+                "Priority for upcoming pro features",
+                "Commercial use",
+              ].map((t) => (
+                <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
+              ))}
             </ul>
             <button
               onClick={onSubscribe}
@@ -114,6 +145,19 @@ export default function PricingPage() {
         </div>
 
         <p className="mt-8 text-sm text-gray-500">Taxes/VAT may apply at checkout. Payments are processed by Stripe.</p>
+      </section>
+
+      {/* Guarantee & Support */}
+      <section className="py-10 bg-gray-900">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+          <h3 className="text-xl font-semibold text-white">Satisfaction Guarantee</h3>
+          <p className="mt-2 text-sm text-gray-300">If something isn’t working for you, contact us and we’ll make it right.</p>
+          <div className="mt-3 text-sm">
+            <a href="/contact" className="text-yellow-300 hover:text-yellow-200">Contact support</a>
+            <span className="mx-2 text-gray-500">·</span>
+            <a href="/refunds" className="text-yellow-300 hover:text-yellow-200">Refund policy</a>
+          </div>
+        </div>
       </section>
 
       {/* Comparison Table */}
