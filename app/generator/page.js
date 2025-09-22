@@ -290,6 +290,12 @@ export default function GeneratorPage() {
 
   const aspectHelp = "Aspect ratio hint (client-side). Your API may ignore it unless implemented server-side."
 
+  function handleTryCase(tab, examplePrompt) {
+    if (tab === "image") setActiveTab("image"); else setActiveTab("text");
+    setPrompt(examplePrompt);
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch {}
+  }
+
   return (
     <>
       <div className="min-h-screen bg-gray-50">
@@ -571,6 +577,154 @@ export default function GeneratorPage() {
             </div>
           </section>
         </main>
+
+        {/* How it Works */}
+        <section id="how-it-works" className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center">
+              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">How it Works</h2>
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Edit with text, not layers</p>
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                Describe your edit and let Nano Banana handle the details. No masking or manual cutouts.
+              </p>
+            </div>
+
+            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
+              {[{
+                n: 1, t: "Choose a mode", d: "Start with Text→Image or upload a reference for Image→Image.",
+              },{
+                n: 2, t: "Describe your edit", d: "Type what you want changed. Add a style chip for a quick look.",
+              },{
+                n: 3, t: "Generate", d: "Get a result in seconds. Keep faces and scene details consistent.",
+              }].map((s) => (
+                <div key={s.n} className="bg-white overflow-hidden shadow rounded-lg">
+                  <div className="px-4 py-6 sm:p-6">
+                    <div className="text-yellow-700 font-semibold">Step {s.n}</div>
+                    <h3 className="mt-1 text-lg font-medium text-gray-900">{s.t}</h3>
+                    <p className="mt-2 text-sm text-gray-500">{s.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Features */}
+        <section id="features" className="py-12 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center">
+              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Why Choose Nano Banana?</h2>
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Core Nano Banana Features</p>
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                Natural-language editing with identity and scene preservation built-in.
+              </p>
+            </div>
+
+            <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                ["Natural Language Editing", "Edit images using plain text prompts—no masks or layers required."],
+                ["Character Consistency", "Maintain faces and details across edits and versions."],
+                ["Scene Preservation", "Blend edits with the original background for realistic results."],
+                ["One-Shot Editing", "High-quality results in a single pass for most edits."],
+                ["Multi-Image Context", "Use references to guide style, identity, or scene."],
+                ["Built for UGC", "Perfect for creators and marketers needing on-brand visuals."],
+              ].map(([title, body]) => (
+                <div key={title} className="bg-white overflow-hidden shadow rounded-lg">
+                  <div className="px-4 py-5 sm:p-6">
+                    <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+                    <p className="mt-3 text-sm text-gray-600">{body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Popular Use Cases */}
+        <section id="use-cases" className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center mb-8">
+              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Popular Use Cases</h2>
+              <p className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">What people make with Nano Banana</p>
+              <p className="mt-2 text-gray-600">Click “Try this” to prefill the editor instantly.</p>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                { title: "Remove Background", tab: "image", prompt: "Remove the background and place the subject on a clean white background." },
+                { title: "Change Clothing Color", tab: "image", prompt: "Change the jacket to a deep navy blue while keeping fabric texture." },
+                { title: "Product Ad", tab: "text", prompt: "A premium product photo on a marble countertop with soft morning light." },
+                { title: "Portrait Cleanup", tab: "image", prompt: "Gently remove blemishes, even skin tone, keep pores and realistic texture." },
+                { title: "Cinematic Scene", tab: "text", prompt: "A cinematic banana astronaut on the moon, 35mm film look, dramatic lighting." },
+                { title: "Social Post", tab: "text", prompt: "High-contrast vibrant image with bold composition for social media." },
+              ].map((c, i) => (
+                <div key={i} className="bg-white rounded-xl shadow hover:shadow-lg transition">
+                  <div className="p-5">
+                    <h3 className="text-lg font-semibold text-gray-900">{c.title}</h3>
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{c.prompt}</p>
+                    <div className="mt-3 flex gap-2">
+                      <button onClick={() => handleTryCase(c.tab, c.prompt)} className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border hover:bg-gray-50">Try this</button>
+                      <Link href={c.tab === "image" ? "/showcase/remove-background" : "/showcase"} className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-yellow-700 bg-yellow-50 hover:bg-yellow-100">Learn more</Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section id="faq" className="py-12 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center">
+              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Help Center</h2>
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Frequently Asked Questions</p>
+            </div>
+            <div className="mt-10 max-w-3xl mx-auto">
+              <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12">
+                <div>
+                  <dt className="text-lg leading-6 font-medium text-gray-900">Do I need any editing skills?</dt>
+                  <dd className="mt-2 text-base text-gray-500">No. Just describe the change you want with plain English.</dd>
+                </div>
+                <div>
+                  <dt className="text-lg leading-6 font-medium text-gray-900">Will it keep faces consistent?</dt>
+                  <dd className="mt-2 text-base text-gray-500">Yes. Identity preservation is built into our pipeline.</dd>
+                </div>
+                <div>
+                  <dt className="text-lg leading-6 font-medium text-gray-900">What formats do you support?</dt>
+                  <dd className="mt-2 text-base text-gray-500">Upload PNG, JPG, or WEBP up to ~10MB.</dd>
+                </div>
+                <div>
+                  <dt className="text-lg leading-6 font-medium text-gray-900">Can I use results commercially?</dt>
+                  <dd className="mt-2 text-base text-gray-500">Yes—great for UGC, ads, and product visuals.</dd>
+                </div>
+              </dl>
+            </div>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": [
+                  { "@type": "Question", "name": "Do I need any editing skills?", "acceptedAnswer": { "@type": "Answer", "text": "No. Just describe the change you want with plain English." } },
+                  { "@type": "Question", "name": "Will it keep faces consistent?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Identity preservation is built into our pipeline." } },
+                  { "@type": "Question", "name": "What formats do you support?", "acceptedAnswer": { "@type": "Answer", "text": "Upload PNG, JPG, or WEBP up to ~10MB." } },
+                  { "@type": "Question", "name": "Can I use results commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—great for UGC, ads, and product visuals." } }
+                ]
+              }) }}
+            />
+          </div>
+        </section>
+
+        {/* Trust & CTA */}
+        <section className="py-12 bg-yellow-600">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Ready to try Nano Banana?</h2>
+            <p className="mt-3 max-w-2xl mx-auto text-lg text-yellow-100 sm:mt-4">Fast, consistent edits for creators and teams.</p>
+            <div className="mt-8">
+              <Link href="/pricing" className="inline-flex items-center px-6 py-3 rounded-md text-yellow-700 bg-white hover:bg-gray-50">Buy Credits</Link>
+            </div>
+          </div>
+        </section>
       </div>
       <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </>
