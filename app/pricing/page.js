@@ -147,16 +147,16 @@ export default function PricingPage() {
           </div>
         </div>
         {mode === "credits" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
             {/* Starter (Credits) */}
-            <div className="bg-white rounded-2xl shadow p-8 border flex flex-col">
+            <div className="bg-white rounded-2xl shadow p-8 border flex flex-col h-full">
               <h2 className="text-2xl font-bold">Starter</h2>
               <p className="text-gray-500 mt-1">For testing and light use</p>
               <div className="mt-6">
                 <div className="text-5xl font-extrabold">$5<span className="text-2xl align-top ml-1">AUD</span></div>
                 <div className="text-gray-500 mt-1">100 credits</div>
               </div>
-              <ul className="mt-6 space-y-2 text-sm text-gray-700">
+              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1">
                 {[
                   "1 credit per generate",
                   "Fast queue",
@@ -169,7 +169,7 @@ export default function PricingPage() {
               <button
                 onClick={onBuy}
                 disabled={loading}
-                className="mt-8 w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-60"
+                className="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-500 hover:bg-yellow-600 disabled:opacity-60"
               >
                 {loading ? "Redirecting…" : "Buy 100 credits ($5)"}
               </button>
@@ -177,16 +177,16 @@ export default function PricingPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {/* Basic */}
-            <div className="bg-white rounded-2xl shadow p-8 border">
+            <div className="bg-white rounded-2xl shadow p-8 border flex flex-col h-full">
               <h2 className="text-2xl font-bold">Basic</h2>
               <p className="text-gray-500 mt-1">Great for getting started</p>
               <div className="mt-6">
                 <div className="text-5xl font-extrabold">$8.99<span className="text-2xl align-top ml-1">/mo</span></div>
                 <div className="text-gray-500 mt-1">Personal use</div>
               </div>
-              <ul className="mt-6 space-y-2 text-sm text-gray-700">
+              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1">
                 {[
                   "100 monthly credits included",
                   "Up to 50 high‑quality images per month",
@@ -202,14 +202,14 @@ export default function PricingPage() {
               <button
                 onClick={() => onSubscribePlan('BASIC')}
                 disabled={loading}
-                className="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-700 hover:bg-yellow-800 disabled:opacity-60"
+                className="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-500 hover:bg-yellow-600 disabled:opacity-60"
               >
                 {loading ? "Redirecting…" : "Subscribe $8.99/mo"}
               </button>
             </div>
 
             {/* Standard (Most Popular) */}
-            <div className="relative bg-white rounded-2xl shadow p-8 border ring-1 ring-yellow-300 flex flex-col">
+            <div className="relative bg-white rounded-2xl shadow p-8 border ring-1 ring-yellow-300 flex flex-col h-full">
               <div className="absolute -top-3 right-6"><span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-300">Most Popular</span></div>
               <h2 className="text-2xl font-bold">Standard</h2>
               <p className="text-gray-500 mt-1">For regular creators</p>
@@ -217,7 +217,7 @@ export default function PricingPage() {
                 <div className="text-5xl font-extrabold">$27.99<span className="text-2xl align-top ml-1">/mo</span></div>
                 <div className="text-gray-500 mt-1">Priority features</div>
               </div>
-              <ul className="mt-6 space-y-2 text-sm text-gray-700">
+              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1">
                 {[
                   "400 monthly credits included",
                   "Up to 250 high‑quality images per month",
@@ -233,21 +233,21 @@ export default function PricingPage() {
               <button
                 onClick={() => onSubscribePlan('STANDARD')}
                 disabled={loading}
-                className="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-700 hover:bg-yellow-800 disabled:opacity-60"
+                className="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-500 hover:bg-yellow-600 disabled:opacity-60"
               >
                 {loading ? "Redirecting…" : "Subscribe $27.99/mo"}
               </button>
             </div>
 
             {/* Premium */}
-            <div className="bg-white rounded-2xl shadow p-8 border flex flex-col">
+            <div className="bg-white rounded-2xl shadow p-8 border flex flex-col h-full">
               <h2 className="text-2xl font-bold">Premium</h2>
               <p className="text-gray-500 mt-1">For teams and power users</p>
               <div className="mt-6">
                 <div className="text-5xl font-extrabold">$77.99<span className="text-2xl align-top ml-1">/mo</span></div>
                 <div className="text-gray-500 mt-1">Best value</div>
               </div>
-              <ul className="mt-6 space-y-2 text-sm text-gray-700">
+              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1">
                 {[
                   "1200 monthly credits included",
                   "Up to 800 high‑quality images per month",
@@ -263,7 +263,7 @@ export default function PricingPage() {
               <button
                 onClick={() => onSubscribePlan('PREMIUM')}
                 disabled={loading}
-                className="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-700 hover:bg-yellow-800 disabled:opacity-60"
+                className="mt-auto w-full inline-flex items-center justify-center px-4 py-3 rounded-lg text-white bg-yellow-500 hover:bg-yellow-600 disabled:opacity-60"
               >
                 {loading ? "Redirecting…" : "Subscribe $77.99/mo"}
               </button>
