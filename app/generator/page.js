@@ -337,6 +337,16 @@ export default function GeneratorPage() {
           </div>
         </nav>
 
+        {/* Page Title */}
+        <section className="bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+            <div className="lg:text-center">
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">Nano Banana AI Image Generator by Google</h1>
+              <p className="mt-3 text-base sm:text-lg text-gray-600 max-w-3xl lg:mx-auto">Edit images instantly with Google Nano Banana. The Nano Banana AI image generator makes it simple to transfer styles, add or remove objects, replace elements, or adjust gestures and expressions with just a prompt. Create seamless edits online using text or image instructions, powered by Gemini 2.5 Flash Image.</p>
+            </div>
+          </div>
+        </section>
+
         {/* Main */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: controls */}
