@@ -155,16 +155,36 @@ export default function PricingPage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 items-center text-center">
             <div className="p-4 bg-white rounded-lg border">
-              <span className="text-sm font-medium text-gray-700">Powered by Google</span>
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg"
+                alt="Google"
+                className="h-6 mx-auto"
+                loading="lazy"
+              />
+              <span className="mt-2 block text-sm font-medium text-gray-700">Powered by Google</span>
             </div>
             <div className="p-4 bg-white rounded-lg border">
-              <span className="text-sm font-medium text-gray-700">Stripe Payments</span>
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/3/30/Stripe_Logo%2C_revised_2016.svg"
+                alt="Stripe"
+                className="h-6 mx-auto"
+                loading="lazy"
+              />
+              <span className="mt-2 block text-sm font-medium text-gray-700">Stripe Payments</span>
             </div>
             <div className="p-4 bg-white rounded-lg border">
-              <span className="text-sm font-medium text-gray-700">Secure SSL</span>
+              <svg className="h-6 w-6 mx-auto text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 10V8a6 6 0 1112 0v2"/>
+                <rect x="4" y="10" width="16" height="10" rx="2" ry="2"/>
+              </svg>
+              <span className="mt-2 block text-sm font-medium text-gray-700">Secure SSL</span>
             </div>
             <div className="p-4 bg-white rounded-lg border">
-              <span className="text-sm font-medium text-gray-700">Privacy First</span>
+              <svg className="h-6 w-6 mx-auto text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="M9 12l2 2 4-4"/>
+              </svg>
+              <span className="mt-2 block text-sm font-medium text-gray-700">Privacy First</span>
             </div>
           </div>
         </div>
