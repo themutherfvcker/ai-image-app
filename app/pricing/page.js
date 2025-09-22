@@ -5,7 +5,7 @@ import { useState } from "react"
 export default function PricingPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  const [mode, setMode] = useState("credits") // "credits" | "subscription"
+  const [mode, setMode] = useState("subscription") // "credits" | "subscription"
 
   async function onSubscribe() {
     setLoading(true)
@@ -153,8 +153,8 @@ export default function PricingPage() {
               </div>
               <ul className="mt-6 space-y-2 text-sm text-gray-700">
                 {[
-                  "Unlimited generates while subscribed",
-                  "Cancel anytime in Billing Portal",
+                  "Unlimited generates (fair use)",
+                  "Standard processing",
                   "Email support",
                   "Commercial use",
                 ].map((t) => (
@@ -181,8 +181,9 @@ export default function PricingPage() {
               </div>
               <ul className="mt-6 space-y-2 text-sm text-gray-700">
                 {[
-                  "Unlimited generates while subscribed",
-                  "Priority for upcoming features",
+                  "Unlimited generates (higher limits)",
+                  "Priority processing",
+                  "Early access to new features",
                   "Email support",
                   "Commercial use",
                 ].map((t) => (
@@ -208,9 +209,10 @@ export default function PricingPage() {
               </div>
               <ul className="mt-6 space-y-2 text-sm text-gray-700">
                 {[
-                  "Unlimited generates while subscribed",
-                  "Priority for upcoming features",
+                  "Unlimited generates (highest limits)",
+                  "Top priority processing",
                   "Priority support",
+                  "Team-friendly usage",
                   "Commercial use",
                 ].map((t) => (
                   <li key={t} className="flex items-center"><svg className="h-4 w-4 text-yellow-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>{t}</li>
