@@ -156,7 +156,7 @@ export default function PricingPage() {
                 <div className="text-5xl font-extrabold">$5<span className="text-2xl align-top ml-1">AUD</span></div>
                 <div className="text-gray-500 mt-1">100 credits</div>
               </div>
-              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1">
+              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1 min-h-[220px]">
                 {[
                   "1 credit per generate",
                   "Fast queue",
@@ -186,7 +186,7 @@ export default function PricingPage() {
                 <div className="text-5xl font-extrabold">$8.99<span className="text-2xl align-top ml-1">/mo</span></div>
                 <div className="text-gray-500 mt-1">Personal use</div>
               </div>
-              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1">
+              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1 min-h-[220px]">
                 {[
                   "100 monthly credits included",
                   "Up to 50 high‑quality images per month",
@@ -217,7 +217,7 @@ export default function PricingPage() {
                 <div className="text-5xl font-extrabold">$27.99<span className="text-2xl align-top ml-1">/mo</span></div>
                 <div className="text-gray-500 mt-1">Priority features</div>
               </div>
-              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1">
+              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1 min-h-[220px]">
                 {[
                   "400 monthly credits included",
                   "Up to 250 high‑quality images per month",
@@ -247,7 +247,7 @@ export default function PricingPage() {
                 <div className="text-5xl font-extrabold">$77.99<span className="text-2xl align-top ml-1">/mo</span></div>
                 <div className="text-gray-500 mt-1">Best value</div>
               </div>
-              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1">
+              <ul className="mt-6 space-y-2 text-sm text-gray-700 flex-1 min-h-[220px]">
                 {[
                   "1200 monthly credits included",
                   "Up to 800 high‑quality images per month",
