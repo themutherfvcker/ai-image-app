@@ -368,11 +368,17 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
       let response;
       if (activeTab === "t2i") {
         if (!t2iPrompt) { setError("Please enter a prompt."); return; }
-        response = await fetch("/api/vertex/imagine", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: t2iPrompt }),
-        });
+        {
+          const supabase = getSupabase();
+          const { data: { session } } = await supabase.auth.getSession();
+          const authHeaders = { "Content-Type": "application/json" };
+          if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`;
+          response = await fetch("/api/vertex/imagine", {
+            method: "POST",
+            headers: authHeaders,
+            body: JSON.stringify({ prompt: t2iPrompt }),
+          });
+        }
       } else {
         if (!i2iFile) { setError("Please choose an image."); return; }
         if (!i2iPrompt) { setError("Please enter an edit prompt."); return; }
@@ -381,17 +387,22 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
         formData.append("prompt", i2iPrompt);
         formData.append("image", i2iFile);
 
-        response = await fetch("/api/vertex/edit", {
-          method: "POST",
-          body: formData,
-        });
+        {
+          const supabase = getSupabase();
+          const { data: { session } } = await supabase.auth.getSession();
+          const authHeaders = {};
+          if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`;
+          response = await fetch("/api/vertex/edit", {
+            method: "POST",
+            headers: authHeaders,
+            body: formData,
+          });
+        }
       }
 
+      if (response.status === 401) { onShowSignIn(true); return; }
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to generate image.");
-      }
+      if (!response.ok) { throw new Error(data.error || "Failed to generate image."); }
 
       setResultUrl(data.dataUrl);
       fetchBalance(); // Refresh balance after generation
@@ -424,8 +435,13 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
 
   async function startSubscription() {
     try {
-      const res = await fetch("/api/subscription", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) });
+      const supabase = getSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
+      const authHeaders = { "Content-Type": "application/json" };
+      if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`;
+      const res = await fetch("/api/subscription", { method: "POST", headers: authHeaders, body: JSON.stringify({}) });
       const j = await res.json();
+      if (res.status === 401) { onShowSignIn(true); return; }
       if (res.ok && j?.url) window.location.href = j.url;
       else throw new Error(j?.error || "Subscription failed");
     } catch (e) {

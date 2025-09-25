@@ -18,6 +18,7 @@ export const runtime = "nodejs"
 
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
+import { createClient } from "@supabase/supabase-js"
 import { PrismaClient } from "@prisma/client"
 import { randomUUID } from "crypto"
 import { GoogleGenAI } from "@google/genai"
@@ -126,17 +127,25 @@ export async function POST(req) {
 
     const { prompt, mimeType, base64 } = await readBody(req)
 
-    // uid cookie
-    const jar = await cookies()
-    let id = jar.get("uid")?.value
-    if (!id) {
-      id = randomUUID()
-      jar.set("uid", id, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 365 })
+    // Require Supabase auth (Bearer token)
+    const authHeader = req.headers.get("authorization") || ""
+    const m = /^(Bearer)\s+(.+)$/i.exec(authHeader)
+    const accessToken = m?.[2] || ""
+    if (!accessToken) {
+      return NextResponse.json({ ok: false, error: "AUTH_REQUIRED" }, { status: 401 })
     }
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
+    const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
+    const supabase = createClient(supabaseUrl, supabaseAnon)
+    const { data: { user: sbUser }, error: authErr } = await supabase.auth.getUser(accessToken)
+    if (authErr || !sbUser) {
+      return NextResponse.json({ ok: false, error: "AUTH_INVALID" }, { status: 401 })
+    }
+    const id = sbUser.id
 
     // 1) Ensure user + check credits
-    const user = await ensureUser(id)
-    if (user.credits < 1) {
+    const dbUser = await ensureUser(id)
+    if (dbUser.credits < 1) {
       return NextResponse.json({ ok: false, error: "Not enough credits. Please purchase more." }, { status: 402 })
     }
 

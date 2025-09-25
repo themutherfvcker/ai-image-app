@@ -259,21 +259,34 @@ export default function GeneratorPage() {
         const file = fileInputRef.current?.files?.[0] || null
         if (!file) throw new Error("Please upload a reference image.")
         const imageDataUrl = await fileToDataUrlCompressed(file, 1536, 0.9)
-        resp = await fetch("/api/vertex/edit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: prompt.trim(), imageDataUrl, meta }),
-          cache: "no-store",
-        })
+        {
+          const supabase = getSupabase()
+          const { data: { session } } = await supabase.auth.getSession()
+          const authHeaders = { "Content-Type": "application/json" }
+          if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`
+          resp = await fetch("/api/vertex/edit", {
+            method: "POST",
+            headers: authHeaders,
+            body: JSON.stringify({ prompt: prompt.trim(), imageDataUrl, meta }),
+            cache: "no-store",
+          })
+        }
       } else {
-        resp = await fetch("/api/vertex/imagine", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: prompt.trim(), meta }),
-          cache: "no-store",
-        })
+        {
+          const supabase = getSupabase()
+          const { data: { session } } = await supabase.auth.getSession()
+          const authHeaders = { "Content-Type": "application/json" }
+          if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`
+          resp = await fetch("/api/vertex/imagine", {
+            method: "POST",
+            headers: authHeaders,
+            body: JSON.stringify({ prompt: prompt.trim(), meta }),
+            cache: "no-store",
+          })
+        }
       }
 
+      if (resp.status === 401) { setShowSignIn(true); return }
       const j = await safeReadJson(resp)   // <--- use robust reader
       if (!resp.ok || !j?.ok) {
         throw new Error(j?.error || `HTTP ${resp.status}`)

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { getSupabase } from "@/lib/supabaseClient"
 import Link from "next/link"
 
 export default function PricingPage() {
@@ -12,9 +13,13 @@ export default function PricingPage() {
     setLoading(true)
     setError("")
     try {
+      const supabase = getSupabase()
+      const { data: { session } } = await supabase.auth.getSession()
+      const authHeaders = { "Content-Type": "application/json" }
+      if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`
       const r = await fetch("/api/subscription", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders,
         body: JSON.stringify({
           success_url: `${location.origin}/success`,
           cancel_url: `${location.origin}/cancel`,
@@ -36,9 +41,13 @@ export default function PricingPage() {
     setLoading(true)
     setError("")
     try {
+      const supabase = getSupabase()
+      const { data: { session } } = await supabase.auth.getSession()
+      const authHeaders = { "Content-Type": "application/json" }
+      if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`
       const r = await fetch("/api/checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders,
         body: JSON.stringify({
           success_url: `${location.origin}/success`,
           cancel_url: `${location.origin}/cancel`,
@@ -60,9 +69,13 @@ export default function PricingPage() {
     setLoading(true)
     setError("")
     try {
+      const supabase = getSupabase()
+      const { data: { session } } = await supabase.auth.getSession()
+      const authHeaders = { "Content-Type": "application/json" }
+      if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`
       const r = await fetch("/api/subscription", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders,
         body: JSON.stringify({
           success_url: `${location.origin}/success`,
           cancel_url: `${location.origin}/cancel`,

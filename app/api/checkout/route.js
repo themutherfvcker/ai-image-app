@@ -1,6 +1,7 @@
 // app/api/checkout/route.js
 import { NextResponse } from 'next/server';
 import { cookies, headers } from 'next/headers';
+import { createClient } from '@supabase/supabase-js'
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -17,15 +18,15 @@ async function handleCheckout(req) {
       );
     }
 
-    // Require an existing uid cookie (so the same user gets the credits)
-    const jar = await cookies();
-    const uid = jar.get('uid')?.value;
-    if (!uid) {
-      return NextResponse.json(
-        { ok: false, error: 'No uid; visit /api/session first' },
-        { status: 400 }
-      );
-    }
+    // Require Supabase auth (Bearer token) and bind checkout to user id
+    const authHeader = request.headers.get('authorization') || ''
+    const m = /^(Bearer)\s+(.+)$/i.exec(authHeader)
+    const accessToken = m?.[2] || ''
+    if (!accessToken) return NextResponse.json({ ok: false, error: 'AUTH_REQUIRED' }, { status: 401 })
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '')
+    const { data: { user }, error: authErr } = await supabase.auth.getUser(accessToken)
+    if (authErr || !user) return NextResponse.json({ ok: false, error: 'AUTH_INVALID' }, { status: 401 })
+    const uid = user.id
 
     // How many credits to sell this time (default 100)
     let credits = 100;
