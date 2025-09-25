@@ -2,8 +2,9 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import Script from "next/script"
 import Link from "next/link"
+import { getSupabase } from "@/lib/supabaseClient"
+import SignInModal from "@/app/components/SignInModal"
 
 const STYLE_CHIPS = [
   { label: "Photorealistic", text: "ultra realistic, natural lighting, 50mm lens, high detail" },
@@ -36,26 +37,16 @@ export default function GeneratorPage() {
   const [error, setError] = useState("")
   const [resultUrl, setResultUrl] = useState("")
   const [history, setHistory] = useState([]) // [{url, at, prompt, mode, aspect}]
+  const [showSignIn, setShowSignIn] = useState(false)
 
   // Upload state (image→image)
   const [previewUrl, setPreviewUrl] = useState(null)
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef(null)
   const dropRef = useRef(null)
+  const [pendingImageDataUrl, setPendingImageDataUrl] = useState("")
 
-  // --- Tailwind / libs (CDN) ---
-  useEffect(() => {
-    const AOS_HREF = "https://unpkg.com/aos@2.3.1/dist/aos.css"
-    if (!document.querySelector(`link[href="${AOS_HREF}"]`)) {
-      const link = document.createElement("link")
-      link.rel = "stylesheet"
-      link.href = AOS_HREF
-      document.head.appendChild(link)
-    }
-  }, [])
-  useEffect(() => {
-    if (window.AOS) window.AOS.init({ duration: 600, easing: "ease-out", once: true })
-  }, [resultUrl, history, activeTab])
+// Using build-time Tailwind via globals.css; removed AOS/CDN usage
 
   // Credits
   useEffect(() => {
@@ -70,6 +61,66 @@ export default function GeneratorPage() {
 
   // Cleanup preview URL
   useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl) }, [previewUrl])
+
+  // Prefill from query params (e.g., /generator?tab=i2i&prompt=...)
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    // Restore any pending state saved before auth redirect
+    try {
+      const pending = sessionStorage.getItem("nb_pending_generate")
+      if (pending) {
+        const parsed = JSON.parse(pending)
+        if (parsed?.activeTab === "image") setActiveTab("image")
+        if (typeof parsed?.prompt === "string") setPrompt(parsed.prompt)
+        if (typeof parsed?.imageDataUrl === "string" && parsed.imageDataUrl) {
+          setPendingImageDataUrl(parsed.imageDataUrl)
+          setPreviewUrl(parsed.imageDataUrl)
+        }
+        // we cannot restore the File object; this uses a data URL snapshot
+        sessionStorage.removeItem("nb_pending_generate")
+      }
+    } catch {}
+    const sp = new URLSearchParams(window.location.search)
+    const tab = sp.get("tab") || ""
+    const qp = sp.get("prompt") || ""
+    if (tab === "i2i") setActiveTab("image")
+    if (tab === "t2i") setActiveTab("text")
+    if (qp) setPrompt(qp)
+  }, [])
+
+  // Close sign-in modal on successful auth; if we have pending image data URL, auto-generate
+  useEffect(() => {
+    const supabase = getSupabase()
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        setShowSignIn(false)
+        if (pendingImageDataUrl && activeTab === "image" && prompt.trim()) {
+          try {
+            setBusy(true)
+            setError("")
+            setResultUrl("")
+            const resp = await fetch("/api/vertex/edit", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ prompt: prompt.trim(), imageDataUrl: pendingImageDataUrl, meta: { aspect, strength } }),
+              cache: "no-store",
+            })
+            const j = await safeReadJson(resp)
+            if (!resp.ok || !j?.ok) throw new Error(j?.error || `HTTP ${resp.status}`)
+            setResultUrl(j.dataUrl || "")
+            setBalance(typeof j.balance === "number" ? j.balance : balance)
+            setHistory((h) => [{ url: j.dataUrl, at: Date.now(), prompt, mode: "image", aspect }, ...h].slice(0, 40))
+          } catch (e) {
+            setError(e?.message || "Generation failed")
+          } finally {
+            setBusy(false)
+            setPendingImageDataUrl("")
+          }
+        }
+      }
+    })
+    return () => subscription?.unsubscribe()
+  }, [pendingImageDataUrl, activeTab, prompt, aspect, strength, balance])
 
   // Compression helper (JSON-safe)
   async function fileToDataUrlCompressed(file, maxDim = 1536, jpegQuality = 0.9) {
@@ -174,6 +225,28 @@ export default function GeneratorPage() {
 
   // Generate
   async function onGenerate() {
+    // Require auth
+    try {
+      const supabase = getSupabase()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        // Persist pending state so we can restore after auth
+        try {
+          let imageDataUrl = ""
+          if (activeTab === "image") {
+            const file = fileInputRef.current?.files?.[0] || null
+            if (file) {
+              try {
+                imageDataUrl = await fileToDataUrlCompressed(file, 1536, 0.9)
+              } catch {}
+            }
+          }
+          sessionStorage.setItem("nb_pending_generate", JSON.stringify({ activeTab, prompt, imageDataUrl }))
+        } catch {}
+        setShowSignIn(true)
+        return
+      }
+    } catch {}
     setBusy(true)
     setError("")
     setResultUrl("")
@@ -217,30 +290,62 @@ export default function GeneratorPage() {
 
   const aspectHelp = "Aspect ratio hint (client-side). Your API may ignore it unless implemented server-side."
 
+  function handleTryCase(tab, examplePrompt) {
+    if (tab === "image") setActiveTab("image"); else setActiveTab("text");
+    setPrompt(examplePrompt);
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch {}
+  }
+
   return (
     <>
-      {/* Tailwind via CDN */}
-      <Script src="https://cdn.tailwindcss.com" strategy="afterInteractive" />
-      <Script src="https://unpkg.com/aos@2.3.1/dist/aos.js" strategy="afterInteractive" />
-
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="border-b bg-white sticky top-0 z-40">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <img className="h-8 w-auto" src="/banana-decoration.png" alt="Nano Banana" />
-              <Link href="/" className="text-lg font-semibold text-gray-900">Nano Banana</Link>
-              <span className="text-gray-300">/</span>
-              <span className="text-gray-600">Generator</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link href="/pricing" className="text-sm text-gray-700 hover:text-gray-900">Pricing</Link>
-              <div className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
-                Credits: {balance ?? "—"}
+        {/* NAV (match homepage) */}
+        <nav className="bg-white shadow-sm sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-16">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 flex items-center">
+                  <img
+                    className="h-8 w-auto"
+                    src="https://nanobanana.ai/_next/image?url=%2Fbanana-decoration.png&w=640&q=75"
+                    alt="Nano Banana"
+                  />
+                  <span className="ml-2 text-xl font-bold text-gray-900">Nano Banana</span>
+                </div>
+              </div>
+              <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                <Link href="/generator" className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-yellow-500">Image Editor</Link>
+                <Link href="/showcase" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Showcase</Link>
+                <Link href="/pricing" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Pricing</Link>
+                <Link href="/developers" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">API</Link>
+                <a href="#faq" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">FAQ</a>
+                <Link href="/toolbox" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Toolbox</Link>
+                <Link href="/account" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Account</Link>
+              </div>
+              <div className="flex items-center">
+                <div className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full mr-3">
+                  Credits: {balance ?? "—"}
+                </div>
+                <button
+                  onClick={() => setShowSignIn(true)}
+                  className="ml-1 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                >
+                  Try Now
+                </button>
               </div>
             </div>
           </div>
-        </header>
+        </nav>
+
+        {/* Page Title */}
+        <section className="bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+            <div className="lg:text-center">
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">Nano Banana AI Image Generator by Google</h1>
+              <p className="mt-3 text-base sm:text-lg text-gray-600 max-w-3xl lg:mx-auto">Edit images instantly with Google Nano Banana. The Nano Banana AI image generator makes it simple to transfer styles, add or remove objects, replace elements, or adjust gestures and expressions with just a prompt. Create seamless edits online using text or image instructions, powered by Gemini 2.5 Flash Image.</p>
+            </div>
+          </div>
+        </section>
 
         {/* Main */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -435,7 +540,7 @@ export default function GeneratorPage() {
               )}
 
               {resultUrl && (
-                <div className="space-y-3" data-aos="fade-in">
+                <div className="space-y-3">
                   <img src={resultUrl} alt="Result" className="w-full h-auto rounded-md border" />
                 </div>
               )}
@@ -482,7 +587,156 @@ export default function GeneratorPage() {
             </div>
           </section>
         </main>
+
+        {/* How it Works */}
+        <section id="how-it-works" className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center">
+              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">How it Works</h2>
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Edit with text, not layers</p>
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                Describe your edit and let Nano Banana handle the details. No masking or manual cutouts.
+              </p>
+            </div>
+
+            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
+              {[{
+                n: 1, t: "Choose a mode", d: "Start with Text→Image or upload a reference for Image→Image.",
+              },{
+                n: 2, t: "Describe your edit", d: "Type what you want changed. Add a style chip for a quick look.",
+              },{
+                n: 3, t: "Generate", d: "Get a result in seconds. Keep faces and scene details consistent.",
+              }].map((s) => (
+                <div key={s.n} className="bg-white overflow-hidden shadow rounded-lg">
+                  <div className="px-4 py-6 sm:p-6">
+                    <div className="text-yellow-700 font-semibold">Step {s.n}</div>
+                    <h3 className="mt-1 text-lg font-medium text-gray-900">{s.t}</h3>
+                    <p className="mt-2 text-sm text-gray-500">{s.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Features */}
+        <section id="features" className="py-12 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center">
+              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Why Choose Nano Banana?</h2>
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Core Nano Banana Features</p>
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                Natural-language editing with identity and scene preservation built-in.
+              </p>
+            </div>
+
+            <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                ["Natural Language Editing", "Edit images using plain text prompts—no masks or layers required."],
+                ["Character Consistency", "Maintain faces and details across edits and versions."],
+                ["Scene Preservation", "Blend edits with the original background for realistic results."],
+                ["One-Shot Editing", "High-quality results in a single pass for most edits."],
+                ["Multi-Image Context", "Use references to guide style, identity, or scene."],
+                ["Built for UGC", "Perfect for creators and marketers needing on-brand visuals."],
+              ].map(([title, body]) => (
+                <div key={title} className="bg-white overflow-hidden shadow rounded-lg">
+                  <div className="px-4 py-5 sm:p-6">
+                    <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+                    <p className="mt-3 text-sm text-gray-600">{body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Popular Use Cases */}
+        <section id="use-cases" className="py-12 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center mb-8">
+              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Popular Use Cases</h2>
+              <p className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">What people make with Nano Banana</p>
+              <p className="mt-2 text-gray-600">Click “Try this” to prefill the editor instantly.</p>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                { title: "Remove Background", tab: "image", prompt: "Remove the background and place the subject on a clean white background." },
+                { title: "Change Clothing Color", tab: "image", prompt: "Change the jacket to a deep navy blue while keeping fabric texture." },
+                { title: "Product Ad", tab: "text", prompt: "A premium product photo on a marble countertop with soft morning light." },
+                { title: "Portrait Cleanup", tab: "image", prompt: "Gently remove blemishes, even skin tone, keep pores and realistic texture." },
+                { title: "Cinematic Scene", tab: "text", prompt: "A cinematic banana astronaut on the moon, 35mm film look, dramatic lighting." },
+                { title: "Social Post", tab: "text", prompt: "High-contrast vibrant image with bold composition for social media." },
+              ].map((c, i) => (
+                <div key={i} className="bg-white rounded-xl shadow hover:shadow-lg transition">
+                  <div className="p-5">
+                    <h3 className="text-lg font-semibold text-gray-900">{c.title}</h3>
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{c.prompt}</p>
+                    <div className="mt-3 flex gap-2">
+                      <button onClick={() => handleTryCase(c.tab, c.prompt)} className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border hover:bg-gray-50">Try this</button>
+                      <Link href={c.tab === "image" ? "/showcase/remove-background" : "/showcase"} className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-yellow-700 bg-yellow-50 hover:bg-yellow-100">Learn more</Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section id="faq" className="py-12 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center">
+              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Help Center</h2>
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Frequently Asked Questions</p>
+            </div>
+            <div className="mt-10 max-w-3xl mx-auto">
+              <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12">
+                <div>
+                  <dt className="text-lg leading-6 font-medium text-gray-900">Do I need any editing skills?</dt>
+                  <dd className="mt-2 text-base text-gray-500">No. Just describe the change you want with plain English.</dd>
+                </div>
+                <div>
+                  <dt className="text-lg leading-6 font-medium text-gray-900">Will it keep faces consistent?</dt>
+                  <dd className="mt-2 text-base text-gray-500">Yes. Identity preservation is built into our pipeline.</dd>
+                </div>
+                <div>
+                  <dt className="text-lg leading-6 font-medium text-gray-900">What formats do you support?</dt>
+                  <dd className="mt-2 text-base text-gray-500">Upload PNG, JPG, or WEBP up to ~10MB.</dd>
+                </div>
+                <div>
+                  <dt className="text-lg leading-6 font-medium text-gray-900">Can I use results commercially?</dt>
+                  <dd className="mt-2 text-base text-gray-500">Yes—great for UGC, ads, and product visuals.</dd>
+                </div>
+              </dl>
+            </div>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": [
+                  { "@type": "Question", "name": "Do I need any editing skills?", "acceptedAnswer": { "@type": "Answer", "text": "No. Just describe the change you want with plain English." } },
+                  { "@type": "Question", "name": "Will it keep faces consistent?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Identity preservation is built into our pipeline." } },
+                  { "@type": "Question", "name": "What formats do you support?", "acceptedAnswer": { "@type": "Answer", "text": "Upload PNG, JPG, or WEBP up to ~10MB." } },
+                  { "@type": "Question", "name": "Can I use results commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—great for UGC, ads, and product visuals." } }
+                ]
+              }) }}
+            />
+          </div>
+        </section>
+
+        {/* Trust & CTA */}
+        <section className="py-12 bg-yellow-600">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Ready to try Nano Banana?</h2>
+            <p className="mt-3 max-w-2xl mx-auto text-lg text-yellow-100 sm:mt-4">Fast, consistent edits for creators and teams.</p>
+            <div className="mt-8">
+              <Link href="/pricing" className="inline-flex items-center px-6 py-3 rounded-md text-yellow-700 bg-white hover:bg-gray-50">Buy Credits</Link>
+            </div>
+          </div>
+        </section>
       </div>
+      <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </>
   )
 }

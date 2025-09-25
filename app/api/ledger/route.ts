@@ -18,7 +18,7 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
       where: { id: uid },
-      select: { id: true, credits: true },
+      select: { id: true, credits: true, plan: true },
     });
 
     const ledgers = await prisma.creditLedger.findMany({
