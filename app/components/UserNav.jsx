@@ -67,9 +67,10 @@ export default function UserNav() {
             onClick={async () => {
               try {
                 const supabase = getSupabase()
-                await supabase.auth.signOut()
+                await supabase.auth.signOut({ scope: 'global' })
                 setMenuOpen(false)
                 setUser(null)
+                try { window.dispatchEvent(new Event('storage')) } catch {}
               } catch {}
             }}
           >
