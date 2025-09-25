@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { getSupabase } from "@/lib/supabaseClient"
 import SignInModal from "@/app/components/SignInModal"
+import UserNav from "@/app/components/UserNav"
 
 const STYLE_CHIPS = [
   { label: "Photorealistic", text: "ultra realistic, natural lighting, 50mm lens, high detail" },
@@ -339,6 +340,7 @@ export default function GeneratorPage() {
                 <div className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full mr-3">
                   Credits: {balance ?? "—"}
                 </div>
+                <UserNav />
                 <button
                   onClick={() => setShowSignIn(true)}
                   className="ml-1 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"

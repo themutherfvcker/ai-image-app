@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { getSupabase } from "@/lib/supabaseClient"
+import UserNav from "@/app/components/UserNav"
 import Link from "next/link"
 
 export default function PricingPage() {
@@ -120,6 +121,7 @@ export default function PricingPage() {
               <Link href="/account" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Account</Link>
             </div>
             <div className="flex items-center">
+              <UserNav />
               <Link
                 href="/generator"
                 className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"

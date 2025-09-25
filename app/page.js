@@ -7,6 +7,7 @@ import Script from "next/script";
 import Link from "next/link";
 import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
+import UserNav from "@/app/components/UserNav";
 
 function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
   const containerRef = useRef(null);
@@ -197,9 +198,12 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                     setLoading(true);
                     setError("");
                     setResultUrl(null);
+                    const { data: { session: sess } } = await supabase.auth.getSession();
+                    const authHeaders = { "Content-Type": "application/json" };
+                    if (sess?.access_token) authHeaders["Authorization"] = `Bearer ${sess.access_token}`;
                     const resp = await fetch("/api/vertex/edit", {
                       method: "POST",
-                      headers: { "Content-Type": "application/json" },
+                      headers: authHeaders,
                       body: JSON.stringify({ prompt: pending.prompt || "", imageDataUrl: pending.imageDataUrl })
                     });
                     const data = await resp.json();
@@ -223,9 +227,12 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                   setLoading(true);
                   setError("");
                   setResultUrl(null);
+                  const { data: { session: sess } } = await supabase.auth.getSession();
+                  const authHeaders = { "Content-Type": "application/json" };
+                  if (sess?.access_token) authHeaders["Authorization"] = `Bearer ${sess.access_token}`;
                   const resp = await fetch("/api/vertex/imagine", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: authHeaders,
                     body: JSON.stringify({ prompt: pending.prompt || "" })
                   });
                   const data = await resp.json();
@@ -254,6 +261,24 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
     return () => subscription?.unsubscribe();
   }, [router]);
 
+  // Also handle popup auth completion message to ensure upload opens
+  useEffect(() => {
+    function onMessage(e) {
+      if (!e?.data || e.data.type !== 'NB_AUTH_COMPLETE') return;
+      try {
+        onShowSignIn(false);
+        const ask = sessionStorage.getItem('nb_home_ask_upload');
+        if (ask === '1') {
+          sessionStorage.removeItem('nb_home_ask_upload');
+          setActiveTab('i2i');
+          setTimeout(() => { try { uploadInputRef.current?.click(); } catch {} }, 250);
+        }
+      } catch {}
+    }
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [onShowSignIn]);
+
   // On mount after redirect: if already authenticated, resume pending
   useEffect(() => {
     (async () => {
@@ -274,11 +299,14 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
             setError("");
             setResultUrl(null);
             try {
-              const resp = await fetch("/api/vertex/edit", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt: pending.prompt || "", imageDataUrl: pending.imageDataUrl })
-              });
+                      const { data: { session: sess } } = await supabase.auth.getSession();
+                      const authHeaders = { "Content-Type": "application/json" };
+                      if (sess?.access_token) authHeaders["Authorization"] = `Bearer ${sess.access_token}`;
+                      const resp = await fetch("/api/vertex/edit", {
+                        method: "POST",
+                        headers: authHeaders,
+                        body: JSON.stringify({ prompt: pending.prompt || "", imageDataUrl: pending.imageDataUrl })
+                      });
               const data = await resp.json();
               if (!resp.ok || !data?.ok) throw new Error(data?.error || `HTTP ${resp.status}`);
               setResultUrl(data.dataUrl);
@@ -298,11 +326,14 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
           setError("");
           setResultUrl(null);
           try {
-            const resp = await fetch("/api/vertex/imagine", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ prompt: pending.prompt || "" })
-            });
+                    const { data: { session: sess } } = await supabase.auth.getSession();
+                    const authHeaders = { "Content-Type": "application/json" };
+                    if (sess?.access_token) authHeaders["Authorization"] = `Bearer ${sess.access_token}`;
+                    const resp = await fetch("/api/vertex/imagine", {
+                      method: "POST",
+                      headers: authHeaders,
+                      body: JSON.stringify({ prompt: pending.prompt || "" })
+                    });
             const data = await resp.json();
             if (!resp.ok) throw new Error(data?.error || `HTTP ${resp.status}`);
             setResultUrl(data.dataUrl);
@@ -461,7 +492,9 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
       }
       uploadInputRef.current?.click();
     } catch {
-      uploadInputRef.current?.click();
+      // If Supabase client/env is unavailable, prefer prompting sign-in instead of bypassing
+      sessionStorage.setItem("nb_home_ask_upload", '1');
+      onShowSignIn(true);
     }
   }
 
@@ -536,6 +569,25 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                       type="file"
                       accept="image/png,image/jpeg,image/webp"
                       className="sr-only"
+                      onClick={async (e) => {
+                        try {
+                          const supabase = getSupabase();
+                          const { data: { user } } = await supabase.auth.getUser();
+                          if (!user) {
+                            e.preventDefault();
+                            sessionStorage.setItem("nb_home_ask_upload", '1');
+                            sessionStorage.setItem("nb_home_pending_generate", JSON.stringify({ tab: "i2i", prompt: i2iPrompt || "" }));
+                            onShowSignIn(true);
+                            return false;
+                          }
+                        } catch {
+                          e.preventDefault();
+                          sessionStorage.setItem("nb_home_ask_upload", '1');
+                          onShowSignIn(true);
+                          return false;
+                        }
+                        return true;
+                      }}
                       onChange={(e) => {
                         const f = e.target.files?.[0];
                         if (f) {
@@ -646,6 +698,20 @@ export default function HomePage() {
   const vantaRef = useRef(null);
   const vantaInstance = useRef(null);
   const [showSignIn, setShowSignIn] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
+
+  useEffect(() => {
+    try {
+      const supabase = getSupabase();
+      supabase.auth.getUser().then(({ data }) => setIsAuthed(!!data?.user));
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+        setIsAuthed(!!session?.user);
+      });
+      return () => subscription?.unsubscribe();
+    } catch {
+      // ignore
+    }
+  }, []);
 
   // Remove AOS progressive animations and setInterval polling
   useEffect(() => {
@@ -715,12 +781,15 @@ export default function HomePage() {
               <Link href="/account" className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-yellow-500">Account</Link>
             </div>
             <div className="flex items-center">
-              <button
-                onClick={() => setShowSignIn(true)}
-                className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-              >
-                Try Now
-              </button>
+              <UserNav />
+              {!isAuthed && (
+                <button
+                  onClick={() => setShowSignIn(true)}
+                  className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                >
+                  Try Now
+                </button>
+              )}
             </div>
           </div>
         </div>
