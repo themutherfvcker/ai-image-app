@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import JsonLd from "./components/JsonLd";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
@@ -25,6 +26,14 @@ export const metadata: Metadata = {
   },
 };
 
+const ORG_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://www.nanobanana-ai.dev/#org",
+  "name": "Nano Banana",
+  "url": "https://www.nanobanana-ai.dev/"
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -40,17 +49,6 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "Nano Banana",
-            "url": "https://www.nanobanana-ai.dev/",
-            "logo": "https://www.nanobanana-ai.dev/og/home.png",
-            "sameAs": ["https://x.com/", "https://github.com/"]
-          }) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify({
-            "@context": "https://schema.org",
             "@type": "Product",
             "name": "Nano Banana – Text-Based Photo Editor",
             "description": "Edit images with plain-English prompts while preserving faces, identity and scene.",
@@ -61,7 +59,10 @@ export default function RootLayout({
           }) }}
         />
       </head>
-      <body className={`${inter.className} antialiased h-full`}>{children}</body>
+      <body className={`${inter.className} antialiased h-full`}>
+        <JsonLd id="org-jsonld" data={ORG_JSONLD} />
+        {children}
+      </body>
     </html>
   );
 }
