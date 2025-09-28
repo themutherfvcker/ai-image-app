@@ -155,6 +155,24 @@ function ExamplesSection() {
   );
 }
 
+// Presets and aspect ratios for the generator UI (client-side hints)
+const STYLE_CHIPS = [
+  { label: "Photorealistic", text: "ultra realistic, natural lighting, 50mm lens, high detail" },
+  { label: "Cinematic", text: "cinematic lighting, volumetric, dramatic shadows, 35mm film look" },
+  { label: "Studio Portrait", text: "studio portrait, softbox lighting, sharp eyes, skin texture" },
+  { label: "Fashion Editorial", text: "editorial fashion, clean backdrop, professional styling" },
+  { label: "Moody", text: "moody, low-key lighting, high contrast, grain" },
+  { label: "Vibrant", text: "vibrant colors, crisp detail, punchy contrast" },
+];
+
+const ASPECTS = [
+  { k: "1:1",  w: 1024, h: 1024 },
+  { k: "3:4",  w: 960,  h: 1280 },
+  { k: "4:3",  w: 1280, h: 960  },
+  { k: "16:9", w: 1536, h: 864  },
+  { k: "9:16", w: 864,  h: 1536 },
+];
+
 function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
   const [activeTab, setActiveTab] = useState("i2i");
   const [t2iPrompt, setT2iPrompt] = useState("");
@@ -169,6 +187,10 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
   const [pendingImageDataUrl, setPendingImageDataUrl] = useState("");
   const uploadInputRef = useRef(null);
   const router = useRouter();
+  // Added advanced controls + local history
+  const [aspect, setAspect] = useState("1:1");
+  const [strength, setStrength] = useState(0.6);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     fetchBalance();
@@ -436,6 +458,17 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
       if (!response.ok) { throw new Error(data.error || "Failed to generate image."); }
 
       setResultUrl(data.dataUrl);
+      // Update local history
+      try {
+        const entry = {
+          url: data.dataUrl,
+          at: Date.now(),
+          mode: activeTab,
+          aspect,
+          prompt: activeTab === "t2i" ? t2iPrompt : i2iPrompt,
+        };
+        setHistory((h) => [entry, ...h].slice(0, 24));
+      } catch {}
       fetchBalance(); // Refresh balance after generation
     } catch (e) {
       setError(e.message);
@@ -604,6 +637,31 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
                     )}
                     {i2iFile && <p className="text-sm text-gray-700 mt-2 truncate">Selected file: {i2iFile.name}</p>}
                   </div>
+                  {/* Styles */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-sm font-semibold text-gray-900">Styles</h3>
+                      <button className="text-xs text-gray-500 hover:text-gray-700" onClick={() => setI2iPrompt("")}>Clear prompt</button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {STYLE_CHIPS.map((c) => (
+                        <button key={c.label} type="button" className="px-3 py-1.5 rounded-full text-xs font-medium border hover:bg-gray-50" onClick={() => setI2iPrompt((p) => p ? `${p.trim().replace(/\.$/, "")}. ${c.text}` : c.text)} title={c.text}>{c.label}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Aspect + Strength */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Aspect Ratio</label>
+                      <select value={aspect} onChange={(e) => setAspect(e.target.value)} className="mt-1 w-full rounded-md border-gray-300 focus:ring-yellow-600 focus:border-yellow-600">
+                        {ASPECTS.map((a) => (<option key={a.k} value={a.k}>{a.k}</option>))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Edit Strength ({strength.toFixed(2)})</label>
+                      <input type="range" min={0} max={1} step={0.05} value={strength} onChange={(e) => setStrength(parseFloat(e.target.value))} className="mt-2 w-full" />
+                    </div>
+                  </div>
                   <textarea
                     rows="4"
                     className="w-full rounded-md border-gray-300 focus:ring-yellow-600 focus:border-yellow-600"
@@ -623,6 +681,25 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
 
               {activeTab === "t2i" && (
                 <div className="space-y-4">
+                  {/* Styles */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-sm font-semibold text-gray-900">Styles</h3>
+                      <button className="text-xs text-gray-500 hover:text-gray-700" onClick={() => setT2iPrompt("")}>Clear prompt</button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {STYLE_CHIPS.map((c) => (
+                        <button key={c.label} type="button" className="px-3 py-1.5 rounded-full text-xs font-medium border hover:bg-gray-50" onClick={() => setT2iPrompt((p) => p ? `${p.trim().replace(/\.$/, "")}. ${c.text}` : c.text)} title={c.text}>{c.label}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Aspect */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Aspect Ratio</label>
+                    <select value={aspect} onChange={(e) => setAspect(e.target.value)} className="mt-1 w-full rounded-md border-gray-300 focus:ring-yellow-600 focus:border-yellow-600">
+                      {ASPECTS.map((a) => (<option key={a.k} value={a.k}>{a.k}</option>))}
+                    </select>
+                  </div>
                   <textarea
                     rows="4"
                     className="w-full rounded-md border-gray-300 focus:ring-yellow-600 focus:border-yellow-600"
@@ -684,6 +761,31 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
 
               {resultUrl && (
                 <img src={resultUrl} alt="Generated Image" className="w-full h-auto rounded-md border" />
+              )}
+            </div>
+            {/* Local history */}
+            <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-semibold text-gray-900">History (local)</h3>
+                {history.length > 0 && (
+                  <button onClick={() => setHistory([])} className="text-xs text-gray-500 hover:text-gray-700">Clear all</button>
+                )}
+              </div>
+              {history.length === 0 ? (
+                <p className="text-sm text-gray-500">No history yet.</p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {history.map((h, i) => (
+                    <button key={i} className="group border rounded-md overflow-hidden text-left" onClick={() => setResultUrl(h.url)} title={`${h.mode === "i2i" ? "Image→Image" : "Text→Image"} • ${h.aspect} • ${h.prompt}`}>
+                      <img src={h.url} alt="" className="w-full h-32 object-cover group-hover:opacity-90" />
+                      <div className="p-2 text-[11px] text-gray-600 line-clamp-2">
+                        <span className="mr-1 inline-block px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">{h.mode === "i2i" ? "I→I" : "T→I"}</span>
+                        <span className="mr-1 inline-block px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">{h.aspect}</span>
+                        {h.prompt}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
           </section>
