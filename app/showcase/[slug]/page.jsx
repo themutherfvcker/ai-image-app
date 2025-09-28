@@ -1,3 +1,5 @@
+import Navbar from "@/app/components/Navbar"
+
 export default function ShowcaseDetail({ params }) {
   const { slug } = params
   const map = {
@@ -30,12 +32,15 @@ export default function ShowcaseDetail({ params }) {
   const tab = slug === 'product-ad' || slug === 'storyboard' ? 't2i' : 'i2i'
   const url = `/generator?tab=${encodeURIComponent(tab)}&prompt=${encodeURIComponent(data.prompt)}`
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">{data.title}</h1>
-      <p className="text-gray-700 mt-2">Prompt:</p>
-      <pre className="mt-1 p-3 bg-gray-50 rounded border text-sm overflow-x-auto">{data.prompt}</pre>
-      <a href={url} className="mt-4 inline-flex items-center px-4 py-2 rounded bg-yellow-600 text-white hover:bg-yellow-700">Try this in Editor</a>
-    </main>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">{data.title}</h1>
+        <p className="text-gray-700 mt-4">Prompt</p>
+        <pre className="mt-2 p-4 bg-white rounded-md border shadow-sm text-sm overflow-x-auto">{data.prompt}</pre>
+        <a href={url} className="mt-6 inline-flex items-center px-4 py-2 rounded-md bg-yellow-600 text-white hover:bg-yellow-700">Try this in Editor</a>
+      </main>
+    </div>
   )
 }
 

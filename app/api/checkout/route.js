@@ -19,7 +19,7 @@ async function handleCheckout(req) {
     }
 
     // Require Supabase auth (Bearer token) and bind checkout to user id
-    const authHeader = request.headers.get('authorization') || ''
+    const authHeader = req.headers.get('authorization') || ''
     const m = /^(Bearer)\s+(.+)$/i.exec(authHeader)
     const accessToken = m?.[2] || ''
     if (!accessToken) return NextResponse.json({ ok: false, error: 'AUTH_REQUIRED' }, { status: 401 })
@@ -28,19 +28,25 @@ async function handleCheckout(req) {
     if (authErr || !user) return NextResponse.json({ ok: false, error: 'AUTH_INVALID' }, { status: 401 })
     const uid = user.id
 
-    // How many credits to sell this time (default 100)
+    // Parse inputs
     let credits = 100;
     const method = req.method || 'GET';
+    let successUrl = '';
+    let cancelUrl = '';
     if (method === 'GET') {
       const url = new URL(req.url);
       credits = Math.max(
         1,
         Math.min(100000, parseInt(url.searchParams.get('credits') || '100', 10))
       );
+      successUrl = url.searchParams.get('success_url') || '';
+      cancelUrl = url.searchParams.get('cancel_url') || '';
     } else {
       const body = await req.json().catch(() => ({}));
       const c = parseInt(String(body.credits ?? '100'), 10);
       credits = Math.max(1, Math.min(100000, isNaN(c) ? 100 : c));
+      successUrl = typeof body.success_url === 'string' ? body.success_url : '';
+      cancelUrl = typeof body.cancel_url === 'string' ? body.cancel_url : '';
     }
 
     // Build success/cancel URLs from the actual request host (fixes “new user at 25” issue)
@@ -52,8 +58,8 @@ async function handleCheckout(req) {
     const stripe = new Stripe(secret);
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      success_url: `${origin}/?success=1`,
-      cancel_url: `${origin}/?canceled=1`,
+      success_url: successUrl || `${origin}/success`,
+      cancel_url: cancelUrl || `${origin}/cancel`,
       // Keep a fixed $5 AUD price; let credits vary (e.g., 25, 100, etc.)
       line_items: [
         {
