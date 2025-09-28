@@ -559,10 +559,6 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
               <>Sign in to start generating images</>
             )}
           </p>
-          <div className="mt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 justify-center">
-            <Link href="/pricing" className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-3 text-sm font-medium rounded-md bg-yellow-600 text-white hover:bg-yellow-700">Buy 100 credits ($5)</Link>
-            <button onClick={startSubscription} className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-3 text-sm font-medium rounded-md bg-gray-900 text-white hover:bg-black">Subscribe $5/mo</button>
-          </div>
         </div>
 
         <div className="mt-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
