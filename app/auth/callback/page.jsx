@@ -46,6 +46,51 @@ function CallbackInner() {
           return;
         }
 
+        // Attempt to resume a pending pricing action (checkout/subscription)
+        try {
+          const pendingRaw = sessionStorage.getItem("nb_pricing_pending");
+          if (pendingRaw) {
+            const pending = JSON.parse(pendingRaw);
+            const { getSupabase } = await import("@/lib/supabaseClient");
+            const supabase2 = getSupabase();
+            const { data: { session } } = await supabase2.auth.getSession();
+            const access = session?.access_token || "";
+            if (access) {
+              const hdrs = { "Content-Type": "application/json", Authorization: `Bearer ${access}` };
+              const origin = window.location.origin;
+              let resp;
+              if (pending?.action === "subscription") {
+                resp = await fetch("/api/subscription", {
+                  method: "POST",
+                  headers: hdrs,
+                  body: JSON.stringify({
+                    plan: pending?.plan || undefined,
+                    success_url: `${origin}/success`,
+                    cancel_url: `${origin}/cancel`,
+                  }),
+                });
+              } else if (pending?.action === "credits") {
+                resp = await fetch("/api/checkout", {
+                  method: "POST",
+                  headers: hdrs,
+                  body: JSON.stringify({
+                    success_url: `${origin}/success`,
+                    cancel_url: `${origin}/cancel`,
+                  }),
+                });
+              }
+              if (resp) {
+                const j = await resp.json().catch(() => ({}));
+                if (resp.ok && j?.url) {
+                  sessionStorage.removeItem("nb_pricing_pending");
+                  window.location.href = j.url;
+                  return;
+                }
+              }
+            }
+          }
+        } catch {}
+
         // If this page is opened as a popup, notify opener and close
         try {
           if (window.opener && !window.opener.closed) {
@@ -58,6 +103,14 @@ function CallbackInner() {
         // Fallback: navigate normally if not a popup
         setTimeout(() => {
           if (!isMounted) return;
+          // Prefer returning to pricing if a pending action was set
+          try {
+            const hadPending = !!sessionStorage.getItem("nb_pricing_pending");
+            if (hadPending) {
+              router.replace("/pricing");
+              return;
+            }
+          } catch {}
           router.replace("/");
         }, 250);
       } catch (e) {
