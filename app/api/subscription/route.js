@@ -35,24 +35,55 @@ export async function POST(req) {
     const body = await req.json().catch(() => ({}));
     const { success_url, cancel_url, priceId: bodyPriceId, plan } = body || {};
 
-    // Resolve priceId: prefer explicit priceId, then by plan env, else default env
+    // Resolve a usable priceId; accept product ids by looking up default price
+    const stripe = new Stripe(secret);
     let priceId = typeof bodyPriceId === 'string' && bodyPriceId ? bodyPriceId : '';
     if (!priceId && typeof plan === 'string' && plan) {
       const key = plan.toUpperCase();
-      const envKey = `STRIPE_PRICE_ID_${key}`; // e.g., STRIPE_PRICE_ID_BASIC
-      priceId = process.env[envKey] || '';
+      const envPriceKey = `STRIPE_PRICE_ID_${key}`; // e.g., STRIPE_PRICE_ID_BASIC
+      priceId = process.env[envPriceKey] || '';
+      if (!priceId) {
+        const envProductKey = `STRIPE_PRODUCT_ID_${key}`; // e.g., STRIPE_PRODUCT_ID_BASIC
+        const productId = process.env[envProductKey] || '';
+        if (productId) {
+          try {
+            const product = await stripe.products.retrieve(productId);
+            const def = product?.default_price;
+            if (typeof def === 'string' && def.startsWith('price_')) priceId = def;
+            else if (def && typeof def === 'object' && def.id) priceId = def.id;
+            if (!priceId) {
+              const prices = await stripe.prices.list({ product: productId, active: true, limit: 1 });
+              if (prices?.data?.length) priceId = prices.data[0].id;
+            }
+          } catch {}
+        }
+      }
     }
     if (!priceId) {
       priceId = process.env.STRIPE_PRICE_ID_SUB || '';
+      if (!priceId) {
+        const productId = process.env.STRIPE_PRODUCT_ID_SUB || '';
+        if (productId) {
+          try {
+            const product = await stripe.products.retrieve(productId);
+            const def = product?.default_price;
+            if (typeof def === 'string' && def.startsWith('price_')) priceId = def;
+            else if (def && typeof def === 'object' && def.id) priceId = def.id;
+            if (!priceId) {
+              const prices = await stripe.prices.list({ product: productId, active: true, limit: 1 });
+              if (prices?.data?.length) priceId = prices.data[0].id;
+            }
+          } catch {}
+        }
+      }
     }
     if (!priceId) {
       return NextResponse.json(
-        { ok: false, error: 'Missing Stripe price ID. Provide body.priceId or set STRIPE_PRICE_ID_SUB (or STRIPE_PRICE_ID_{PLAN}).' },
+        { ok: false, error: 'Missing Stripe price. Provide priceId, STRIPE_PRICE_ID_*, or STRIPE_PRODUCT_ID_* with default price.' },
         { status: 500 }
       );
     }
 
-    const stripe = new Stripe(secret);
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
