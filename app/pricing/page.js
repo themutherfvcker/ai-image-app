@@ -1,14 +1,53 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { getSupabase } from "@/lib/supabaseClient"
 import UserNav from "@/app/components/UserNav"
 import Link from "next/link"
+import SignInModal from "@/app/components/SignInModal"
 
 export default function PricingPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [mode, setMode] = useState("subscription") // "credits" | "subscription"
+  const [showSignIn, setShowSignIn] = useState(false)
+
+  async function createSubscription(planKey) {
+    const supabase = getSupabase()
+    const { data: { session } } = await supabase.auth.getSession()
+    const authHeaders = { "Content-Type": "application/json" }
+    if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`
+    const r = await fetch("/api/subscription", {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({
+        success_url: `${location.origin}/success`,
+        cancel_url: `${location.origin}/cancel`,
+        plan: planKey ? String(planKey || "").toUpperCase() : undefined,
+      }),
+    })
+    const j = await r.json()
+    if (!r.ok || !j?.url) throw new Error(j?.error || `HTTP ${r.status}`)
+    window.location.href = j.url
+  }
+
+  async function createCheckout() {
+    const supabase = getSupabase()
+    const { data: { session } } = await supabase.auth.getSession()
+    const authHeaders = { "Content-Type": "application/json" }
+    if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`
+    const r = await fetch("/api/checkout", {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({
+        success_url: `${location.origin}/success`,
+        cancel_url: `${location.origin}/cancel`,
+      }),
+    })
+    const j = await r.json()
+    if (!r.ok || !j?.url) throw new Error(j?.error || `HTTP ${r.status}`)
+    window.location.href = j.url
+  }
 
   async function onSubscribe() {
     setLoading(true)
@@ -16,21 +55,12 @@ export default function PricingPage() {
     try {
       const supabase = getSupabase()
       const { data: { session } } = await supabase.auth.getSession()
-      const authHeaders = { "Content-Type": "application/json" }
-      if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`
-      const r = await fetch("/api/subscription", {
-        method: "POST",
-        headers: authHeaders,
-        body: JSON.stringify({
-          success_url: `${location.origin}/success`,
-          cancel_url: `${location.origin}/cancel`,
-        }),
-      })
-      const j = await r.json()
-      if (!r.ok || !j?.url) {
-        throw new Error(j?.error || `HTTP ${r.status}`)
+      if (!session) {
+        try { sessionStorage.setItem("nb_pricing_pending", JSON.stringify({ action: "subscription" })) } catch {}
+        setShowSignIn(true)
+        return
       }
-      window.location.href = j.url
+      await createSubscription()
     } catch (e) {
       setError(e.message || "Checkout failed")
     } finally {
@@ -44,21 +74,12 @@ export default function PricingPage() {
     try {
       const supabase = getSupabase()
       const { data: { session } } = await supabase.auth.getSession()
-      const authHeaders = { "Content-Type": "application/json" }
-      if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`
-      const r = await fetch("/api/checkout", {
-        method: "POST",
-        headers: authHeaders,
-        body: JSON.stringify({
-          success_url: `${location.origin}/success`,
-          cancel_url: `${location.origin}/cancel`,
-        }),
-      })
-      const j = await r.json()
-      if (!r.ok || !j?.url) {
-        throw new Error(j?.error || `HTTP ${r.status}`)
+      if (!session) {
+        try { sessionStorage.setItem("nb_pricing_pending", JSON.stringify({ action: "credits" })) } catch {}
+        setShowSignIn(true)
+        return
       }
-      window.location.href = j.url
+      await createCheckout()
     } catch (e) {
       setError(e.message || "Checkout failed")
     } finally {
@@ -72,28 +93,51 @@ export default function PricingPage() {
     try {
       const supabase = getSupabase()
       const { data: { session } } = await supabase.auth.getSession()
-      const authHeaders = { "Content-Type": "application/json" }
-      if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`
-      const r = await fetch("/api/subscription", {
-        method: "POST",
-        headers: authHeaders,
-        body: JSON.stringify({
-          success_url: `${location.origin}/success`,
-          cancel_url: `${location.origin}/cancel`,
-          plan: String(planKey || "").toUpperCase(),
-        }),
-      })
-      const j = await r.json()
-      if (!r.ok || !j?.url) {
-        throw new Error(j?.error || `HTTP ${r.status}`)
+      if (!session) {
+        try { sessionStorage.setItem("nb_pricing_pending", JSON.stringify({ action: "subscription", plan: String(planKey || "").toUpperCase() })) } catch {}
+        setShowSignIn(true)
+        return
       }
-      window.location.href = j.url
+      await createSubscription(planKey)
     } catch (e) {
       setError(e.message || "Checkout failed")
     } finally {
       setLoading(false)
     }
   }
+
+  // Resume pending action after authentication
+  useEffect(() => {
+    const supabase = getSupabase()
+    const resume = async () => {
+      try {
+        const raw = sessionStorage.getItem("nb_pricing_pending")
+        if (!raw) return
+        const pending = JSON.parse(raw)
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) return
+        sessionStorage.removeItem("nb_pricing_pending")
+        setShowSignIn(false)
+        setLoading(true)
+        if (pending?.action === "subscription") {
+          await createSubscription(pending?.plan)
+        } else if (pending?.action === "credits") {
+          await createCheckout()
+        }
+      } catch {
+        // ignore
+      } finally {
+        setLoading(false)
+      }
+    }
+    // On mount (if redirected back authed)
+    resume()
+    // On auth state change (popup-based auth)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (session?.user) resume()
+    })
+    return () => subscription?.unsubscribe()
+  }, [])
 
   return (
     <main className="min-h-screen bg-gray-50">
