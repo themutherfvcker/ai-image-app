@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Navbar from "@/app/components/Navbar"
 
 export default function AccountPage() {
   const [loading, setLoading] = useState(true)
@@ -56,20 +57,7 @@ export default function AccountPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="border-b bg-white sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img className="h-8 w-auto" src="/banana-decoration.png" alt="Nano Banana" />
-            <Link href="/" className="text-lg font-semibold text-gray-900">Nano Banana</Link>
-            <span className="text-gray-300">/</span>
-            <span className="text-gray-600">Account</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link href="/generator" className="text-sm text-gray-700 hover:text-gray-900">Generator</Link>
-            <Link href="/pricing" className="text-sm text-gray-700 hover:text-gray-900">Pricing</Link>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Profile & Billing */}
