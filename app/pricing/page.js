@@ -5,6 +5,7 @@ import { getSupabase } from "@/lib/supabaseClient"
 import UserNav from "@/app/components/UserNav"
 import Link from "next/link"
 import SignInModal from "@/app/components/SignInModal"
+import JsonLd from "../components/JsonLd"
 
 export default function PricingPage() {
   const [loading, setLoading] = useState(false)
@@ -141,6 +142,52 @@ export default function PricingPage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
+      {/* JSON-LD: WebApplication + WebPage (Pricing) */}
+      <JsonLd
+        id="app-jsonld-pricing"
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "@id": "https://www.nanobanana-ai.dev/#app",
+          "name": "Nano Banana – AI Image Editor",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "url": "https://www.nanobanana-ai.dev/",
+          "publisher": { "@id": "https://www.nanobanana-ai.dev/#org" },
+          "offers": [
+            {
+              "@type": "Offer",
+              "@id": "https://www.nanobanana-ai.dev/pricing/#offer-credits-100",
+              "url": "https://www.nanobanana-ai.dev/pricing",
+              "name": "100 credits",
+              "price": "5.00",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            },
+            {
+              "@type": "Offer",
+              "@id": "https://www.nanobanana-ai.dev/pricing/#offer-sub-monthly",
+              "url": "https://www.nanobanana-ai.dev/pricing",
+              "name": "Monthly subscription",
+              "price": "5.00",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            }
+          ]
+        }}
+      />
+      <JsonLd
+        id="webpage-jsonld-pricing"
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://www.nanobanana-ai.dev/pricing/#webpage",
+          "url": "https://www.nanobanana-ai.dev/pricing",
+          "name": "Pricing – Nano Banana",
+          "isPartOf": { "@id": "https://www.nanobanana-ai.dev/#org" },
+          "about": { "@id": "https://www.nanobanana-ai.dev/#app" }
+        }}
+      />
       {/* NAV (match homepage) */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
 import Navbar from "@/app/components/Navbar";
+import JsonLd from "@/app/components/JsonLd";
 
 function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
   const containerRef = useRef(null);
@@ -846,6 +847,52 @@ export default function HomePage() {
 
   return (
     <>
+      {/* JSON-LD: WebApplication + WebPage (Home) */}
+      <JsonLd
+        id="app-jsonld-home"
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "@id": "https://www.nanobanana-ai.dev/#app",
+          "name": "Nano Banana – AI Image Editor",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "url": "https://www.nanobanana-ai.dev/",
+          "publisher": { "@id": "https://www.nanobanana-ai.dev/#org" },
+          "offers": [
+            {
+              "@type": "Offer",
+              "@id": "https://www.nanobanana-ai.dev/#offer-credits-100",
+              "url": "https://www.nanobanana-ai.dev/",
+              "name": "100 credits",
+              "price": "5.00",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            },
+            {
+              "@type": "Offer",
+              "@id": "https://www.nanobanana-ai.dev/#offer-sub-monthly",
+              "url": "https://www.nanobanana-ai.dev/",
+              "name": "Monthly subscription",
+              "price": "5.00",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            }
+          ]
+        }}
+      />
+      <JsonLd
+        id="webpage-jsonld-home"
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://www.nanobanana-ai.dev/#webpage",
+          "url": "https://www.nanobanana-ai.dev/",
+          "name": "Nano Banana – Text-Based AI Photo Editor · Change Anything. Keep What Matters.",
+          "isPartOf": { "@id": "https://www.nanobanana-ai.dev/#org" },
+          "about": { "@id": "https://www.nanobanana-ai.dev/#app" }
+        }}
+      />
       {/* Load only the minimal scripts after interactive */}
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" strategy="afterInteractive" />
       <Script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js" strategy="afterInteractive" />
