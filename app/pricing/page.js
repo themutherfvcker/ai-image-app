@@ -474,6 +474,8 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
+
+      <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </main>
   )
 }
