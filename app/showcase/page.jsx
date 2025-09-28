@@ -1,3 +1,5 @@
+import Navbar from "@/app/components/Navbar"
+
 export default function ShowcasePage() {
   const items = [
     { slug: 'remove-background', title: 'Remove Background', desc: 'Cut subjects cleanly while preserving edges and hair.' },
@@ -8,18 +10,28 @@ export default function ShowcasePage() {
     { slug: 'style-transfer', title: 'Artistic Style Transfer', desc: 'Render photos as painterly artworks.' },
   ]
   return (
-    <main className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">Showcase</h1>
-      <p className="text-gray-600 mt-1">Before/after examples with prompts. Click any to try in the editor.</p>
-      <ul className="mt-6 space-y-3">
-        {items.map(it => (
-          <li key={it.slug}>
-            <a className="text-yellow-700 hover:text-yellow-800 underline" href={`/showcase/${it.slug}`}>{it.title}</a>
-            <div className="text-sm text-gray-600">{it.desc}</div>
-          </li>
-        ))}
-      </ul>
-    </main>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="lg:text-center">
+          <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Lightning-Fast Nano Banana AI Creations</h2>
+          <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Nano Banana Showcase</p>
+          <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Before/after examples with prompts. Click any to try in the editor.</p>
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map(it => (
+            <a key={it.slug} href={`/showcase/${it.slug}`} className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition">
+              <div className="px-4 py-5 sm:p-6">
+                <h3 className="text-lg font-medium text-gray-900">{it.title}</h3>
+                <p className="mt-2 text-sm text-gray-600">{it.desc}</p>
+                <span className="mt-4 inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50">View example</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </main>
+    </div>
   )
 }
 
