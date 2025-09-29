@@ -560,11 +560,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
               <>Sign in to start generating images</>
             )}
           </p>
-          <div className="mt-2 flex justify-center">
-            <Link href="/pricing" className="inline-flex items-center justify-center px-4 py-3 text-sm font-medium rounded-md bg-yellow-600 text-white hover:bg-yellow-700">
-              See Pricing
-            </Link>
-          </div>
+          
         </div>
 
         <div className="mt-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">

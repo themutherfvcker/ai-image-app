@@ -210,11 +210,6 @@ export default function PricingSection() {
         )}
 
         <p className="mt-8 text-sm text-gray-500">Taxes/VAT may apply at checkout. Payments are processed by Stripe.</p>
-
-        <div className="mt-8 flex gap-3 justify-center">
-          <button onClick={onBuy} disabled={loading} className="inline-flex items-center px-6 py-3 rounded-md text-yellow-700 bg-white hover:bg-gray-50 disabled:opacity-60">Buy 100 credits</button>
-          <button onClick={onSubscribe} disabled={loading} className="inline-flex items-center px-6 py-3 rounded-md text-white bg-gray-900 hover:bg-black disabled:opacity-60">Subscribe</button>
-        </div>
       </div>
       <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </section>
