@@ -59,35 +59,15 @@ export async function GET() {
     return NextResponse.json({ ok: true, uid, balance: user.credits })
   }
 
-  // Case 2: Authenticated -> unify identity (idempotent)
-  const anonId = cookieUid && cookieUid !== canonicalId ? cookieUid : ''
-
+  // Case 2: Authenticated -> set canonical cookie and return canonical balance.
+  // SAFETY: Do NOT auto-merge anon data to avoid cross-user contamination.
+  // If desired, a deliberate import flow can be implemented later.
   const out = await prisma.$transaction(async (tx) => {
-    // Ensure canonical user exists
     let canonical = await tx.user.findUnique({ where: { id: canonicalId } })
     if (!canonical) {
       canonical = await tx.user.create({ data: { id: canonicalId, credits: 25 } })
       await createLedger(tx, { userId: canonicalId, amount: 25, reason: 'signup_bonus' })
     }
-
-    if (anonId) {
-      const anon = await tx.user.findUnique({ where: { id: anonId } })
-      if (anon && anon.id !== canonical.id) {
-        // Repoint ledgers and jobs
-        try { await tx.creditLedger.updateMany({ where: { userId: anon.id }, data: { userId: canonical.id } }) } catch {}
-        try { await tx.generationJob.updateMany({ where: { userId: anon.id }, data: { userId: canonical.id } }) } catch {}
-
-        // Move credits once; idempotent because anon.credits set to 0 below
-        const delta = Math.max(0, anon.credits || 0)
-        if (delta > 0) {
-          await tx.user.update({ where: { id: canonical.id }, data: { credits: { increment: delta } } })
-          await createLedger(tx, { userId: canonical.id, delta, reason: 'merge:anon', ref: anon.id })
-        }
-        // Zero the anon record to avoid double-counting; keep row for history
-        await tx.user.update({ where: { id: anon.id }, data: { credits: 0 } })
-      }
-    }
-
     const fresh = await tx.user.findUnique({ where: { id: canonical.id } })
     return { uid: canonical.id, balance: fresh?.credits ?? 0 }
   })
