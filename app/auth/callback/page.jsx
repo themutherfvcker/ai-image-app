@@ -107,7 +107,13 @@ function CallbackInner() {
           try {
             const hadPending = !!sessionStorage.getItem("nb_pricing_pending");
             if (hadPending) {
-              router.replace("/pricing");
+              router.replace("/#pricing");
+              return;
+            }
+            const redir = sessionStorage.getItem('nb_redirect_after_auth')
+            if (redir) {
+              sessionStorage.removeItem('nb_redirect_after_auth')
+              router.replace(redir)
               return;
             }
           } catch {}

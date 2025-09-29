@@ -132,7 +132,10 @@ export default function AccountPage() {
             <p className="mt-2 text-gray-600">Check your credits, history, and subscription details.</p>
             <div className="mt-6">
               <button
-                onClick={() => setShowSignIn(true)}
+                onClick={() => {
+                  try { sessionStorage.setItem('nb_redirect_after_auth', '/account') } catch {}
+                  setShowSignIn(true)
+                }}
                 className="inline-flex items-center px-4 py-2 rounded-md text-white bg-yellow-600 hover:bg-yellow-700"
               >
                 Sign in
