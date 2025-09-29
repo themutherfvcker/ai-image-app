@@ -1,5 +1,5 @@
 export async function GET() {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "https://nanobanana-ai.dev"
+  const base = process.env.NEXT_PUBLIC_SITE_URL || "https://www.nanobanana-ai.dev"
   const body = [
     "User-agent: *",
     "Allow: /",
