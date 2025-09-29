@@ -46,6 +46,16 @@ function CallbackInner() {
           return;
         }
 
+        // If a redirect target was explicitly requested, honor it first
+        try {
+          const redir = sessionStorage.getItem('nb_redirect_after_auth')
+          if (redir) {
+            sessionStorage.removeItem('nb_redirect_after_auth')
+            router.replace(redir)
+            return;
+          }
+        } catch {}
+
         // Attempt to resume a pending pricing action (checkout/subscription)
         try {
           const pendingRaw = sessionStorage.getItem("nb_pricing_pending");
@@ -87,6 +97,8 @@ function CallbackInner() {
                   return;
                 }
               }
+              // If we couldn't start checkout, fall through to show pricing
+              sessionStorage.removeItem("nb_pricing_pending");
             }
           }
         } catch {}
@@ -108,12 +120,6 @@ function CallbackInner() {
             const hadPending = !!sessionStorage.getItem("nb_pricing_pending");
             if (hadPending) {
               router.replace("/#pricing");
-              return;
-            }
-            const redir = sessionStorage.getItem('nb_redirect_after_auth')
-            if (redir) {
-              sessionStorage.removeItem('nb_redirect_after_auth')
-              router.replace(redir)
               return;
             }
           } catch {}
