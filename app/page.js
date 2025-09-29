@@ -911,9 +911,8 @@ export default function HomePage() {
         }}
       />
       {/* Load only the minimal scripts after interactive */}
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" strategy="afterInteractive" />
-      <Script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js" strategy="afterInteractive" />
-      <Script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" strategy="afterInteractive" />
+      <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" strategy="lazyOnload" />
+      <Script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js" strategy="lazyOnload" />
 
       {/* Minimal custom styles for hero + banana float */}
       <style>{`
@@ -949,6 +948,11 @@ export default function HomePage() {
                 className="banana-float absolute inset-x-0 bottom-0 mx-auto w-64 sm:w-80 lg:w-[520px] lg:bottom-[-24px] lg:right-0 lg:left-auto lg:mx-0"
                 src="https://nanobanana.ai/_next/image?url=%2Fbanana-decoration.png&w=640&q=75"
                 alt="Banana decoration"
+                width="520"
+                height="520"
+                fetchpriority="low"
+                decoding="async"
+                loading="lazy"
               />
             </div>
           </div>
@@ -985,7 +989,42 @@ export default function HomePage() {
                 <div className="px-4 py-5 sm:p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 bg-yellow-100 rounded-md p-3">
-                      <i data-feather={icon} className="h-6 w-6 text-yellow-600" />
+                      {icon === "message-square" && (
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V5a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+                        </svg>
+                      )}
+                      {icon === "user" && (
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                      )}
+                      {icon === "image" && (
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                          <circle cx="8.5" cy="8.5" r="1.5" />
+                          <path d="M21 15l-5-5L5 21" />
+                        </svg>
+                      )}
+                      {icon === "zap" && (
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                        </svg>
+                      )}
+                      {icon === "layers" && (
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                          <polyline points="2 17 12 22 22 17" />
+                          <polyline points="2 12 12 17 22 12" />
+                        </svg>
+                      )}
+                      {icon === "award" && (
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="8" r="7" />
+                          <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.11" />
+                        </svg>
+                      )}
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <h3 className="text-lg font-medium text-gray-900">{title}</h3>
@@ -1012,7 +1051,7 @@ export default function HomePage() {
             {[1, 2, 3, 4].map((n) => (
               <div key={n} className="bg-white overflow-hidden shadow rounded-lg">
                 <div className="px-4 py-5 sm:p-6">
-                  <img className="w-full h-auto object-cover rounded-md" src={`https://picsum.photos/seed/nb${n}/640/360`} alt={`Showcase ${n}`} />
+                  <img className="w-full h-auto object-cover rounded-md" src={`https://picsum.photos/seed/nb${n}/640/360`} alt={`Showcase ${n}`} width="640" height="360" loading="lazy" decoding="async" />
                   <h3 className="mt-4 text-lg font-medium text-gray-900">Sample {n}</h3>
                   <p className="mt-1 text-sm text-gray-500">Generated with the Nano Banana editor.</p>
                 </div>
@@ -1049,7 +1088,7 @@ export default function HomePage() {
               <div key={name} className="bg-white overflow-hidden shadow rounded-lg">
                 <div className="px-4 py-5 sm:p-6">
                   <div className="flex items-center">
-                    <img className="h-10 w-10 rounded-full" src={avatar} alt={name} />
+                    <img className="h-10 w-10 rounded-full" src={avatar} alt={name} width="40" height="40" loading="lazy" decoding="async" />
                     <div className="ml-4">
                       <h3 className="text-lg font-medium text-gray-900">{name}</h3>
                       <p className="text-sm text-gray-500">{role}</p>
