@@ -9,6 +9,7 @@ import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
 import Navbar from "@/app/components/Navbar";
 import JsonLd from "@/app/components/JsonLd";
+import PricingSection from "@/app/components/PricingSection";
 
 function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
   const containerRef = useRef(null);
@@ -1047,6 +1048,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* PRICING (moved before FAQ) */}
+      <PricingSection />
 
       {/* FAQ */}
       <section id="faq" className="py-12 bg-gray-50">
