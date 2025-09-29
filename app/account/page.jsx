@@ -10,6 +10,10 @@ export default function AccountPage() {
   const [plan, setPlan] = useState("—")
   const [ledgers, setLedgers] = useState([])
   const [jobs, setJobs] = useState([])
+  const [pageL, setPageL] = useState(1)
+  const [hasMoreL, setHasMoreL] = useState(false)
+  const [pageJ, setPageJ] = useState(1)
+  const [hasMoreJ, setHasMoreJ] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -33,8 +37,8 @@ export default function AccountPage() {
         // Normalize cookie to canonical id and load data for auth user only
         await fetch("/api/session", { cache: "no-store", headers })
         const [ledgerRes, jobsRes] = await Promise.all([
-          fetch("/api/ledger", { cache: "no-store", headers }),
-          fetch("/api/jobs", { cache: "no-store", headers }),
+          fetch(`/api/ledger?page=1&pageSize=10`, { cache: "no-store", headers }),
+          fetch(`/api/jobs?page=1&pageSize=12`, { cache: "no-store", headers }),
         ])
         const lj = await ledgerRes.json()
         const jj = await jobsRes.json()
@@ -42,7 +46,11 @@ export default function AccountPage() {
         setBalance(lj.user?.credits ?? null)
         setPlan(lj.user?.plan || "free")
         setLedgers(lj.ledgers || [])
-        if (jobsRes.ok && jj?.ok) setJobs(jj.jobs || [])
+        setPageL(1); setHasMoreL(!!lj?.hasMore)
+        if (jobsRes.ok && jj?.ok) {
+          setJobs(jj.jobs || [])
+          setPageJ(1); setHasMoreJ(!!jj?.hasMore)
+        }
       } catch (e) {
         setErr(e?.message || "Failed to load account")
       } finally {
@@ -50,6 +58,38 @@ export default function AccountPage() {
       }
     })()
   }, [])
+
+  async function loadMoreLedgers() {
+    try {
+      const { getSupabase } = await import("@/lib/supabaseClient")
+      const supabase = getSupabase()
+      const { data: { session } } = await supabase.auth.getSession()
+      const headers = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}
+      const next = pageL + 1
+      const r = await fetch(`/api/ledger?page=${next}&pageSize=10`, { cache: "no-store", headers })
+      const j = await r.json()
+      if (r.ok && j?.ok) {
+        setLedgers(prev => [...prev, ...(j.ledgers || [])])
+        setPageL(next); setHasMoreL(!!j?.hasMore)
+      }
+    } catch {}
+  }
+
+  async function loadMoreJobs() {
+    try {
+      const { getSupabase } = await import("@/lib/supabaseClient")
+      const supabase = getSupabase()
+      const { data: { session } } = await supabase.auth.getSession()
+      const headers = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}
+      const next = pageJ + 1
+      const r = await fetch(`/api/jobs?page=${next}&pageSize=12`, { cache: "no-store", headers })
+      const j = await r.json()
+      if (r.ok && j?.ok) {
+        setJobs(prev => [...prev, ...(j.jobs || [])])
+        setPageJ(next); setHasMoreJ(!!j?.hasMore)
+      }
+    } catch {}
+  }
 
   async function goCheckout() {
     try {
@@ -85,7 +125,10 @@ export default function AccountPage() {
           <div className="bg-white shadow-sm rounded-lg p-5 space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-semibold text-gray-900">Credits</h2>
-              <div className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">{balance ?? "—"}</div>
+              <div className="flex items-center gap-2">
+                <div className={`text-sm px-3 py-1 rounded-full ${typeof balance === 'number' && balance < 5 ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>{balance ?? "—"}</div>
+                <button onClick={() => window.location.reload()} className="text-xs text-gray-600 hover:text-gray-800 underline">Refresh</button>
+              </div>
             </div>
             <div className="flex gap-3">
               <button onClick={goCheckout} className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-yellow-600 text-white hover:bg-yellow-700">Add 100 credits</button>
@@ -95,7 +138,7 @@ export default function AccountPage() {
           </div>
 
           <div className="bg-white shadow-sm rounded-lg p-5">
-            <h2 className="text-base font-semibold text-gray-900">Usage (last 10)</h2>
+            <h2 className="text-base font-semibold text-gray-900">Credit history</h2>
             {ledgers.length === 0 ? (
               <p className="text-sm text-gray-500 mt-2">No usage yet.</p>
             ) : (
@@ -110,6 +153,11 @@ export default function AccountPage() {
                   </li>
                 ))}
               </ul>
+            )}
+            {hasMoreL && (
+              <div className="mt-3">
+                <button onClick={loadMoreLedgers} className="text-sm text-yellow-700 hover:text-yellow-800 underline">Load more</button>
+              </div>
             )}
           </div>
         </section>
@@ -140,6 +188,11 @@ export default function AccountPage() {
                     <div className="mt-2 text-xs text-gray-500">{j.latencyMs} ms • {j.success ? 'ok' : 'failed'}</div>
                   </div>
                 ))}
+              </div>
+            )}
+            {hasMoreJ && (
+              <div className="mt-3">
+                <button onClick={loadMoreJobs} className="text-sm text-yellow-700 hover:text-yellow-800 underline">Load more</button>
               </div>
             )}
           </div>
