@@ -158,7 +158,6 @@ export default function AccountPage() {
         <section className="lg:col-span-4 space-y-6">
           <div className="bg-white shadow-sm rounded-lg p-5">
             <h2 className="text-base font-semibold text-gray-900">Profile</h2>
-            <p className="text-sm text-gray-600 mt-1">Signed in via uid cookie session.</p>
             <div className="mt-3 text-sm text-gray-700 flex items-center gap-2">
               <span className="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">Plan: {plan}</span>
             </div>
