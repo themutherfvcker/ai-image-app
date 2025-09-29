@@ -22,7 +22,10 @@ export default function UserNav() {
     if (!user) return
     ;(async () => {
       try {
-        const r = await fetch("/api/session", { cache: "no-store" })
+        const supabase = getSupabase()
+        const { data: { session } } = await supabase.auth.getSession()
+        const headers = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}
+        const r = await fetch("/api/session", { cache: "no-store", headers })
         const j = await r.json()
         if (typeof j?.balance === "number") setCredits(j.balance)
       } catch {}
