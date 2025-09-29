@@ -71,7 +71,7 @@ async function handleCheckout(req) {
           quantity: 1,
         },
       ],
-      metadata: { uid, credits: String(credits) },
+      metadata: { userId: uid, credits: String(credits) },
       client_reference_id: uid,
     });
 

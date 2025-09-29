@@ -88,7 +88,7 @@ export async function POST(req) {
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: [ { price: priceId, quantity: 1 } ],
-      metadata: { uid },
+      metadata: { userId: uid },
       client_reference_id: uid,
       success_url: success_url || `${origin}/success`,
       cancel_url: cancel_url || `${origin}/cancel`,
