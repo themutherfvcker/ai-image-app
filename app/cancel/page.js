@@ -12,7 +12,7 @@ export default function CancelPage() {
         </p>
         <div className="mt-6 flex gap-3 justify-center">
           <Link
-            href="/pricing"
+            href="/#pricing"
             className="inline-flex items-center px-4 py-3 rounded-lg text-gray-900 bg-gray-100 hover:bg-gray-200"
           >
             Back to Pricing

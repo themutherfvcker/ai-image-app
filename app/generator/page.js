@@ -334,7 +334,7 @@ export default function GeneratorPage() {
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
                 <Link href="/generator" className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-yellow-500">Image Editor</Link>
                 <Link href="/showcase" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Showcase</Link>
-                <Link href="/pricing" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Pricing</Link>
+                <Link href="/#pricing" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Pricing</Link>
                 <Link href="/developers" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">API</Link>
                 <a href="#faq" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">FAQ</a>
                 <Link href="/toolbox" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Toolbox</Link>

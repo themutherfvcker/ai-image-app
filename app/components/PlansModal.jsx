@@ -76,7 +76,7 @@ export default function PlansModal({ open, onClose }) {
 
           <div className="pt-2">
             Prefer to compare plans first?{" "}
-            <a className="text-yellow-700 hover:text-yellow-800 underline" href="/pricing">See pricing</a>
+            <a className="text-yellow-700 hover:text-yellow-800 underline" href="/#pricing">See pricing</a>
           </div>
         </div>
       </div>

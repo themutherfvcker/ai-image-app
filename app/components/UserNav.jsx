@@ -64,7 +64,7 @@ export default function UserNav() {
       {menuOpen && (
         <div className="absolute right-0 mt-2 w-44 bg-white border rounded-md shadow-lg py-1 z-50">
           <Link href="/account" className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Account</Link>
-          <Link href="/pricing" className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Buy credits</Link>
+          <Link href="/#pricing" className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Buy credits</Link>
           <button
             className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
             onClick={async () => {
