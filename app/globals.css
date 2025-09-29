@@ -1,5 +1,16 @@
 /* app/globals.css */
 @import "tailwindcss";
 
-:root { --nb-accent: #eab308; }
+:root { --nb-accent: #eab308; --nb-sticky-offset: 64px; }
 html, body { margin: 0; padding: 0; }
+
+/* Offset hash-anchor scroll for sticky header */
+section[id], [id^="pricing"], [id^="generator"], [id^="faq"], [id^="showcase"], [id^="features"] {
+  scroll-margin-top: var(--nb-sticky-offset);
+}
+
+/* Defer rendering work for offscreen sections */
+section[loading="lazy"], .cv-lazy {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 500px;
+}

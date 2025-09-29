@@ -126,7 +126,7 @@ export default function PricingSection() {
   }, [])
 
   return (
-    <section id="pricing" className="bg-white py-12">
+    <section id="pricing" className="bg-white py-12 cv-lazy" loading="lazy">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="lg:text-center">
           <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Plans</h2>

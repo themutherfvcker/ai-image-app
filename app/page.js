@@ -815,28 +815,59 @@ export default function HomePage() {
     }
   }, []);
 
-  // Remove AOS progressive animations and setInterval polling
+  // Lazy-load Vanta when hero enters viewport
   useEffect(() => {
-    if (window.feather) window.feather.replace();
-    if (!vantaInstance.current && window.VANTA && window.THREE && vantaRef.current) {
-      try {
-        vantaInstance.current = window.VANTA.GLOBE({
-          el: vantaRef.current,
-          THREE: window.THREE,
-          mouseControls: true,
-          touchControls: true,
-          gyroControls: false,
-          minHeight: 200.0,
-          minWidth: 200.0,
-          scale: 1.0,
-          scaleMobile: 1.0,
-          color: 0xffc107,
-          backgroundColor: 0xf6d365,
-          size: 0.8,
-        });
-      } catch {}
+    let isDestroyed = false;
+    const target = vantaRef.current;
+    if (!target) return;
+
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.onload = () => resolve();
+        s.onerror = (e) => reject(e);
+        document.head.appendChild(s);
+      });
     }
+
+    async function ensureVanta() {
+      if (window.VANTA && window.THREE) return;
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js');
+    }
+
+    const observer = new IntersectionObserver(async (entries) => {
+      const entry = entries[0];
+      if (!entry?.isIntersecting || isDestroyed) return;
+      observer.disconnect();
+      try {
+        await ensureVanta();
+        if (!isDestroyed && !vantaInstance.current && window.VANTA && window.THREE) {
+          vantaInstance.current = window.VANTA.GLOBE({
+            el: target,
+            THREE: window.THREE,
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.0,
+            minWidth: 200.0,
+            scale: 1.0,
+            scaleMobile: 1.0,
+            color: 0xffc107,
+            backgroundColor: 0xf6d365,
+            size: 0.8,
+          });
+        }
+      } catch {}
+    }, { rootMargin: '200px' });
+
+    observer.observe(target);
     return () => {
+      isDestroyed = true;
+      observer.disconnect();
       if (vantaInstance.current?.destroy) {
         vantaInstance.current.destroy();
         vantaInstance.current = null;
@@ -910,9 +941,7 @@ export default function HomePage() {
           "about": { "@id": "https://www.nanobanana-ai.dev/#app" }
         }}
       />
-      {/* Load only the minimal scripts after interactive */}
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" strategy="lazyOnload" />
-      <Script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js" strategy="lazyOnload" />
+      {/* Vanta/Three are loaded dynamically on intersection */}
 
       {/* Minimal custom styles for hero + banana float */}
       <style>{`
@@ -966,7 +995,7 @@ export default function HomePage() {
       <ExamplesSection />
 
       {/* FEATURES */}
-      <section id="features" className="py-12 bg-white">
+      <section id="features" className="py-12 bg-white cv-lazy" loading="lazy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
             <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Why Choose Nano Banana?</h2>
@@ -1039,7 +1068,7 @@ export default function HomePage() {
       </section>
 
       {/* SHOWCASE */}
-      <section id="showcase" className="py-12 bg-gray-50">
+      <section id="showcase" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
             <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Lightning-Fast Nano Banana AI Creations</h2>
@@ -1071,7 +1100,7 @@ export default function HomePage() {
       </section>
 
       {/* REVIEWS */}
-      <section id="reviews" className="py-12 bg-white" data-aos="fade-up">
+      <section id="reviews" className="py-12 bg-white cv-lazy" data-aos="fade-up" loading="lazy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
             <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Testimonials</h2>
@@ -1106,7 +1135,7 @@ export default function HomePage() {
       <PricingSection />
 
       {/* FAQ */}
-      <section id="faq" className="py-12 bg-gray-50">
+      <section id="faq" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
             <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Help Center</h2>
