@@ -4,6 +4,7 @@ import Link from "next/link"
 import Navbar from "@/app/components/Navbar"
 import SignInModal from "@/app/components/SignInModal"
 import { getSupabase } from "@/lib/supabaseClient"
+import JsonLdRaw from "@/app/components/JsonLdRaw"
 
 export default function AccountPage() {
   const [loading, setLoading] = useState(true)
@@ -126,6 +127,14 @@ export default function AccountPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
+        {/* Breadcrumbs */}
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 text-sm text-gray-600" aria-label="Breadcrumb">
+          <ol className="flex items-center gap-2">
+            <li><Link href="/" className="hover:text-gray-900">Home</Link></li>
+            <li aria-hidden>›</li>
+            <li className="text-gray-900" aria-current="page">Account</li>
+          </ol>
+        </nav>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-white shadow-sm rounded-lg p-8 text-center">
             <h1 className="text-2xl font-bold text-gray-900">Sign in to view your account</h1>
@@ -144,6 +153,18 @@ export default function AccountPage() {
             {err && <div className="mt-4 text-sm text-red-600">{err}</div>}
           </div>
         </main>
+        {/* JSON-LD Breadcrumbs */}
+        <JsonLdRaw
+          id="breadcrumbs-jsonld-account"
+          data={{
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.nanobanana-ai.dev/" },
+              { "@type": "ListItem", "position": 2, "name": "Account", "item": "https://www.nanobanana-ai.dev/account" }
+            ]
+          }}
+        />
         <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
       </div>
     )
@@ -152,6 +173,14 @@ export default function AccountPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+      {/* Breadcrumbs */}
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 text-sm text-gray-600" aria-label="Breadcrumb">
+        <ol className="flex items-center gap-2">
+          <li><Link href="/" className="hover:text-gray-900">Home</Link></li>
+          <li aria-hidden>›</li>
+          <li className="text-gray-900" aria-current="page">Account</li>
+        </ol>
+      </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Profile & Billing */}
@@ -239,6 +268,18 @@ export default function AccountPage() {
           </div>
         </section>
       </main>
+      {/* JSON-LD Breadcrumbs */}
+      <JsonLdRaw
+        id="breadcrumbs-jsonld-account"
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.nanobanana-ai.dev/" },
+            { "@type": "ListItem", "position": 2, "name": "Account", "item": "https://www.nanobanana-ai.dev/account" }
+          ]
+        }}
+      />
       <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </div>
   )
