@@ -46,12 +46,14 @@ function CallbackInner() {
           return;
         }
 
-        // If a redirect target was explicitly requested, honor it first
+        // If a redirect target was explicitly requested in either sessionStorage or the querystring, honor it first
         try {
           const redir = sessionStorage.getItem('nb_redirect_after_auth')
-          if (redir) {
+          const qsNext = searchParams?.get('next') || ''
+          const next = (qsNext && qsNext.startsWith('/')) ? qsNext : (redir || '')
+          if (next) {
             sessionStorage.removeItem('nb_redirect_after_auth')
-            router.replace(redir)
+            router.replace(next)
             return;
           }
         } catch {}

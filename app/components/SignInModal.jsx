@@ -16,9 +16,13 @@ export default function SignInModal({ open, onClose }) {
     setError("")
     const supabase = getSupabase()
     try {
+      let nextPath = ''
+      try { nextPath = sessionStorage.getItem('nb_redirect_after_auth') || '' } catch {}
+      const nextParam = nextPath && nextPath.startsWith('/') ? `?next=${encodeURIComponent(nextPath)}` : ''
+      const redirectTo = `${callbackUrl}${nextParam}`
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: callbackUrl }
+        options: { redirectTo }
       })
       if (error) throw error
       // Browser will redirect; nothing else to do here
@@ -31,9 +35,13 @@ export default function SignInModal({ open, onClose }) {
     e.preventDefault()
     setError("")
     const supabase = getSupabase()
+    let nextPath = ''
+    try { nextPath = sessionStorage.getItem('nb_redirect_after_auth') || '' } catch {}
+    const nextParam = nextPath && nextPath.startsWith('/') ? `?next=${encodeURIComponent(nextPath)}` : ''
+    const emailRedirectTo = `${callbackUrl}${nextParam}`
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: callbackUrl }
+      options: { emailRedirectTo }
     })
     if (error) setError(error.message)
     else setSent(true)
