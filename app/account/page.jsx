@@ -13,16 +13,24 @@ export default function AccountPage() {
 
   useEffect(() => {
     ;(async () => {
+      setLoading(true)
       try {
-        setLoading(true)
-        // Ensure uid cookie and get balance (with auth if available)
-        let headers = {}
-        try {
-          const { getSupabase } = await import("@/lib/supabaseClient")
-          const supabase = getSupabase()
-          const { data: { session } } = await supabase.auth.getSession()
-          if (session?.access_token) headers = { Authorization: `Bearer ${session.access_token}` }
-        } catch {}
+        const { getSupabase } = await import("@/lib/supabaseClient")
+        const supabase = getSupabase()
+        const { data: { session } } = await supabase.auth.getSession()
+        const access = session?.access_token || ""
+        if (!access) {
+          // Not authenticated: do NOT show cookie-based data
+          setErr("Please sign in to view your account.")
+          setLedgers([])
+          setJobs([])
+          setBalance(null)
+          setPlan("free")
+          return
+        }
+
+        const headers = { Authorization: `Bearer ${access}` }
+        // Normalize cookie to canonical id and load data for auth user only
         await fetch("/api/session", { cache: "no-store", headers })
         const [ledgerRes, jobsRes] = await Promise.all([
           fetch("/api/ledger", { cache: "no-store", headers }),
@@ -30,14 +38,11 @@ export default function AccountPage() {
         ])
         const lj = await ledgerRes.json()
         const jj = await jobsRes.json()
-        if (lj?.ok) {
-          setBalance(lj.user?.credits ?? null)
-          setPlan(lj.user?.plan || "free")
-          setLedgers(lj.ledgers || [])
-        } else {
-          throw new Error(lj?.error || "Failed to load ledger")
-        }
-        if (jj?.ok) setJobs(jj.jobs || [])
+        if (!ledgerRes.ok || !lj?.ok) throw new Error(lj?.error || "Failed to load ledger")
+        setBalance(lj.user?.credits ?? null)
+        setPlan(lj.user?.plan || "free")
+        setLedgers(lj.ledgers || [])
+        if (jobsRes.ok && jj?.ok) setJobs(jj.jobs || [])
       } catch (e) {
         setErr(e?.message || "Failed to load account")
       } finally {
