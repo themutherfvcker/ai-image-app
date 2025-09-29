@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Navbar from "@/app/components/Navbar"
+import SignInModal from "@/app/components/SignInModal"
+import { getSupabase } from "@/lib/supabaseClient"
 
 export default function AccountPage() {
   const [loading, setLoading] = useState(true)
@@ -10,16 +12,29 @@ export default function AccountPage() {
   const [plan, setPlan] = useState("—")
   const [ledgers, setLedgers] = useState([])
   const [jobs, setJobs] = useState([])
+  const [isAuthed, setIsAuthed] = useState(false)
+  const [showSignIn, setShowSignIn] = useState(false)
   const [pageL, setPageL] = useState(1)
   const [hasMoreL, setHasMoreL] = useState(false)
   const [pageJ, setPageJ] = useState(1)
   const [hasMoreJ, setHasMoreJ] = useState(false)
 
   useEffect(() => {
+    // Track auth state for rendering
+    try {
+      const supabase = getSupabase()
+      supabase.auth.getUser().then(({ data }) => setIsAuthed(!!data?.user))
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+        setIsAuthed(!!session?.user)
+      })
+      return () => subscription?.unsubscribe()
+    } catch {}
+  }, [])
+
+  useEffect(() => {
     ;(async () => {
       setLoading(true)
       try {
-        const { getSupabase } = await import("@/lib/supabaseClient")
         const supabase = getSupabase()
         const { data: { session } } = await supabase.auth.getSession()
         const access = session?.access_token || ""
@@ -105,6 +120,30 @@ export default function AccountPage() {
       const j = await r.json()
       if (j?.url) window.location.href = j.url
     } catch {}
+  }
+
+  if (!isAuthed) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-white shadow-sm rounded-lg p-8 text-center">
+            <h1 className="text-2xl font-bold text-gray-900">Sign in to view your account</h1>
+            <p className="mt-2 text-gray-600">Check your credits, history, and subscription details.</p>
+            <div className="mt-6">
+              <button
+                onClick={() => setShowSignIn(true)}
+                className="inline-flex items-center px-4 py-2 rounded-md text-white bg-yellow-600 hover:bg-yellow-700"
+              >
+                Sign in
+              </button>
+            </div>
+            {err && <div className="mt-4 text-sm text-red-600">{err}</div>}
+          </div>
+        </main>
+        <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
+      </div>
+    )
   }
 
   return (
@@ -198,6 +237,7 @@ export default function AccountPage() {
           </div>
         </section>
       </main>
+      <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </div>
   )
 }
