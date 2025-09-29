@@ -858,7 +858,45 @@ export default function HomePage() {
           "applicationCategory": "BusinessApplication",
           "operatingSystem": "Web",
           "url": "https://www.nanobanana-ai.dev/",
-          "publisher": { "@id": "https://www.nanobanana-ai.dev/#org" }
+          "publisher": { "@id": "https://www.nanobanana-ai.dev/#org" },
+          "offers": [
+            {
+              "@type": "Offer",
+              "@id": "https://www.nanobanana-ai.dev/#offer-credits-100",
+              "url": "https://www.nanobanana-ai.dev/#pricing",
+              "name": "100 credits",
+              "price": "5.00",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            },
+            {
+              "@type": "Offer",
+              "@id": "https://www.nanobanana-ai.dev/#offer-basic",
+              "url": "https://www.nanobanana-ai.dev/#pricing-basic",
+              "name": "Basic subscription",
+              "price": "8.99",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            },
+            {
+              "@type": "Offer",
+              "@id": "https://www.nanobanana-ai.dev/#offer-standard",
+              "url": "https://www.nanobanana-ai.dev/#pricing-standard",
+              "name": "Standard subscription",
+              "price": "27.99",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            },
+            {
+              "@type": "Offer",
+              "@id": "https://www.nanobanana-ai.dev/#offer-premium",
+              "url": "https://www.nanobanana-ai.dev/#pricing-premium",
+              "name": "Premium subscription",
+              "price": "77.99",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            }
+          ]
         }}
       />
       <JsonLdRaw
