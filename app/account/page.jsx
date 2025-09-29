@@ -1,7 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import Navbar from "@/app/components/Navbar"
 import SignInModal from "@/app/components/SignInModal"
 import { getSupabase } from "@/lib/supabaseClient"
 import JsonLdRaw from "@/app/components/JsonLdRaw"
@@ -126,7 +125,7 @@ export default function AccountPage() {
   if (!isAuthed) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
+        
         {/* Breadcrumbs */}
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 text-sm text-gray-600" aria-label="Breadcrumb">
           <ol className="flex items-center gap-2">
@@ -172,7 +171,7 @@ export default function AccountPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      
       {/* Breadcrumbs */}
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 text-sm text-gray-600" aria-label="Breadcrumb">
         <ol className="flex items-center gap-2">

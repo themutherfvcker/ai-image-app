@@ -7,7 +7,6 @@ import Script from "next/script";
 import Link from "next/link";
 import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
-import Navbar from "@/app/components/Navbar";
 import JsonLdRaw from "@/app/components/JsonLdRaw";
 import PricingSection from "@/app/components/PricingSection";
 
@@ -924,7 +923,6 @@ export default function HomePage() {
         @keyframes nb-float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
       `}</style>
 
-      <Navbar />
 
       {/* HERO */}
       <div className="hero-gradient relative overflow-hidden">

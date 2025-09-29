@@ -1,4 +1,3 @@
-import Navbar from "@/app/components/Navbar"
 
 export default function ShowcasePage() {
   const items = [
@@ -11,7 +10,6 @@ export default function ShowcasePage() {
   ]
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="lg:text-center">
           <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Lightning-Fast Nano Banana AI Creations</h2>

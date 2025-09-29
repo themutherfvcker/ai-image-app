@@ -1,4 +1,3 @@
-import Navbar from "@/app/components/Navbar"
 
 export default function ShowcaseDetail({ params }) {
   const { slug } = params
@@ -33,7 +32,6 @@ export default function ShowcaseDetail({ params }) {
   const url = `/generator?tab=${encodeURIComponent(tab)}&prompt=${encodeURIComponent(data.prompt)}`
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">{data.title}</h1>
         <p className="text-gray-700 mt-4">Prompt</p>
