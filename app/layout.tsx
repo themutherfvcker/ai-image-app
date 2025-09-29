@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import JsonLd from "./components/JsonLd";
+import JsonLdRaw from "./components/JsonLdRaw";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
@@ -60,7 +60,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} antialiased h-full`}>
-        <JsonLd id="org-jsonld" data={ORG_JSONLD} />
+        <JsonLdRaw id="org-jsonld" data={ORG_JSONLD} />
         {children}
       </body>
     </html>

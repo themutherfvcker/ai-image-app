@@ -15,11 +15,18 @@ export default function AccountPage() {
     ;(async () => {
       try {
         setLoading(true)
-        // Ensure uid cookie and get balance
-        await fetch("/api/session", { cache: "no-store" })
+        // Ensure uid cookie and get balance (with auth if available)
+        let headers = {}
+        try {
+          const { getSupabase } = await import("@/lib/supabaseClient")
+          const supabase = getSupabase()
+          const { data: { session } } = await supabase.auth.getSession()
+          if (session?.access_token) headers = { Authorization: `Bearer ${session.access_token}` }
+        } catch {}
+        await fetch("/api/session", { cache: "no-store", headers })
         const [ledgerRes, jobsRes] = await Promise.all([
-          fetch("/api/ledger", { cache: "no-store" }),
-          fetch("/api/jobs", { cache: "no-store" }),
+          fetch("/api/ledger", { cache: "no-store", headers }),
+          fetch("/api/jobs", { cache: "no-store", headers }),
         ])
         const lj = await ledgerRes.json()
         const jj = await jobsRes.json()

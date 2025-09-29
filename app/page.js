@@ -8,6 +8,8 @@ import Link from "next/link";
 import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
 import Navbar from "@/app/components/Navbar";
+import JsonLd from "@/app/components/JsonLd";
+import PricingSection from "@/app/components/PricingSection";
 
 function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
   const containerRef = useRef(null);
@@ -383,8 +385,10 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
 
   const fetchBalance = async () => {
     try {
-      // Pre-seed a uid cookie session and balance server-side to avoid client fetch flash
-      const r = await fetch("/api/session", { cache: "no-store" });
+      const supabase = getSupabase();
+      const { data: { session } } = await supabase.auth.getSession();
+      const headers = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+      const r = await fetch("/api/session", { cache: "no-store", headers });
       const j = await r.json();
       if (typeof j?.balance === "number") setBalance(j.balance);
     } catch (e) {
@@ -558,10 +562,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
               <>Sign in to start generating images</>
             )}
           </p>
-          <div className="mt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 justify-center">
-            <Link href="/pricing" className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-3 text-sm font-medium rounded-md bg-yellow-600 text-white hover:bg-yellow-700">Buy 100 credits ($5)</Link>
-            <button onClick={startSubscription} className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-3 text-sm font-medium rounded-md bg-gray-900 text-white hover:bg-black">Subscribe $5/mo</button>
-          </div>
+          
         </div>
 
         <div className="mt-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -846,6 +847,52 @@ export default function HomePage() {
 
   return (
     <>
+      {/* JSON-LD: WebApplication + WebPage (Home) */}
+      <JsonLd
+        id="app-jsonld-home"
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "@id": "https://www.nanobanana-ai.dev/#app",
+          "name": "Nano Banana – AI Image Editor",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "url": "https://www.nanobanana-ai.dev/",
+          "publisher": { "@id": "https://www.nanobanana-ai.dev/#org" },
+          "offers": [
+            {
+              "@type": "Offer",
+              "@id": "https://www.nanobanana-ai.dev/#offer-credits-100",
+              "url": "https://www.nanobanana-ai.dev/",
+              "name": "100 credits",
+              "price": "5.00",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            },
+            {
+              "@type": "Offer",
+              "@id": "https://www.nanobanana-ai.dev/#offer-sub-monthly",
+              "url": "https://www.nanobanana-ai.dev/",
+              "name": "Monthly subscription",
+              "price": "5.00",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            }
+          ]
+        }}
+      />
+      <JsonLd
+        id="webpage-jsonld-home"
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": "https://www.nanobanana-ai.dev/#webpage",
+          "url": "https://www.nanobanana-ai.dev/",
+          "name": "Nano Banana – Text-Based AI Photo Editor · Change Anything. Keep What Matters.",
+          "isPartOf": { "@id": "https://www.nanobanana-ai.dev/#org" },
+          "about": { "@id": "https://www.nanobanana-ai.dev/#app" }
+        }}
+      />
       {/* Load only the minimal scripts after interactive */}
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" strategy="afterInteractive" />
       <Script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js" strategy="afterInteractive" />
@@ -999,6 +1046,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* PRICING (moved before FAQ) */}
+      <PricingSection />
 
       {/* FAQ */}
       <section id="faq" className="py-12 bg-gray-50">

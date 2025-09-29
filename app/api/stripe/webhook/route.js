@@ -37,7 +37,7 @@ export async function POST(request) {
   try {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object; // Stripe.Checkout.Session
-      const uid = session?.metadata?.uid;
+      const uid = session?.metadata?.userId;
       const credits = Number(session?.metadata?.credits || '0') || 0;
 
       // One-time credits purchase flow remains supported
