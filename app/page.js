@@ -8,7 +8,7 @@ import Link from "next/link";
 import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
 import Navbar from "@/app/components/Navbar";
-import JsonLd from "@/app/components/JsonLd";
+import JsonLdRaw from "@/app/components/JsonLdRaw";
 import PricingSection from "@/app/components/PricingSection";
 
 function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
@@ -848,8 +848,8 @@ export default function HomePage() {
   return (
     <>
       {/* JSON-LD: WebApplication + WebPage (Home) */}
-      <JsonLd
-        id="app-jsonld-home"
+      <JsonLdRaw
+        id="app-jsonld"
         data={{
           "@context": "https://schema.org",
           "@type": "WebApplication",
@@ -858,31 +858,11 @@ export default function HomePage() {
           "applicationCategory": "BusinessApplication",
           "operatingSystem": "Web",
           "url": "https://www.nanobanana-ai.dev/",
-          "publisher": { "@id": "https://www.nanobanana-ai.dev/#org" },
-          "offers": [
-            {
-              "@type": "Offer",
-              "@id": "https://www.nanobanana-ai.dev/#offer-credits-100",
-              "url": "https://www.nanobanana-ai.dev/",
-              "name": "100 credits",
-              "price": "5.00",
-              "priceCurrency": "USD",
-              "availability": "https://schema.org/InStock"
-            },
-            {
-              "@type": "Offer",
-              "@id": "https://www.nanobanana-ai.dev/#offer-sub-monthly",
-              "url": "https://www.nanobanana-ai.dev/",
-              "name": "Monthly subscription",
-              "price": "5.00",
-              "priceCurrency": "USD",
-              "availability": "https://schema.org/InStock"
-            }
-          ]
+          "publisher": { "@id": "https://www.nanobanana-ai.dev/#org" }
         }}
       />
-      <JsonLd
-        id="webpage-jsonld-home"
+      <JsonLdRaw
+        id="webpage-jsonld"
         data={{
           "@context": "https://schema.org",
           "@type": "WebPage",
