@@ -13,6 +13,8 @@ import PricingSection from "@/app/components/PricingSection";
 function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
   const containerRef = useRef(null);
   const [percent, setPercent] = useState(50);
+  const [beforeSource, setBeforeSource] = useState(beforeSrc);
+  const [afterSource, setAfterSource] = useState(afterSrc);
 
   function clamp(v) { return Math.max(0, Math.min(100, v)); }
 
@@ -46,9 +48,25 @@ function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
 
   return (
     <div ref={containerRef} className="relative w-full overflow-hidden rounded-xl shadow before-after" style={{ aspectRatio: "16/9" }}>
-      <img src={beforeSrc} alt={altBefore} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+      <img
+        src={beforeSource}
+        alt={altBefore}
+        loading="lazy"
+        decoding="async"
+        sizes="100vw"
+        className="absolute inset-0 w-full h-full object-cover"
+        onError={() => setBeforeSource("https://picsum.photos/seed/nb-before/1600/900")}
+      />
       <div className="absolute inset-0 overflow-hidden" style={{ width: `${percent}%` }}>
-        <img src={afterSrc} alt={altAfter} loading="lazy" className="w-full h-full object-cover" />
+        <img
+          src={afterSource}
+          alt={altAfter}
+          loading="lazy"
+          decoding="async"
+          sizes="100vw"
+          className="w-full h-full object-cover"
+          onError={() => setAfterSource("https://picsum.photos/seed/nb-after/1600/900")}
+        />
       </div>
       <button
         type="button"
@@ -78,52 +96,46 @@ function ExamplesSection() {
     window.location.href = u.toString()
   }
 
-  const cards = [
+  const EXAMPLE_ITEMS = [
     {
+      slug: "remove-background",
       title: "Remove background",
       desc: "Cut out your subject while preserving edges and hair.",
-      before: "https://picsum.photos/seed/nb-before1/1600/900",
-      after: "https://picsum.photos/seed/nb-after1/1600/900",
       tab: "i2i",
       prompt: "Remove the background and place the subject on a clean white background.",
     },
     {
+      slug: "change-clothing-color",
       title: "Change clothing color",
       desc: "Recolor garments without losing texture.",
-      before: "https://picsum.photos/seed/nb-before2/1600/900",
-      after: "https://picsum.photos/seed/nb-after2/1600/900",
       tab: "i2i",
       prompt: "Change the jacket to a deep navy blue while keeping fabric texture.",
     },
     {
+      slug: "product-ad",
       title: "Product ad",
       desc: "Create lifestyle scenes from a studio shot.",
-      before: "https://picsum.photos/seed/nb-before3/1600/900",
-      after: "https://picsum.photos/seed/nb-after3/1600/900",
       tab: "t2i",
       prompt: "A premium product photo on a marble countertop with soft morning light.",
     },
     {
+      slug: "storyboard",
       title: "Storyboard",
       desc: "Generate sequential images to tell a short visual story.",
-      before: "https://picsum.photos/seed/nb-before4/1600/900",
-      after: "https://picsum.photos/seed/nb-after4/1600/900",
       tab: "t2i",
       prompt: "Four cinematic stills of a traveler boarding a train at sunrise, consistent character and outfit.",
     },
     {
+      slug: "age-transformation",
       title: "Age transformation",
       desc: "See a younger or older version while keeping identity consistent.",
-      before: "https://picsum.photos/seed/nb-before5/1600/900",
-      after: "https://picsum.photos/seed/nb-after5/1600/900",
       tab: "i2i",
       prompt: "Make the person appear about 10 years older, keep skin details and hair line realistic.",
     },
     {
+      slug: "style-transfer",
       title: "Artistic style transfer",
       desc: "Turn photos into painterly images.",
-      before: "https://picsum.photos/seed/nb-before6/1600/900",
-      after: "https://picsum.photos/seed/nb-after6/1600/900",
       tab: "i2i",
       prompt: "Render this image in the style of an oil painting with visible brush strokes and warm tones.",
     },
@@ -138,9 +150,12 @@ function ExamplesSection() {
           <p className="mt-2 text-gray-600">Move the handle to compare. Click “Try this” to prefill the editor.</p>
         </div>
         <div className="grid grid-cols-1 gap-6">
-          {cards.map((c, i) => (
+          {EXAMPLE_ITEMS.map((c, i) => {
+            const before = `/examples/${c.slug}-before.jpg`;
+            const after = `/examples/${c.slug}-after.jpg`;
+            return (
             <div key={i} className="bg-white rounded-xl shadow hover:shadow-lg transition">
-              <BeforeAfter beforeSrc={c.before} afterSrc={c.after} altBefore={`${c.title} before`} altAfter={`${c.title} after`} />
+              <BeforeAfter beforeSrc={before} afterSrc={after} altBefore={`${c.title} before`} altAfter={`${c.title} after`} />
               <div className="p-4">
                 <h3 className="text-lg font-semibold text-gray-900">{c.title}</h3>
                 <p className="text-sm text-gray-600 mt-1">{c.desc}</p>
@@ -149,7 +164,8 @@ function ExamplesSection() {
                 </button>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
