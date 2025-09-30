@@ -959,13 +959,13 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             {/* Copy */}
             <div className="relative z-10">
-              <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+              <h1 className="fluid-h1 tracking-tight font-extrabold text-gray-900">
                 <span className="block">Nano Banana</span>
                 <span className="block">Text-Based AI Photo Editor</span>
                 <span className="block text-white">Change Anything.</span>
                 <span className="block text-white">Keep What Matters.</span>
               </h1>
-              <p className="mt-3 md:mt-4 mb-0 text-base text-gray-800 sm:text-lg md:text-xl max-w-xl">
+              <p className="mt-3 md:mt-4 mb-0 text-base sm:text-lg md:text-xl text-gray-800 max-w-xl">
                 Edit with plain text prompts while preserving faces, identities, and details. Nano Banana makes hard edits feel easy.
               </p>
               
@@ -982,6 +982,7 @@ export default function HomePage() {
                 fetchpriority="low"
                 decoding="async"
                 loading="lazy"
+                sizes="(min-width: 1024px) 520px, (min-width: 640px) 20rem, 16rem"
               />
             </div>
           </div>
@@ -1080,7 +1081,7 @@ export default function HomePage() {
             {[1, 2, 3, 4].map((n) => (
               <div key={n} className="bg-white overflow-hidden shadow rounded-lg">
                 <div className="px-4 py-5 sm:p-6">
-                  <img className="w-full h-auto object-cover rounded-md" src={`https://picsum.photos/seed/nb${n}/640/360`} alt={`Showcase ${n}`} width="640" height="360" loading="lazy" decoding="async" />
+                  <img className="w-full h-auto object-cover rounded-md" src={`https://picsum.photos/seed/nb${n}/640/360`} alt={`Showcase ${n}`} width="640" height="360" loading="lazy" decoding="async" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
                   <h3 className="mt-4 text-lg font-medium text-gray-900">Sample {n}</h3>
                   <p className="mt-1 text-sm text-gray-500">Generated with the Nano Banana editor.</p>
                 </div>

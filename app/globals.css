@@ -14,3 +14,20 @@ section[loading="lazy"], .cv-lazy {
   content-visibility: auto;
   contain-intrinsic-size: 1px 500px;
 }
+
+/* Respect iOS/Android safe areas for overlays/drawers/footer */
+.safe-area {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Fluid typography helpers for headings */
+.fluid-h1 {
+  font-size: clamp(2rem, 6vw, 3.75rem);
+  line-height: 1.1;
+}
+.fluid-h2 {
+  font-size: clamp(1.25rem, 3.5vw, 2rem);
+  line-height: 1.25;
+}

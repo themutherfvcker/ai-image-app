@@ -11,6 +11,12 @@ export const metadata: Metadata = {
   description: "Edit images with plain-English prompts. Preserve faces, identity and scene while changing anything else. Try free.",
   metadataBase: new URL("https://www.nanobanana-ai.dev"),
   alternates: { canonical: "/" },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    viewportFit: "cover",
+  },
   openGraph: {
     type: "website",
     url: "https://www.nanobanana-ai.dev/",
@@ -69,7 +75,7 @@ export default function RootLayout({
           }) }}
         />
       </head>
-      <body className={`${inter.className} antialiased h-full`}>
+      <body className={`${inter.className} antialiased h-full safe-area`}>
         <JsonLdRaw id="org-jsonld" data={ORG_JSONLD} />
         <Navbar />
         {children}
