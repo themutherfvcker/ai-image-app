@@ -133,7 +133,7 @@ function ExamplesSection() {
     <section className="py-12 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="lg:text-center mb-8">
-          <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">See real Nano Banana edits</h2>
+          <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">See real Nano Banana edits</h2>
           <p className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">Nano Banana - Before and after examples</p>
           <p className="mt-2 text-gray-600">Move the handle to compare. Click “Try this” to prefill the editor.</p>
         </div>
@@ -552,7 +552,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
         {/* FAQ schema for the homepage FAQ */}
         <JsonLdRaw id="faq-jsonld" data={FAQ_JSONLD} />
         <div className="lg:text-center">
-          <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">AI Image Editor</h2>
+          <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">AI Image Editor</h2>
           <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Try the Nano Banana Editor</p>
           <p className="mt-4 max-w-2xl text-lg sm:text-xl text-gray-600 lg:mx-auto">
             {isAuthed ? (
@@ -998,7 +998,7 @@ export default function HomePage() {
       <section id="features" className="py-12 bg-white cv-lazy" loading="lazy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
-            <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Why Choose Nano Banana?</h2>
+            <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">Why Choose Nano Banana?</h2>
             <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Core Nano Banana Features</p>
             <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
               Natural-language editing with unmatched consistency. Keep faces and identities while changing anything else.
@@ -1019,37 +1019,37 @@ export default function HomePage() {
                   <div className="flex items-center">
                     <div className="flex-shrink-0 bg-yellow-100 rounded-md p-3">
                       {icon === "message-square" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V5a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
                         </svg>
                       )}
                       {icon === "user" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                           <circle cx="12" cy="7" r="4" />
                         </svg>
                       )}
                       {icon === "image" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                           <circle cx="8.5" cy="8.5" r="1.5" />
                           <path d="M21 15l-5-5L5 21" />
                         </svg>
                       )}
                       {icon === "zap" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                         </svg>
                       )}
                       {icon === "layers" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <polygon points="12 2 2 7 12 12 22 7 12 2" />
                           <polyline points="2 17 12 22 22 17" />
                           <polyline points="2 12 12 17 22 12" />
                         </svg>
                       )}
                       {icon === "award" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="8" r="7" />
                           <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.11" />
                         </svg>
@@ -1071,7 +1071,7 @@ export default function HomePage() {
       <section id="showcase" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
-            <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Lightning-Fast Nano Banana AI Creations</h2>
+            <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">Lightning-Fast Nano Banana AI Creations</h2>
             <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Nano Banana Showcase</p>
             <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">See what Nano Banana can do in seconds.</p>
           </div>
@@ -1103,7 +1103,7 @@ export default function HomePage() {
       <section id="reviews" className="py-12 bg-white cv-lazy" data-aos="fade-up" loading="lazy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
-            <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Testimonials</h2>
+            <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">Testimonials</h2>
             <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">User Reviews</p>
             <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">What creators are saying.</p>
           </div>
@@ -1138,7 +1138,7 @@ export default function HomePage() {
       <section id="faq" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
-            <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Help Center</h2>
+            <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">Help Center</h2>
             <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Frequently Asked Questions</p>
           </div>
 

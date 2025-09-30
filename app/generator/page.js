@@ -611,7 +611,7 @@ export default function GeneratorPage() {
         <section id="how-it-works" className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center">
-              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">How it Works</h2>
+              <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">How it Works</h2>
               <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Edit with text, not layers</p>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
                 Describe your edit and let Nano Banana handle the details. No masking or manual cutouts.
@@ -642,7 +642,7 @@ export default function GeneratorPage() {
         <section id="features" className="py-12 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center">
-              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Why Choose Nano Banana?</h2>
+              <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">Why Choose Nano Banana?</h2>
               <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Core Nano Banana Features</p>
               <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
                 Natural-language editing with identity and scene preservation built-in.
@@ -673,7 +673,7 @@ export default function GeneratorPage() {
         <section id="use-cases" className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center mb-8">
-              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Popular Use Cases</h2>
+              <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">Popular Use Cases</h2>
               <p className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">What people make with Nano Banana</p>
               <p className="mt-2 text-gray-600">Click “Try this” to prefill the editor instantly.</p>
             </div>
@@ -705,7 +705,7 @@ export default function GeneratorPage() {
         <section id="faq" className="py-12 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:text-center">
-              <h2 className="text-base text-yellow-600 font-semibold tracking-wide uppercase">Help Center</h2>
+              <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">Help Center</h2>
               <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Frequently Asked Questions</p>
             </div>
             <div className="mt-10 max-w-3xl mx-auto">
