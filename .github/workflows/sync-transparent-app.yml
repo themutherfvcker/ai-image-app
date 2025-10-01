@@ -1,0 +1,94 @@
+name: Sync Transparent App
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Transparent repo ref (branch, tag, or commit)'
+        required: false
+        default: 'main'
+  schedule:
+    - cron: '0 5 * * *' # daily at 05:00 UTC
+
+jobs:
+  build-and-sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout site repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Checkout transparent app repo
+        uses: actions/checkout@v4
+        with:
+          repository: themutherfvcker/Transparent-Image-Generator
+          path: tmp/transparent
+          ref: ${{ github.event.inputs.ref || 'main' }}
+
+      - name: Detect build system
+        id: detect
+        run: |
+          set -e
+          cd tmp/transparent
+          if [ -f package.json ]; then
+            if grep -q "vite" package.json; then echo "type=vite" >> $GITHUB_OUTPUT; fi
+            if grep -q "react-scripts" package.json; then echo "type=cra" >> $GITHUB_OUTPUT; fi
+          fi
+
+      - name: Install and build (Vite)
+        if: steps.detect.outputs.type == 'vite'
+        run: |
+          set -e
+          cd tmp/transparent
+          npm ci
+          # Ensure correct base path for hosting under /transparent-app/
+          if [ -f vite.config.ts ]; then
+            sed -i "s/base:\s*['\"][^'\"]*['\"]/base: '\/transparent-app\/'/" vite.config.ts || true
+          fi
+          if [ -f vite.config.js ]; then
+            sed -i "s/base:\s*['\"][^'\"]*['\"]/base: '\/transparent-app\/'/" vite.config.js || true
+          fi
+          npm run build
+          rsync -av --delete dist/ ../../public/transparent-app/
+
+      - name: Install and build (CRA)
+        if: steps.detect.outputs.type == 'cra'
+        run: |
+          set -e
+          cd tmp/transparent
+          npm ci
+          # Ensure homepage is subpath
+          if jq -e '.homepage' package.json > /dev/null; then
+            jq '.homepage = "/transparent-app"' package.json > package.tmp.json && mv package.tmp.json package.json
+          else
+            jq '. + {homepage: "/transparent-app"}' package.json > package.tmp.json && mv package.tmp.json package.json
+          fi
+          npm run build
+          rsync -av --delete build/ ../../public/transparent-app/
+
+      - name: Fallback copy if custom build
+        if: steps.detect.outputs.type == ''
+        run: |
+          set -e
+          cd tmp/transparent
+          if [ -d dist ]; then rsync -av --delete dist/ ../../public/transparent-app/; fi
+          if [ -d build ]; then rsync -av --delete build/ ../../public/transparent-app/; fi
+
+      - name: Commit and push changes
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/transparent-app || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore(transparent-app): sync build from external repo"
+            git push origin ${{ github.ref_name || 'main' }}
+          fi
