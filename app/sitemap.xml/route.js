@@ -18,6 +18,7 @@ export async function GET() {
     url(`${base}/`, "1.0"),
     url(`${base}/generator`, "0.8"),
     url(`${base}/showcase`, "0.7"),
+    url(`${base}/transparent`, "0.7"),
     url(`${base}/developers`, "0.6"),
     url(`${base}/docs`, "0.6"),
     url(`${base}/about`, "0.5"),
