@@ -11,7 +11,7 @@ export default function TransparentToolsPage() {
   const iframeRef = useRef(null)
 
   useEffect(() => {
-    const base = process.env.NEXT_PUBLIC_TRANSPARENT_APP_URL || "https://transparent.nanobanana-ai.dev"
+    const base = process.env.NEXT_PUBLIC_TRANSPARENT_APP_URL || "/transparent-app/index.html"
     try {
       const origin = typeof window !== 'undefined' ? window.location.origin : ''
       const u = new URL(base)
@@ -86,7 +86,7 @@ export default function TransparentToolsPage() {
           <iframe ref={iframeRef} src={iframeSrc} title="Transparent Image Generator" className="w-full h-full" loading="lazy" referrerPolicy="no-referrer" />
         </div>
         <div className="px-4 py-3 border-t text-sm text-gray-600">
-          Having trouble? <a className="text-yellow-700 hover:text-yellow-800 underline" href={url} target="_blank" rel="noopener noreferrer">Open in a new tab</a>.
+          Having trouble? <a className="text-yellow-700 hover:text-yellow-800 underline" href={url || "/transparent-app/index.html"} target="_blank" rel="noopener noreferrer">Open in a new tab</a>.
         </div>
       </div>
     </main>
