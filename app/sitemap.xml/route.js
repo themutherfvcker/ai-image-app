@@ -21,6 +21,7 @@ export async function GET() {
     url(`${base}/transparent`, "0.7"),
     url(`${base}/developers`, "0.6"),
     url(`${base}/docs`, "0.6"),
+    url(`${base}/16-9-image-generator`, "0.7"),
     url(`${base}/about`, "0.5"),
     url(`${base}/contact`, "0.5"),
     url(`${base}/privacy`, "0.4"),
