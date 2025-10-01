@@ -9,7 +9,6 @@ import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
 import JsonLdRaw from "@/app/components/JsonLdRaw";
 import PricingSection from "@/app/components/PricingSection";
-import GeminiSliderSection from "@/app/components/GeminiSliderSection";
 
 function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
   const containerRef = useRef(null);
@@ -1009,8 +1008,8 @@ export default function HomePage() {
       {/* GENERATOR (inline) */}
       <HomeGeneratorSection showSignIn={showSignIn} onShowSignIn={setShowSignIn} />
 
-      {/* EXAMPLES (Before/After) - Gemini slider HTML */}
-      <GeminiSliderSection />
+      {/* EXAMPLES (Before/After) */}
+      <ExamplesSection />
 
       {/* FEATURES */}
       <section id="features" className="py-12 bg-white cv-lazy" loading="lazy">
