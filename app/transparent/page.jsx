@@ -7,17 +7,17 @@ export default function TransparentToolsPage() {
   const [url, setUrl] = useState("")
   const [isAuthed, setIsAuthed] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [accessToken, setAccessToken] = useState("")
-  const iframeRef = useRef(null)
+  const [html, setHtml] = useState("")
+  const [loadErr, setLoadErr] = useState("")
+  const containerRef = useRef(null)
 
   useEffect(() => {
     const base = process.env.NEXT_PUBLIC_TRANSPARENT_APP_URL || "/transparent-app/index.html"
     try {
       const origin = typeof window !== 'undefined' ? window.location.origin : ''
-      const u = new URL(base)
+      const u = new URL(base, origin)
       u.searchParams.set('embedded', '1')
-      if (origin) u.searchParams.set('origin', origin)
-      setUrl(u.toString())
+      setUrl(u.pathname + u.search)
     } catch {
       setUrl(base)
     }
@@ -29,26 +29,50 @@ export default function TransparentToolsPage() {
         const supabase = getSupabase()
         const { data: { user } } = await supabase.auth.getUser()
         setIsAuthed(!!user)
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session?.access_token) setAccessToken(session.access_token)
       } catch {}
       setLoading(false)
     })()
   }, [])
 
-  // Send token to iframe after load (if app listens for it)
+  // Load and inject the built app HTML (frameless)
   useEffect(() => {
-    if (!accessToken) return
-    const el = iframeRef.current
-    if (!el) return
-    const onLoad = () => {
+    let cancelled = false
+    if (!isAuthed || !url) return
+    ;(async () => {
       try {
-        el.contentWindow?.postMessage({ type: 'NB_AUTH', accessToken }, '*')
-      } catch {}
-    }
-    el.addEventListener('load', onLoad)
-    return () => el.removeEventListener('load', onLoad)
-  }, [accessToken])
+        const res = await fetch(url, { cache: 'no-store' })
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const text = await res.text()
+        if (!cancelled) setHtml(text)
+      } catch (e) {
+        if (!cancelled) setLoadErr("Transparent app is not deployed at /public/transparent-app/. Run the sync workflow or copy the build.")
+      }
+    })()
+    return () => { cancelled = true }
+  }, [isAuthed, url])
+
+  useEffect(() => {
+    if (!html || !containerRef.current) return
+    const host = containerRef.current
+    // Clear existing
+    while (host.firstChild) host.removeChild(host.firstChild)
+    // Parse HTML and execute scripts
+    const temp = document.createElement('div')
+    temp.innerHTML = html
+    const scripts = Array.from(temp.querySelectorAll('script'))
+    scripts.forEach(s => s.parentNode?.removeChild(s))
+    host.innerHTML = temp.innerHTML
+    scripts.forEach(old => {
+      const s = document.createElement('script')
+      if (old.src) s.src = old.src
+      if (old.type) s.type = old.type
+      for (const attr of old.attributes) {
+        if (attr.name !== 'src' && attr.name !== 'type') s.setAttribute(attr.name, attr.value)
+      }
+      if (old.textContent) s.textContent = old.textContent
+      host.appendChild(s)
+    })
+  }, [html])
 
   if (loading) {
     return (
@@ -72,22 +96,20 @@ export default function TransparentToolsPage() {
     )
   }
 
-  // Append token in hash to avoid server logs capturing it
-  const iframeSrc = accessToken ? `${url}#access_token=${encodeURIComponent(accessToken)}` : url
-
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-        <div className="px-4 py-3 border-b">
-          <h1 className="text-lg font-semibold text-gray-900">Transparent Image Tools</h1>
-          <p className="text-sm text-gray-600">Embedded external app. Your data stays within that app.</p>
+      <div className="bg-white overflow-hidden">
+        <div className="lg:text-center mb-4">
+          <h1 className="text-2xl font-bold text-gray-900">Transparent Image Tools</h1>
+          <p className="mt-1 text-gray-600">Runs directly on this page. Requires auth.</p>
         </div>
-        <div className="aspect-video w-full">
-          <iframe ref={iframeRef} src={iframeSrc} title="Transparent Image Generator" className="w-full h-full" loading="lazy" referrerPolicy="no-referrer" />
-        </div>
-        <div className="px-4 py-3 border-t text-sm text-gray-600">
-          Having trouble? <a className="text-yellow-700 hover:text-yellow-800 underline" href={url || "/transparent-app/index.html"} target="_blank" rel="noopener noreferrer">Open in a new tab</a>.
-        </div>
+        {loadErr ? (
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded-md">
+            {loadErr}
+          </div>
+        ) : (
+          <div ref={containerRef} className="w-full min-h-[70vh]" />
+        )}
       </div>
     </main>
   )
