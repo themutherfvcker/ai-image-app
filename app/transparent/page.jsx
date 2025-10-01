@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { getSupabase } from "@/lib/supabaseClient"
 
@@ -7,10 +7,20 @@ export default function TransparentToolsPage() {
   const [url, setUrl] = useState("")
   const [isAuthed, setIsAuthed] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [accessToken, setAccessToken] = useState("")
+  const iframeRef = useRef(null)
 
   useEffect(() => {
-    const u = process.env.NEXT_PUBLIC_TRANSPARENT_APP_URL || "https://transparent.nanobanana-ai.dev"
-    setUrl(u)
+    const base = process.env.NEXT_PUBLIC_TRANSPARENT_APP_URL || "https://transparent.nanobanana-ai.dev"
+    try {
+      const origin = typeof window !== 'undefined' ? window.location.origin : ''
+      const u = new URL(base)
+      u.searchParams.set('embedded', '1')
+      if (origin) u.searchParams.set('origin', origin)
+      setUrl(u.toString())
+    } catch {
+      setUrl(base)
+    }
   }, [])
 
   useEffect(() => {
@@ -19,10 +29,26 @@ export default function TransparentToolsPage() {
         const supabase = getSupabase()
         const { data: { user } } = await supabase.auth.getUser()
         setIsAuthed(!!user)
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.access_token) setAccessToken(session.access_token)
       } catch {}
       setLoading(false)
     })()
   }, [])
+
+  // Send token to iframe after load (if app listens for it)
+  useEffect(() => {
+    if (!accessToken) return
+    const el = iframeRef.current
+    if (!el) return
+    const onLoad = () => {
+      try {
+        el.contentWindow?.postMessage({ type: 'NB_AUTH', accessToken }, '*')
+      } catch {}
+    }
+    el.addEventListener('load', onLoad)
+    return () => el.removeEventListener('load', onLoad)
+  }, [accessToken])
 
   if (loading) {
     return (
@@ -46,6 +72,9 @@ export default function TransparentToolsPage() {
     )
   }
 
+  // Append token in hash to avoid server logs capturing it
+  const iframeSrc = accessToken ? `${url}#access_token=${encodeURIComponent(accessToken)}` : url
+
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="bg-white shadow-sm rounded-lg overflow-hidden">
@@ -54,7 +83,10 @@ export default function TransparentToolsPage() {
           <p className="text-sm text-gray-600">Embedded external app. Your data stays within that app.</p>
         </div>
         <div className="aspect-video w-full">
-          <iframe src={url} title="Transparent Image Generator" className="w-full h-full" loading="lazy" referrerPolicy="no-referrer" />
+          <iframe ref={iframeRef} src={iframeSrc} title="Transparent Image Generator" className="w-full h-full" loading="lazy" referrerPolicy="no-referrer" />
+        </div>
+        <div className="px-4 py-3 border-t text-sm text-gray-600">
+          Having trouble? <a className="text-yellow-700 hover:text-yellow-800 underline" href={url} target="_blank" rel="noopener noreferrer">Open in a new tab</a>.
         </div>
       </div>
     </main>
