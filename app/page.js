@@ -105,11 +105,22 @@ function ExamplesSection() {
       prompt: "Remove the background and place the subject on a clean white background.",
     },
     {
+      slug: "change-background",
+      title: "Change background",
+      desc: "Replace the background while keeping the subject intact.",
+      tab: "i2i",
+      prompt: "Replace the background with a clean studio backdrop.",
+      beforeFile: "change-background-before.jpeg",
+      afterFile: "change-background-after.png",
+    },
+    {
       slug: "change-clothing-color",
       title: "Change clothing color",
       desc: "Recolor garments without losing texture.",
       tab: "i2i",
       prompt: "Change the jacket to a deep navy blue while keeping fabric texture.",
+      beforeFile: "change-clothing-color-before.jpeg",
+      afterFile: "change-clothing-color-after.png",
     },
     {
       slug: "product-ad",
@@ -151,8 +162,8 @@ function ExamplesSection() {
         </div>
         <div className="grid grid-cols-1 gap-6">
           {EXAMPLE_ITEMS.map((c, i) => {
-            const before = `/examples/${c.slug}-before.jpg`;
-            const after = `/examples/${c.slug}-after.jpg`;
+            const before = c.beforeFile ? `/examples/${c.beforeFile}` : `/examples/${c.slug}-before.jpg`;
+            const after = c.afterFile ? `/examples/${c.afterFile}` : `/examples/${c.slug}-after.jpg`;
             return (
             <div key={i} className="bg-white rounded-xl shadow hover:shadow-lg transition">
               <BeforeAfter beforeSrc={before} afterSrc={after} altBefore={`${c.title} before`} altAfter={`${c.title} after`} />
