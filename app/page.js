@@ -48,6 +48,13 @@ function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
 
   return (
     <div ref={containerRef} className="relative w-full overflow-hidden rounded-xl shadow before-after" style={{ aspectRatio: "16/9" }}>
+      {/* Labels */}
+      <div className="absolute top-3 left-3 z-10">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-yellow-500 text-white shadow">After</span>
+      </div>
+      <div className="absolute top-3 right-3 z-10">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-900 text-white/90 shadow">Before</span>
+      </div>
       <img
         src={beforeSource}
         alt={altBefore}
