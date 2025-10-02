@@ -1084,6 +1084,18 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 16:9 CREATOR (inline) */}
+      <section id="sixteen-nine" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:text-center">
+            <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">16:9 Image Creator</h2>
+            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">YouTube & Hero Banners, Perfectly Framed</p>
+            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Generate native 16:9 or convert any image while preserving composition.</p>
+          </div>
+          <SixteenNineInline />
+        </div>
+      </section>
+
       {/* SHOWCASE */}
       <section id="showcase" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
