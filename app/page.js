@@ -1084,7 +1084,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 16:9 CREATOR (inline) */}
+      {/* 16:9 CREATOR (embedded app) */}
       <section id="sixteen-nine" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:text-center">
@@ -1092,7 +1092,14 @@ export default function HomePage() {
             <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">YouTube & Hero Banners, Perfectly Framed</p>
             <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Generate native 16:9 or convert any image while preserving composition.</p>
           </div>
-          <SixteenNineInline />
+          <div className="mt-6 h-[calc(100vh-6rem)]">
+            <iframe
+              src="https://nano-banana-16-9-image-creator.vercel.app/"
+              className="w-full h-full border-0 rounded-lg shadow-sm"
+              loading="eager"
+              title="16:9 Image Generator"
+            />
+          </div>
         </div>
       </section>
 
