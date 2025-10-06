@@ -1002,7 +1002,7 @@ export default function HomePage() {
               <h2 className="mt-3 md:mt-4 text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900">
                 Experience the REAL Nano Banana advanced AI image editor powered by Google's Gemini 2.5 Flash Image API.
               </h2>
-              <p className="mt-2 text-sm sm:text-lg md:text-2xl text-gray-900">
+              <p className="mt-2 text-xs sm:text-base md:text-xl text-gray-900">
                 EASILY transform images with simple text commands while achieving consistent characters. No need to search for hours for nanobanana. Create stunning visuals with REAL nano-banana AI image technology.
               </p>
               <h3 className="mt-2 text-base sm:text-lg text-gray-800 italic">
