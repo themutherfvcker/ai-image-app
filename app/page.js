@@ -990,18 +990,18 @@ export default function HomePage() {
       {/* HERO */}
       <div className="hero-gradient relative overflow-hidden">
         <div ref={vantaRef} id="home" className="absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <div className="absolute inset-0 bg-black/30 sm:bg-black/25" aria-hidden="true" />
+        
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-20">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             {/* Copy */}
-            <div className="relative z-10 max-w-2xl">
-              <h1 className="fluid-h1 tracking-tight font-extrabold text-white drop-shadow-md">
+            <div className="relative z-10">
+              <h1 className="fluid-h1 tracking-tight font-extrabold text-gray-900">
                 Nano Banana - Advanced AI Image Editor
               </h1>
-              <h2 className="mt-4 text-lg sm:text-xl md:text-2xl font-semibold text-white/90 leading-relaxed max-w-2xl">
+              <h2 className="mt-3 md:mt-4 text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900">
                 Experience the REAL Nano Banana advanced AI image editor powered by Google's Gemini 2.5 Flash Image API. EASILY transform images with simple text commands while achieving consistent characters. No need to search for hours for nanobanana. Create stunning visuals with REAL nano-banana AI image technology.
               </h2>
-              <h3 className="mt-3 text-sm sm:text-base md:text-lg text-white/80 font-medium">
+              <h3 className="mt-2 text-base sm:text-lg text-gray-800 italic">
                 Independent, convenient, easy-to-use service utilizing Google's Nano Banana API technology.
               </h3>
               

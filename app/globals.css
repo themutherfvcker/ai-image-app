@@ -24,9 +24,8 @@ section[loading="lazy"], .cv-lazy {
 
 /* Fluid typography helpers for headings */
 .fluid-h1 {
-  font-size: clamp(2.25rem, 6vw, 4rem);
+  font-size: clamp(2rem, 6vw, 3.75rem);
   line-height: 1.1;
-  letter-spacing: -0.01em;
 }
 .fluid-h2 {
   font-size: clamp(1.25rem, 3.5vw, 2rem);
