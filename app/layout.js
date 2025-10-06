@@ -19,7 +19,7 @@ export const metadata = {
     description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
     siteName: "Nano Banana",
     images: [
-      { url: "/og/home.png", width: 1200, height: 630, alt: "Nano Banana – AI Image Editor" }
+      { url: "/og/home.png", width: 1200, height: 630, alt: "Nanobanana AI image editor · Google Gemini 2.5 Flash" }
     ]
   },
   twitter: {
@@ -40,6 +40,8 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        <meta property="og:image:alt" content="Nanobanana AI image editor · Google Gemini 2.5 Flash" />
+        <meta name="twitter:image:alt" content="Nanobanana AI image editor · Google Gemini 2.5 Flash" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify({

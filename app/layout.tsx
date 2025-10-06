@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: "Nano Banana (nanobanana) – AI Image Editor · Gemini 2.5 Flash",
     description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
     siteName: "Nano Banana",
-    images: [{ url: "/og/home.png", width: 1200, height: 630, alt: "Nano Banana – AI Image Editor" }],
+    images: [{ url: "/og/home.png", width: 1200, height: 630, alt: "Nanobanana AI image editor · Google Gemini 2.5 Flash" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -67,6 +67,8 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://picsum.photos" />
         <link rel="dns-prefetch" href="https://i.pravatar.cc" />
         <link rel="preconnect" href="https://nanobanana.ai" crossOrigin="anonymous" />
+        <meta property="og:image:alt" content="Nanobanana AI image editor · Google Gemini 2.5 Flash" />
+        <meta name="twitter:image:alt" content="Nanobanana AI image editor · Google Gemini 2.5 Flash" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify({
