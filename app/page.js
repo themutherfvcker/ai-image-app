@@ -1038,8 +1038,9 @@ export default function HomePage() {
   <section id="what-is-nano-banana" className="py-12 bg-white">
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="lg:text-center mb-6">
-        <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">What is Nano Banana?</h2>
-        <p className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">Fast, high‑quality AI image generation and editing</p>
+        <p className="text-sm text-yellow-700 font-semibold tracking-wide uppercase">What is Nano Banana?</p>
+        <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">What is Nano Banana?</h2>
+        <p className="mt-2 text-gray-700">Fast, high‑quality AI image generation and editing</p>
       </div>
       <div className="prose prose-gray max-w-none">
         <p>

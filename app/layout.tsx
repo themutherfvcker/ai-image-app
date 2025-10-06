@@ -73,6 +73,33 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "WebSite",
+            "url": "https://www.nanobanana-ai.dev/",
+            "name": "Nano Banana",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://www.nanobanana-ai.dev/search?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          }) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Nano Banana – AI Image Editor",
+            "url": "https://www.nanobanana-ai.dev/",
+            "applicationCategory": "Multimedia",
+            "operatingSystem": "Web",
+            "description": "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit with simple text prompts while preserving faces and scene.",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+          }) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "Product",
             "name": "Nano Banana – Text-Based Photo Editor",
             "description": "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit with simple text prompts while preserving faces and scene.",
