@@ -1006,7 +1006,7 @@ export default function HomePage() {
                 EASILY transform images with simple text commands while achieving consistent characters. No need to search for hours for nanobanana. Create stunning visuals with REAL nano-banana AI image technology.
               </p>
               <h3 className="mt-2 text-base sm:text-lg text-gray-800 italic">
-                Independent, convenient, easy-to-use service utilizing Google's Nano Banana API technology.
+                easy-to-use service utilizing Google's Nano Banana API technology.
               </h3>
               
             </div>
