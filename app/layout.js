@@ -4,12 +4,18 @@ import { Inter } from "next/font/google";
 export const metadata = {
   title: "Nano Banana – Text-Based Photo Editor · Change Anything. Keep What Matters.",
   description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
+  keywords: [
+    "nanobanana",
+    "nano banana",
+    "AI image editor",
+    "Google Gemini 2.5 Flash image editor"
+  ],
   metadataBase: new URL("https://www.nanobanana-ai.dev"),
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "https://www.nanobanana-ai.dev/",
-    title: "Nano Banana – AI Image Editor",
+    title: "Nano Banana (nanobanana) – AI Image Editor · Gemini 2.5 Flash",
     description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
     siteName: "Nano Banana",
     images: [
@@ -18,7 +24,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nano Banana – Text-Based Photo Editor",
+    title: "Nano Banana (nanobanana) – AI Image Editor · Gemini 2.5 Flash",
     description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
     images: ["/og/home.png"],
   },

@@ -574,10 +574,10 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
     "@type": "FAQPage",
     "@id": "https://www.nanobanana-ai.dev/#faq",
     "mainEntity": [
-      { "@type": "Question", "name": "What is Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "A text-based photo editor that understands complex instructions and preserves the details you care about." } },
-      { "@type": "Question", "name": "How does it work?", "acceptedAnswer": { "@type": "Answer", "text": "Upload an image (or start from text), describe your edit, and generate. No manual masking required." } },
-      { "@type": "Question", "name": "Is it better than other tools?", "acceptedAnswer": { "@type": "Answer", "text": "We focus on identity and scene preservation so results look consistent across edits and versions." } },
-      { "@type": "Question", "name": "Can I use it commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—great for UGC, social, and marketing where brand/identity consistency matters." } }
+      { "@type": "Question", "name": "What is Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "Nano Banana (nanobanana) is an AI image editor powered by Google Gemini 2.5 Flash image editor. It preserves faces, identity, and scene while you edit with simple text prompts." } },
+      { "@type": "Question", "name": "How does it work?", "acceptedAnswer": { "@type": "Answer", "text": "Upload an image or start from text, describe your edit in natural language, and generate. Powered by Gemini 2.5 Flash, no manual masking is required." } },
+      { "@type": "Question", "name": "Is it better than other tools?", "acceptedAnswer": { "@type": "Answer", "text": "Our nanobanana AI image editor focuses on consistent characters and scene preservation, delivering realistic results across edits and versions." } },
+      { "@type": "Question", "name": "Can I use it commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Nano Banana AI image editor is great for UGC, social, and marketing where brand and identity consistency matters." } }
     ]
   }
 
