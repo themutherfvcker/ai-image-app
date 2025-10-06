@@ -995,8 +995,9 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             {/* Copy */}
             <div className="relative z-10">
-              <h1 className="fluid-h1 tracking-tight font-extrabold text-gray-900">
-                Nano Banana - Advanced AI Image Editor
+              <h1 className="fluid-h1 tracking-tight font-extrabold">
+                <span className="text-gray-900">Nano Banana - </span>
+                <span className="text-white">Advanced AI Image Editor</span>
               </h1>
               <h2 className="mt-3 md:mt-4 text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900">
                 Experience the REAL Nano Banana advanced AI image editor powered by Google's Gemini 2.5 Flash Image API. EASILY transform images with simple text commands while achieving consistent characters. No need to search for hours for nanobanana. Create stunning visuals with REAL nano-banana AI image technology.
