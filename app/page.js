@@ -593,7 +593,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
             {isAuthed ? (
               <>Credits: <span className="font-semibold">{balance}</span></>
             ) : (
-              <>Sign in to start generating images</>
+              <>Sign in to get free credits and start generating images.</>
             )}
           </p>
           
@@ -1004,7 +1004,7 @@ export default function HomePage() {
               </h2>
               <ul className="mt-3 text-sm sm:text-base md:text-lg text-gray-800 leading-snug md:leading-relaxed max-w-2xl list-disc pl-5 space-y-1.5">
                 <li>Easily transform images in Nano Banana with simple text prompts.</li>
-                <li>Only nanobanana can maintain consistent characters across edits.</li>
+                <li>Only Nano Banana can maintain consistent characters across edits.</li>
                 <li>Create stunning visuals with real Nano Banana AI from Google.</li>
               </ul>
               <h3 className="mt-2 text-base sm:text-lg text-gray-800 italic">
@@ -1033,6 +1033,40 @@ export default function HomePage() {
 
       {/* GENERATOR (inline) */}
       <HomeGeneratorSection showSignIn={showSignIn} onShowSignIn={setShowSignIn} />
+
+  {/* WHAT IS NANO BANANA */}
+  <section id="what-is-nano-banana" className="py-12 bg-white">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="lg:text-center mb-6">
+        <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">What is Nano Banana?</h2>
+        <p className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">Fast, high‑quality AI image generation and editing</p>
+      </div>
+      <div className="prose prose-gray max-w-none">
+        <p>
+          “Nano Banana” is the community nickname for Google’s Gemini 2.5 Flash Image model—a fast, high-quality AI for image generation and text‑based image editing (remove/replace objects, change backgrounds, merge images, keep character identity consistent, etc.). All outputs include SynthID provenance watermarking.
+        </p>
+      </div>
+      <div className="mt-6 grid md:grid-cols-2 gap-6">
+        <div className="bg-gray-50 rounded-lg p-5 border">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <span>What it can do</span>
+          </h3>
+          <ul className="mt-3 list-disc pl-5 text-gray-800 space-y-1">
+            <li>Text → image and image → image edits with natural‑language prompts.</li>
+            <li>Character consistency across multiple edits/shots.</li>
+            <li>Multi‑image fusion (blend/compose images).</li>
+            <li>Low latency and broad aspect‑ratio support; available via Gemini API, AI Studio/Vertex AI, and consumer Gemini surfaces.</li>
+          </ul>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-5 border">
+          <h3 className="text-lg font-semibold text-gray-900">Why people call it “Nano Banana”</h3>
+          <p className="mt-3 text-gray-800">
+            It started as a shorthand used by developers and creators online for Gemini 2.5 Flash Image, and the name stuck as the model went mainstream.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
       {/* EXAMPLES (Before/After) */}
       <ExamplesSection />
