@@ -995,14 +995,14 @@ export default function HomePage() {
             {/* Copy */}
             <div className="relative z-10">
               <h1 className="fluid-h1 tracking-tight font-extrabold text-gray-900">
-                <span className="block">Nano Banana</span>
-                <span className="block">Text-Based AI Photo Editor</span>
-                <span className="block text-white">Change Anything.</span>
-                <span className="block text-white">Keep What Matters.</span>
+                Nano Banana - Advanced AI Image Editor
               </h1>
-              <p className="mt-3 md:mt-4 mb-0 text-base sm:text-lg md:text-xl text-gray-800 max-w-xl">
-                Edit with plain text prompts while preserving faces, identities, and details. Nano Banana makes hard edits feel easy.
-              </p>
+              <h2 className="mt-3 md:mt-4 text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900">
+                Experience the REAL Nano Banana advanced AI image editor powered by Google's Gemini 2.5 Flash Image API. EASILY transform images with simple text commands while achieving consistent characters. No need to search for hours for nanobanana. Create stunning visuals with REAL nano-banana AI image technology.
+              </h2>
+              <h3 className="mt-2 text-base sm:text-lg text-gray-800 italic">
+                Independent, convenient, easy-to-use service utilizing Google's Nano Banana API technology.
+              </h3>
               
             </div>
 

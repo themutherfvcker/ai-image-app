@@ -2,16 +2,16 @@ export default function Head() {
   return (
     <>
       <title>Nano Banana AI Image Generator by Google</title>
-      <meta name="description" content="Edit images instantly with Google Nano Banana. Transfer styles, add or remove objects, replace elements, or adjust gestures and expressions with a prompt. Create seamless edits with text or image instructions, powered by Gemini 2.5 Flash Image." />
+      <meta name="description" content="Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—transfer styles, add or remove objects, replace elements, and refine with text or image prompts." />
       <link rel="canonical" href="https://www.nanobanana-ai.dev/generator" />
       <meta property="og:type" content="website" />
       <meta property="og:title" content="Nano Banana AI Image Generator by Google" />
-      <meta property="og:description" content="Edit images instantly with Google Nano Banana. Transfer styles, add or remove objects, replace elements, or adjust gestures and expressions with a prompt. Create seamless edits with text or image instructions, powered by Gemini 2.5 Flash Image." />
+      <meta property="og:description" content="Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—transfer styles, add or remove objects, replace elements, and refine with text or image prompts." />
       <meta property="og:url" content="https://www.nanobanana-ai.dev/generator" />
       <meta property="og:image" content="/og/generator.png" />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content="Nano Banana AI Image Generator by Google" />
-      <meta name="twitter:description" content="Edit images instantly with Google Nano Banana. Transfer styles, add or remove objects, replace elements, or adjust gestures and expressions with a prompt. Create seamless edits with text or image instructions, powered by Gemini 2.5 Flash Image." />
+      <meta name="twitter:description" content="Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—transfer styles, add or remove objects, replace elements, and refine with text or image prompts." />
       <meta name="twitter:image" content="/og/generator.png" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org",

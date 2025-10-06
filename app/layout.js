@@ -3,14 +3,14 @@ import { Inter } from "next/font/google";
 
 export const metadata = {
   title: "Nano Banana – Text-Based Photo Editor · Change Anything. Keep What Matters.",
-  description: "Edit images with plain-English prompts. Preserve faces, identity and scene while changing anything else. Try free.",
+  description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
   metadataBase: new URL("https://www.nanobanana-ai.dev"),
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "https://www.nanobanana-ai.dev/",
     title: "Nano Banana – AI Image Editor",
-    description: "Change anything. Keep what matters.",
+    description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
     siteName: "Nano Banana",
     images: [
       { url: "/og/home.png", width: 1200, height: 630, alt: "Nano Banana – AI Image Editor" }
@@ -19,7 +19,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Nano Banana – Text-Based Photo Editor",
-    description: "Edit images with plain-English prompts. Preserve faces, identity and scene.",
+    description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
     images: ["/og/home.png"],
   },
 };
@@ -53,7 +53,7 @@ export default function RootLayout({ children }) {
             "@context": "https://schema.org",
             "@type": "Product",
             "name": "Nano Banana – Text-Based Photo Editor",
-            "description": "Edit images with plain-English prompts while preserving faces, identity and scene.",
+            "description": "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit with simple text prompts while preserving faces and scene.",
             "brand": { "@type": "Brand", "name": "Nano Banana" },
             "url": "https://www.nanobanana-ai.dev/",
             "image": "https://www.nanobanana-ai.dev/og/home.png",
