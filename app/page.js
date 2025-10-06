@@ -991,7 +991,7 @@ export default function HomePage() {
       <div className="hero-gradient relative overflow-hidden">
         <div ref={vantaRef} id="home" className="absolute inset-0 pointer-events-none" aria-hidden="true" />
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-20">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             {/* Copy */}
             <div className="relative z-10">
