@@ -586,6 +586,11 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
       { "@type": "Question", "name": "Is there a limit to how many images I can generate?", "acceptedAnswer": { "@type": "Answer", "text": "Flexible plans and batch support scale from solo creators to teams. See the Pricing page for details." } },
       { "@type": "Question", "name": "Is my data secure when using Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "We prioritize privacy and security: encrypted processing, minimal retention, and optional deletion. See our Privacy Policy." } },
       { "@type": "Question", "name": "Do you offer a free trial?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—start with free credits to try core features, then upgrade anytime." } }
+      ,
+      { "@type": "Question", "name": "How are credits calculated?", "acceptedAnswer": { "@type": "Answer", "text": "Each edit or generation uses credits based on settings and complexity. Advanced options may consume more; see Pricing for details." } },
+      { "@type": "Question", "name": "Can I cancel my subscription anytime?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—manage your plan in your account. Access continues until the end of the current billing period." } },
+      { "@type": "Question", "name": "Will unused credits roll over?", "acceptedAnswer": { "@type": "Answer", "text": "On paid tiers, unused credits may roll into the next cycle depending on plan—see Pricing for specifics." } },
+      { "@type": "Question", "name": "What payment methods do you accept?", "acceptedAnswer": { "@type": "Answer", "text": "Major credit/debit cards via Stripe; taxes/VAT may apply based on your location." } }
     ]
   }
 
@@ -1307,6 +1312,37 @@ export default function HomePage() {
                 <dt className="text-lg leading-6 font-medium text-gray-900">Do you offer a free trial?</dt>
                 <dd className="mt-2 text-base text-gray-500">
                   Yes—start with free credits to try core features, then upgrade anytime.
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          {/* Pricing & Billing FAQs */}
+          <div className="mt-12 max-w-3xl mx-auto">
+            <h3 className="text-xl font-bold text-gray-900">Pricing & Billing FAQs</h3>
+            <dl className="mt-6 space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12">
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">How are credits calculated?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Each edit or generation uses credits based on settings and complexity. Advanced options may consume more; see Pricing for details.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Can I cancel my subscription anytime?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Yes—manage your plan in your account. Access continues until the end of the current billing period.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Will unused credits roll over?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  On paid tiers, unused credits may roll into the next cycle depending on plan—see Pricing for specifics.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">What payment methods do you accept?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Major credit/debit cards via Stripe; taxes/VAT may apply based on your location.
                 </dd>
               </div>
             </dl>
