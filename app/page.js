@@ -1244,25 +1244,25 @@ export default function HomePage() {
               <div>
                 <dt className="text-lg leading-6 font-medium text-gray-900">What is Nano Banana?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  A text-based photo editor that understands complex instructions and preserves the details you care about.
+                  Nano Banana (Nano Banana) is an AI image editor powered by Google Gemini 2.5 Flash image editor. It preserves faces, identity, and scene while you edit with simple text prompts.
                 </dd>
               </div>
               <div>
                 <dt className="text-lg leading-6 font-medium text-gray-900">How does it work?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  Upload an image (or start from text), describe your edit, and generate. No manual masking required.
+                  Upload an image or start from text, describe your edit in natural language, and generate. Powered by Gemini 2.5 Flash, no manual masking is required.
                 </dd>
               </div>
               <div>
                 <dt className="text-lg leading-6 font-medium text-gray-900">Is it better than other tools?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  We focus on identity and scene preservation so results look consistent across edits and versions.
+                  Nano Banana focuses on maintaining consistent characters and scene preservation for realistic results across edits and versions.
                 </dd>
               </div>
               <div>
                 <dt className="text-lg leading-6 font-medium text-gray-900">Can I use it commercially?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  Yes—great for UGC, social, and marketing where brand/identity consistency matters.
+                  Yes. The Nano Banana AI image editor is great for UGC, social, and marketing where brand and identity consistency matters.
                 </dd>
               </div>
             </dl>
