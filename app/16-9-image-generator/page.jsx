@@ -10,8 +10,7 @@ export default function Page() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         <div className="text-center">
           <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-            <span className="block">Resize Any Image to</span>
-            <span className="block text-yellow-500">Perfect 16:9</span>
+            Nano Banana 16:9 — Fix Gemini Nano Banana 16:9 Aspect Ratio Problems
           </h1>
           <h2 className="mt-4 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-700 font-medium">
             Instantly fix the frustrating aspect ratio issues in Gemini Nano Banana when it keeps generating square 1:1 images instead of your desired 16:9
