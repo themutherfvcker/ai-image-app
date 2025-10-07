@@ -41,6 +41,23 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Narrative helper section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Nano Banana Square Images? Get 16:9 with 1-click</h2>
+          <p className="mt-4 text-gray-800"><strong>Have you tried Nano Banana, felt amazed… and then totally stuck?</strong></p>
+          <p className="mt-3 text-gray-600">
+            You get a gorgeous image, but when you need 16:9 for a banner or YouTube thumbnail, the editor keeps spitting out 1:1.
+            You add “aspect ratio” to your prompt—bam, still square. Then it’s off to YouTube for 700 “fixes” and weird hacks like
+            uploading a blank 16:9 as the second image. Exhausting, right?
+          </p>
+          <p className="mt-3 text-gray-600">
+            Skip the hacks. Our 1-click 16:9 tool converts or generates true widescreen, outpaints the edges, and keeps your subject and
+            composition—so you can ship the image you already love.
+          </p>
+        </div>
+      </section>
+
       {/* Features */}
       <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center">
