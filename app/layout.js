@@ -2,7 +2,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 
 export const metadata = {
-  title: "Nano Banana – Text-Based Photo Editor · Change Anything. Keep What Matters.",
+  title: "Nano Banana – AI Image Editor",
   description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
   keywords: [
     "nanobanana",

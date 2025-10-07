@@ -7,7 +7,7 @@ import Navbar from "@/app/components/Navbar";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Nano Banana – Text-Based Photo Editor · Change Anything. Keep What Matters.",
+  title: "Nano Banana – AI Image Editor",
   description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
   keywords: [
     "nanobanana",

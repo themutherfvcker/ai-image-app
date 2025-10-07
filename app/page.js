@@ -971,7 +971,7 @@ export default function HomePage() {
           "@type": "WebPage",
           "@id": "https://www.nanobanana-ai.dev/#webpage",
           "url": "https://www.nanobanana-ai.dev/",
-          "name": "Nano Banana – Text-Based AI Photo Editor · Change Anything. Keep What Matters.",
+          "name": "Nano Banana – AI Image Editor",
           "isPartOf": { "@id": "https://www.nanobanana-ai.dev/#org" },
           "about": { "@id": "https://www.nanobanana-ai.dev/#app" }
         }}
