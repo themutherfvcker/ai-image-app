@@ -573,11 +573,19 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "@id": "https://www.nanobanana-ai.dev/#faq",
+    isPartOf: { "@id": "https://www.nanobanana-ai.dev/#website" },
+    about: { "@id": "https://www.nanobanana-ai.dev/#app" },
     "mainEntity": [
-      { "@type": "Question", "name": "What is Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "Nano Banana (nanobanana) is an AI image editor powered by Google Gemini 2.5 Flash image editor. It preserves faces, identity, and scene while you edit with simple text prompts." } },
-      { "@type": "Question", "name": "How does it work?", "acceptedAnswer": { "@type": "Answer", "text": "Upload an image or start from text, describe your edit in natural language, and generate. Powered by Gemini 2.5 Flash, no manual masking is required." } },
-      { "@type": "Question", "name": "Is it better than other tools?", "acceptedAnswer": { "@type": "Answer", "text": "Our nanobanana AI image editor focuses on consistent characters and scene preservation, delivering realistic results across edits and versions." } },
-      { "@type": "Question", "name": "Can I use it commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Nano Banana AI image editor is great for UGC, social, and marketing where brand and identity consistency matters." } }
+      { "@type": "Question", "name": "What is Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "Nano Banana (nanobanana) is an AI image editor powered by Google Gemini 2.5 Flash image editor. It preserves faces, identity and scene while you edit with simple text prompts." } },
+      { "@type": "Question", "name": "What makes Nano Banana different from other image generators?", "acceptedAnswer": { "@type": "Answer", "text": "Nano Banana focuses on character consistency and precision, helping keep facial features and scene details coherent across edits." } },
+      { "@type": "Question", "name": "What kind of prompts work best with Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "Both simple and detailed prompts work. For best results, describe the specific changes you want in natural language." } },
+      { "@type": "Question", "name": "How accurate is the image editing?", "acceptedAnswer": { "@type": "Answer", "text": "Edits are highly realistic, especially for identity consistency and scene preservation. Provide reference images for even tighter control." } },
+      { "@type": "Question", "name": "What file formats does it support?", "acceptedAnswer": { "@type": "Answer", "text": "Upload PNG/JPEG/WEBP and export high‑resolution PNG or JPG. Common aspect ratios (16:9, 1:1, 4:3, more) are supported." } },
+      { "@type": "Question", "name": "Can I use Nano Banana for commercial projects?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Nano Banana AI image editor is great for UGC, social, and marketing where brand and identity consistency matters." } },
+      { "@type": "Question", "name": "How long does it take to generate an image?", "acceptedAnswer": { "@type": "Answer", "text": "Most edits complete in about 15–30 seconds, depending on image complexity and settings." } },
+      { "@type": "Question", "name": "Is there a limit to how many images I can generate?", "acceptedAnswer": { "@type": "Answer", "text": "Flexible plans and batch support scale from solo creators to teams. See the Pricing page for details." } },
+      { "@type": "Question", "name": "Is my data secure when using Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "We prioritize privacy and security: encrypted processing, minimal retention, and optional deletion. See our Privacy Policy." } },
+      { "@type": "Question", "name": "Do you offer a free trial?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—start with free credits to try core features, then upgrade anytime." } }
     ]
   }
 
@@ -1244,25 +1252,61 @@ export default function HomePage() {
               <div>
                 <dt className="text-lg leading-6 font-medium text-gray-900">What is Nano Banana?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  Nano Banana (Nano Banana) is an AI image editor powered by Google Gemini 2.5 Flash image editor. It preserves faces, identity, and scene while you edit with simple text prompts.
+                  Nano Banana (nanobanana) is an AI image editor powered by Google Gemini 2.5 Flash image editor. It preserves faces, identity and scene while you edit with simple text prompts.
                 </dd>
               </div>
               <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">How does it work?</dt>
+                <dt className="text-lg leading-6 font-medium text-gray-900">What makes Nano Banana different from other image generators?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  Upload an image or start from text, describe your edit in natural language, and generate. Powered by Gemini 2.5 Flash, no manual masking is required.
+                  Nano Banana focuses on character consistency and precision, helping keep facial features and scene details coherent across edits.
                 </dd>
               </div>
               <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">Is it better than other tools?</dt>
+                <dt className="text-lg leading-6 font-medium text-gray-900">What kind of prompts work best with Nano Banana?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  Nano Banana focuses on maintaining consistent characters and scene preservation for realistic results across edits and versions.
+                  Both simple and detailed prompts work. For best results, describe the specific changes you want in natural language.
                 </dd>
               </div>
               <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">Can I use it commercially?</dt>
+                <dt className="text-lg leading-6 font-medium text-gray-900">How accurate is the image editing?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Edits are highly realistic, especially for identity consistency and scene preservation. Provide reference images for even tighter control.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">What file formats does it support?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Upload PNG/JPEG/WEBP; export high‑resolution PNG or JPG. Common aspect ratios (16:9, 1:1, 4:3 and more) are supported.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Can I use Nano Banana for commercial projects?</dt>
                 <dd className="mt-2 text-base text-gray-500">
                   Yes. The Nano Banana AI image editor is great for UGC, social, and marketing where brand and identity consistency matters.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">How long does it take to generate an image?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Most edits complete in about 15–30 seconds, depending on image complexity and settings.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Is there a limit to how many images I can generate?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Flexible plans and batch support scale from solo creators to teams. See the Pricing page for details.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Is my data secure when using Nano Banana?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  We prioritize privacy and security: encrypted processing, minimal retention, and optional deletion. See our Privacy Policy.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Do you offer a free trial?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Yes—start with free credits to try core features, then upgrade anytime.
                 </dd>
               </div>
             </dl>
