@@ -1,4 +1,4 @@
-export const metadata = { title: "Docs", description: "How to use Nano Banana AI image generator." }
+export const metadata = { title: "Docs", description: "How to use the nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor.", keywords: ["nanobanana", "AI image editor", "Google Gemini 2.5 Flash image editor"] }
 
 export default function Docs() {
   return (

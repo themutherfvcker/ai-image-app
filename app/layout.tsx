@@ -7,10 +7,16 @@ import Navbar from "@/app/components/Navbar";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Nano Banana – Text-Based Photo Editor · Change Anything. Keep What Matters.",
-  description: "Edit images with plain-English prompts. Preserve faces, identity and scene while changing anything else. Try free.",
+  title: "Nano Banana – Advanced AI Image Editor | Gemini 2.5 Flash",
+  description: "Nanobanana AI image editor powered by Gemini 2.5 Flash. Edit, replace, and restyle photos with simple prompts while preserving faces and scene.",
+  keywords: [
+    "nanobanana",
+    "nano banana",
+    "AI image editor",
+    "Google Gemini 2.5 Flash image editor"
+  ],
   metadataBase: new URL("https://www.nanobanana-ai.dev"),
-  alternates: { canonical: "/" },
+  alternates: { canonical: "https://www.nanobanana-ai.dev" },
   viewport: {
     width: "device-width",
     initialScale: 1,
@@ -19,16 +25,16 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    url: "https://www.nanobanana-ai.dev/",
-    title: "Nano Banana – Text-Based Photo Editor",
-    description: "Edit images with plain-English prompts. Preserve faces, identity and scene.",
+    url: "https://www.nanobanana-ai.dev",
+    title: "Nano Banana – Advanced AI Image Editor | Gemini 2.5 Flash",
+    description: "Nanobanana AI image editor powered by Gemini 2.5 Flash. Edit, replace, and restyle photos with simple prompts while preserving faces and scene.",
     siteName: "Nano Banana",
-    images: [{ url: "/og/home.png", width: 1200, height: 630, alt: "Nano Banana – AI Image Editor" }],
+    images: [{ url: "/og/home.png", width: 1200, height: 630, alt: "Nanobanana AI image editor · Google Gemini 2.5 Flash" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nano Banana – Text-Based Photo Editor",
-    description: "Edit images with plain-English prompts. Preserve faces, identity and scene.",
+    title: "Nano Banana – Advanced AI Image Editor | Gemini 2.5 Flash",
+    description: "Nanobanana AI image editor powered by Gemini 2.5 Flash. Edit, replace, and restyle photos with simple prompts while preserving faces and scene.",
     images: ["/og/home.png"],
   },
 };
@@ -38,7 +44,8 @@ const ORG_JSONLD = {
   "@type": "Organization",
   "@id": "https://www.nanobanana-ai.dev/#org",
   "name": "Nano Banana",
-  "url": "https://www.nanobanana-ai.dev/"
+  "url": "https://www.nanobanana-ai.dev",
+  "logo": { "@type": "ImageObject", "url": "https://www.nanobanana-ai.dev/og/home.png" }
 };
 
 export default function RootLayout({
@@ -61,22 +68,46 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://picsum.photos" />
         <link rel="dns-prefetch" href="https://i.pravatar.cc" />
         <link rel="preconnect" href="https://nanobanana.ai" crossOrigin="anonymous" />
+        <meta property="og:image:alt" content="Nanobanana AI image editor · Google Gemini 2.5 Flash" />
+        <meta name="twitter:image:alt" content="Nanobanana AI image editor · Google Gemini 2.5 Flash" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Product",
-            "name": "Nano Banana – Text-Based Photo Editor",
-            "description": "Edit images with plain-English prompts while preserving faces, identity and scene.",
-            "brand": { "@type": "Brand", "name": "Nano Banana" },
-            "url": "https://www.nanobanana-ai.dev/",
-            "image": "https://www.nanobanana-ai.dev/og/home.png",
-            "offers": { "@type": "Offer", "price": "5", "priceCurrency": "USD", "availability": "https://schema.org/InStock" }
+            "@graph": [
+              {
+                "@type": "Organization",
+                "@id": "https://www.nanobanana-ai.dev/#org",
+                "name": "Nano Banana",
+                "url": "https://www.nanobanana-ai.dev",
+                "logo": "https://www.nanobanana-ai.dev/og/home.png"
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://www.nanobanana-ai.dev/#website",
+                "url": "https://www.nanobanana-ai.dev",
+                "name": "Nano Banana",
+                "publisher": { "@id": "https://www.nanobanana-ai.dev/#org" },
+                "potentialAction": {
+                  "@type": "SearchAction",
+                  "target": "https://www.nanobanana-ai.dev/search?q={search_term_string}",
+                  "query-input": "required name=search_term_string"
+                }
+              },
+              {
+                "@type": "WebApplication",
+                "@id": "https://www.nanobanana-ai.dev/#app",
+                "name": "Nano Banana – AI Image Editor",
+                "applicationCategory": "Multimedia",
+                "operatingSystem": "Web",
+                "url": "https://www.nanobanana-ai.dev"
+              }
+            ]
           }) }}
         />
       </head>
       <body className={`${inter.className} antialiased h-full safe-area`}>
-        <JsonLdRaw id="org-jsonld" data={ORG_JSONLD} />
+        {/* Entity JSON-LD provided via @graph in <head> */}
         <Navbar />
         {children}
       </body>

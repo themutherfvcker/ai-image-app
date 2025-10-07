@@ -15,8 +15,13 @@ export async function GET() {
   ]
 
   const urls = [
-    url(`${base}/`, "1.0"),
+    url(`${base}`, "1.0"),
     url(`${base}/generator`, "0.8"),
+    url(`${base}/faq`, "0.7"),
+    url(`${base}/transparent/faq`, "0.6"),
+    url(`${base}/16-9-image-generator/faq`, "0.6"),
+    url(`${base}/developers/faq`, "0.6"),
+    url(`${base}/pricing/faq`, "0.6"),
     url(`${base}/showcase`, "0.7"),
     url(`${base}/transparent`, "0.7"),
     url(`${base}/developers`, "0.6"),

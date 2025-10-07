@@ -73,6 +73,7 @@ export default function Navbar() {
             <a href="/16-9-image-generator" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">16:9 Image Generator</a>
             <Link href="/transparent" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Transparent</Link>
             <Link href="/developers" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">API</Link>
+            <Link href="/faq" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">FAQ</Link>
             <Link href="/toolbox" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Toolbox</Link>
             <Link href="/account" className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-yellow-500">Account</Link>
           </div>
@@ -108,6 +109,7 @@ export default function Navbar() {
               <a onClick={() => setOpen(false)} href="/16-9-image-generator" className="block px-3 py-3 rounded-md text-base font-medium text-gray-800 hover:bg-gray-50">16:9 Image Generator</a>
               <Link onClick={() => setOpen(false)} href="/transparent" className="block px-3 py-3 rounded-md text-base font-medium text-gray-800 hover:bg-gray-50">Transparent</Link>
               <Link onClick={() => setOpen(false)} href="/developers" className="block px-3 py-3 rounded-md text-base font-medium text-gray-800 hover:bg-gray-50">API</Link>
+              <Link onClick={() => setOpen(false)} href="/faq" className="block px-3 py-3 rounded-md text-base font-medium text-gray-800 hover:bg-gray-50">FAQ</Link>
               <Link onClick={() => setOpen(false)} href="/toolbox" className="block px-3 py-3 rounded-md text-base font-medium text-gray-800 hover:bg-gray-50">Toolbox</Link>
               <Link onClick={() => setOpen(false)} href="/account" className="block px-3 py-3 rounded-md text-base font-medium text-gray-800 hover:bg-gray-50">Account</Link>
             </nav>

@@ -111,6 +111,52 @@ export default function TransparentToolsPage() {
           <div ref={containerRef} className="w-full min-h-[70vh]" />
         )}
       </div>
+
+      {/* Transparent FAQ */}
+      <section id="transparent-faq" className="mt-12 bg-white rounded-lg shadow-sm p-6">
+        <div className="lg:text-center mb-4">
+          <h2 className="text-xl font-bold text-gray-900">Transparent – Background Remover FAQ</h2>
+          <p className="mt-1 text-gray-600">Answers to common questions about transparent PNGs and workflow.</p>
+        </div>
+        <div className="grid gap-3">
+          {[ 
+            { q: "What is Transparent?", a: "A background‑removal service that exports clean PNGs with transparency for ecommerce and design." },
+            { q: "Which files work best?", a: "High‑resolution PNG/JPG with clear subject/background separation. Avoid heavy compression artifacts." },
+            { q: "Does it keep hair and fine edges?", a: "Yes—edge handling is optimized for hair, fur, and semi‑transparent regions where possible." },
+            { q: "How do I download a transparent PNG?", a: "Generate, then choose PNG export. The checkerboard preview denotes transparency." },
+            { q: "Commercial usage?", a: "Yes—exports can be used commercially subject to our Terms and your rights to the input image." },
+            { q: "File limits?", a: "See the upload UI for current size limits (commonly up to 10 MB per image)." },
+            { q: "Tips for best cut‑outs?", a: "Use images with contrast between subject and background; prompt with context like ‘keep hair wisps’." },
+            { q: "Troubleshooting halos?", a: "Try generating at higher resolution or refine the prompt to clarify edge treatment and background color spill." }
+          ].map(({ q, a }) => (
+            <details key={q} className="rounded-xl border border-slate-200 bg-white p-4 [&_summary]:cursor-pointer">
+              <summary className="text-lg font-semibold text-slate-900" id={q.replace(/\s+/g, '-').toLowerCase()}>{q}</summary>
+              <div className="mt-2 text-slate-700 leading-relaxed">{a}</div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "@id": "https://www.nanobanana-ai.dev/transparent#faq",
+          isPartOf: { "@id": "https://www.nanobanana-ai.dev/#website" },
+          about: { "@id": "https://www.nanobanana-ai.dev/#app" },
+          mainEntity: [
+            { "@type": "Question", name: "What is Transparent?", acceptedAnswer: { "@type": "Answer", text: "A background‑removal service that exports clean PNGs with transparency for ecommerce and design." }},
+            { "@type": "Question", name: "Which files work best?", acceptedAnswer: { "@type": "Answer", text: "High‑resolution PNG/JPG with clear subject/background separation. Avoid heavy compression artifacts." }},
+            { "@type": "Question", name: "Does it keep hair and fine edges?", acceptedAnswer: { "@type": "Answer", text: "Yes—edge handling is optimized for hair, fur, and semi‑transparent regions where possible." }},
+            { "@type": "Question", name: "How do I download a transparent PNG?", acceptedAnswer: { "@type": "Answer", text: "Generate, then choose PNG export. The checkerboard preview denotes transparency." }},
+            { "@type": "Question", name: "Commercial usage?", acceptedAnswer: { "@type": "Answer", text: "Yes—exports can be used commercially subject to our Terms and your rights to the input image." }},
+            { "@type": "Question", name: "File limits?", acceptedAnswer: { "@type": "Answer", text: "See the upload UI for current size limits (commonly up to 10 MB per image)." }},
+            { "@type": "Question", name: "Tips for best cut‑outs?", acceptedAnswer: { "@type": "Answer", text: "Use images with contrast between subject and background; prompt with context like ‘keep hair wisps’." }},
+            { "@type": "Question", name: "Troubleshooting halos?", acceptedAnswer: { "@type": "Answer", text: "Try generating at higher resolution or refine the prompt to clarify edge treatment and background color spill." }}
+          ]
+        }) }}
+      />
     </main>
   )
 }

@@ -573,11 +573,24 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "@id": "https://www.nanobanana-ai.dev/#faq",
+    isPartOf: { "@id": "https://www.nanobanana-ai.dev/#website" },
+    about: { "@id": "https://www.nanobanana-ai.dev/#app" },
     "mainEntity": [
-      { "@type": "Question", "name": "What is Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "A text-based photo editor that understands complex instructions and preserves the details you care about." } },
-      { "@type": "Question", "name": "How does it work?", "acceptedAnswer": { "@type": "Answer", "text": "Upload an image (or start from text), describe your edit, and generate. No manual masking required." } },
-      { "@type": "Question", "name": "Is it better than other tools?", "acceptedAnswer": { "@type": "Answer", "text": "We focus on identity and scene preservation so results look consistent across edits and versions." } },
-      { "@type": "Question", "name": "Can I use it commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—great for UGC, social, and marketing where brand/identity consistency matters." } }
+      { "@type": "Question", "name": "What is Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "Nano Banana (nanobanana) is an AI image editor powered by Google Gemini 2.5 Flash image editor. It preserves faces, identity and scene while you edit with simple text prompts." } },
+      { "@type": "Question", "name": "What makes Nano Banana different from other image generators?", "acceptedAnswer": { "@type": "Answer", "text": "Nano Banana focuses on character consistency and precision, helping keep facial features and scene details coherent across edits." } },
+      { "@type": "Question", "name": "What kind of prompts work best with Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "Both simple and detailed prompts work. For best results, describe the specific changes you want in natural language." } },
+      { "@type": "Question", "name": "How accurate is the image editing?", "acceptedAnswer": { "@type": "Answer", "text": "Edits are highly realistic, especially for identity consistency and scene preservation. Provide reference images for even tighter control." } },
+      { "@type": "Question", "name": "What file formats does it support?", "acceptedAnswer": { "@type": "Answer", "text": "Upload PNG/JPEG/WEBP and export high‑resolution PNG or JPG. Common aspect ratios (16:9, 1:1, 4:3, more) are supported." } },
+      { "@type": "Question", "name": "Can I use Nano Banana for commercial projects?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Nano Banana AI image editor is great for UGC, social, and marketing where brand and identity consistency matters." } },
+      { "@type": "Question", "name": "How long does it take to generate an image?", "acceptedAnswer": { "@type": "Answer", "text": "Most edits complete in about 15–30 seconds, depending on image complexity and settings." } },
+      { "@type": "Question", "name": "Is there a limit to how many images I can generate?", "acceptedAnswer": { "@type": "Answer", "text": "Flexible plans and batch support scale from solo creators to teams. See the Pricing page for details." } },
+      { "@type": "Question", "name": "Is my data secure when using Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "We prioritize privacy and security: encrypted processing, minimal retention, and optional deletion. See our Privacy Policy." } },
+      { "@type": "Question", "name": "Do you offer a free trial?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—start with free credits to try core features, then upgrade anytime." } }
+      ,
+      { "@type": "Question", "name": "How are credits calculated?", "acceptedAnswer": { "@type": "Answer", "text": "Each edit or generation uses credits based on settings and complexity. Advanced options may consume more; see Pricing for details." } },
+      { "@type": "Question", "name": "Can I cancel my subscription anytime?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—manage your plan in your account. Access continues until the end of the current billing period." } },
+      { "@type": "Question", "name": "Will unused credits roll over?", "acceptedAnswer": { "@type": "Answer", "text": "On paid tiers, unused credits may roll into the next cycle depending on plan—see Pricing for specifics." } },
+      { "@type": "Question", "name": "What payment methods do you accept?", "acceptedAnswer": { "@type": "Answer", "text": "Major credit/debit cards via Stripe; taxes/VAT may apply based on your location." } }
     ]
   }
 
@@ -593,7 +606,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
             {isAuthed ? (
               <>Credits: <span className="font-semibold">{balance}</span></>
             ) : (
-              <>Sign in to start generating images</>
+              <>Sign in to get free credits and start generating images.</>
             )}
           </p>
           
@@ -971,8 +984,8 @@ export default function HomePage() {
           "@type": "WebPage",
           "@id": "https://www.nanobanana-ai.dev/#webpage",
           "url": "https://www.nanobanana-ai.dev/",
-          "name": "Nano Banana – Text-Based AI Photo Editor · Change Anything. Keep What Matters.",
-          "isPartOf": { "@id": "https://www.nanobanana-ai.dev/#org" },
+          "name": "Nano Banana – AI Image Editor",
+          "isPartOf": { "@id": "https://www.nanobanana-ai.dev/#website" },
           "about": { "@id": "https://www.nanobanana-ai.dev/#app" }
         }}
       />
@@ -990,19 +1003,26 @@ export default function HomePage() {
       {/* HERO */}
       <div className="hero-gradient relative overflow-hidden">
         <div ref={vantaRef} id="home" className="absolute inset-0 pointer-events-none" aria-hidden="true" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-20">
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             {/* Copy */}
             <div className="relative z-10">
-              <h1 className="fluid-h1 tracking-tight font-extrabold text-gray-900">
-                <span className="block">Nano Banana</span>
-                <span className="block">Text-Based AI Photo Editor</span>
-                <span className="block text-white">Change Anything.</span>
-                <span className="block text-white">Keep What Matters.</span>
+              <h1 className="fluid-h1 tracking-tight font-extrabold">
+                <span className="text-gray-900">Nano Banana - </span>
+                <span className="text-white">Advanced AI Image Editor</span>
               </h1>
-              <p className="mt-3 md:mt-4 mb-0 text-base sm:text-lg md:text-xl text-gray-800 max-w-xl">
-                Edit with plain text prompts while preserving faces, identities, and details. Nano Banana makes hard edits feel easy.
-              </p>
+              <h2 className="mt-3 md:mt-4 text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900">
+                Experience the REAL Nano Banana advanced AI image editor powered by Google's Gemini 2.5 Flash Image API.
+              </h2>
+              <ul className="mt-3 text-sm sm:text-base md:text-lg text-gray-800 leading-snug md:leading-relaxed max-w-2xl list-disc pl-5 space-y-1.5">
+                <li>Easily transform images in Nano Banana with simple text prompts.</li>
+                <li>Nano Banana maintains consistent characters across edits.</li>
+                <li>Create stunning visuals with real Nano Banana AI from Google.</li>
+              </ul>
+              <h3 className="mt-2 text-base sm:text-lg text-gray-800 italic">
+                Easy-to-use service utilizing Google's Nano Banana API technology.
+              </h3>
               
             </div>
 
@@ -1024,8 +1044,45 @@ export default function HomePage() {
         </div>
       </div>
 
+      
+
       {/* GENERATOR (inline) */}
       <HomeGeneratorSection showSignIn={showSignIn} onShowSignIn={setShowSignIn} />
+
+  {/* WHAT IS NANO BANANA */}
+  <section id="what-is-nano-banana" className="py-12 bg-white">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="lg:text-center mb-6">
+        <p className="text-sm text-yellow-700 font-semibold tracking-wide uppercase">What is Nano Banana?</p>
+        <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">What is Nano Banana?</h2>
+        <p className="mt-2 text-gray-700">Fast, high‑quality AI image generation and editing</p>
+      </div>
+      <div className="prose prose-gray max-w-none">
+        <p>
+          “Nano Banana” is the community nickname for Google’s Gemini 2.5 Flash Image model—a fast, high-quality AI for image generation and text‑based image editing (remove/replace objects, change backgrounds, merge images, keep character identity consistent, etc.). All outputs include SynthID provenance watermarking.
+        </p>
+      </div>
+      <div className="mt-6 grid md:grid-cols-2 gap-6">
+        <div className="bg-gray-50 rounded-lg p-5 border">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <span>What it can do</span>
+          </h3>
+          <ul className="mt-3 list-disc pl-5 text-gray-800 space-y-1">
+            <li>Text → image and image → image edits with natural‑language prompts.</li>
+            <li>Character consistency across multiple edits/shots.</li>
+            <li>Multi‑image fusion (blend/compose images).</li>
+            <li>Low latency and broad aspect‑ratio support; available via Gemini API, AI Studio/Vertex AI, and consumer Gemini surfaces.</li>
+          </ul>
+        </div>
+        <div className="bg-gray-50 rounded-lg p-5 border">
+          <h3 className="text-lg font-semibold text-gray-900">Why people call it “Nano Banana”</h3>
+          <p className="mt-3 text-gray-800">
+            It started as a shorthand used by developers and creators online for Gemini 2.5 Flash Image, and the name stuck as the model went mainstream.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
       {/* EXAMPLES (Before/After) */}
       <ExamplesSection />
@@ -1040,6 +1097,24 @@ export default function HomePage() {
               Natural-language editing with unmatched consistency. Keep faces and identities while changing anything else.
             </p>
           </div>
+
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "AI Image Editing" },
+                { "@type": "ListItem", "position": 2, "name": "Gemini 2.5 Flash Engine" },
+                { "@type": "ListItem", "position": 3, "name": "Character Consistency" },
+                { "@type": "ListItem", "position": 4, "name": "Multi-Image Fusion" },
+                { "@type": "ListItem", "position": 5, "name": "Style & Color Control" },
+                { "@type": "ListItem", "position": 6, "name": "Conversational Editing" },
+                { "@type": "ListItem", "position": 7, "name": "API Access (coming soon)" },
+                { "@type": "ListItem", "position": 8, "name": "Watermark Transparency (SynthID)" }
+              ]
+            }) }}
+          />
 
           <div className="mt-10 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
             {[
@@ -1202,25 +1277,92 @@ export default function HomePage() {
               <div>
                 <dt className="text-lg leading-6 font-medium text-gray-900">What is Nano Banana?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  A text-based photo editor that understands complex instructions and preserves the details you care about.
+                  Nano Banana (nanobanana) is an AI image editor powered by Google Gemini 2.5 Flash image editor. It preserves faces, identity and scene while you edit with simple text prompts.
                 </dd>
               </div>
               <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">How does it work?</dt>
+                <dt className="text-lg leading-6 font-medium text-gray-900">What makes Nano Banana different from other image generators?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  Upload an image (or start from text), describe your edit, and generate. No manual masking required.
+                  Nano Banana focuses on character consistency and precision, helping keep facial features and scene details coherent across edits.
                 </dd>
               </div>
               <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">Is it better than other tools?</dt>
+                <dt className="text-lg leading-6 font-medium text-gray-900">What kind of prompts work best with Nano Banana?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  We focus on identity and scene preservation so results look consistent across edits and versions.
+                  Both simple and detailed prompts work. For best results, describe the specific changes you want in natural language.
                 </dd>
               </div>
               <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">Can I use it commercially?</dt>
+                <dt className="text-lg leading-6 font-medium text-gray-900">How accurate is the image editing?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  Yes—great for UGC, social, and marketing where brand/identity consistency matters.
+                  Edits are highly realistic, especially for identity consistency and scene preservation. Provide reference images for even tighter control.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">What file formats does it support?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Upload PNG/JPEG/WEBP; export high‑resolution PNG or JPG. Common aspect ratios (16:9, 1:1, 4:3 and more) are supported.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Can I use Nano Banana for commercial projects?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Yes. The Nano Banana AI image editor is great for UGC, social, and marketing where brand and identity consistency matters.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">How long does it take to generate an image?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Most edits complete in about 15–30 seconds, depending on image complexity and settings.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Is there a limit to how many images I can generate?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Flexible plans and batch support scale from solo creators to teams. See the Pricing page for details.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Is my data secure when using Nano Banana?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  We prioritize privacy and security: encrypted processing, minimal retention, and optional deletion. See our Privacy Policy.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Do you offer a free trial?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Yes—start with free credits to try core features, then upgrade anytime.
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          {/* Pricing & Billing FAQs */}
+          <div className="mt-12 max-w-3xl mx-auto">
+            <h3 className="text-xl font-bold text-gray-900">Pricing & Billing FAQs</h3>
+            <dl className="mt-6 space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12">
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">How are credits calculated?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Each edit or generation uses credits based on settings and complexity. Advanced options may consume more; see Pricing for details.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Can I cancel my subscription anytime?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Yes—manage your plan in your account. Access continues until the end of the current billing period.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">Will unused credits roll over?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  On paid tiers, unused credits may roll into the next cycle depending on plan—see Pricing for specifics.
+                </dd>
+              </div>
+              <div>
+                <dt className="text-lg leading-6 font-medium text-gray-900">What payment methods do you accept?</dt>
+                <dd className="mt-2 text-base text-gray-500">
+                  Major credit/debit cards via Stripe; taxes/VAT may apply based on your location.
                 </dd>
               </div>
             </dl>
@@ -1277,7 +1419,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-8 border-t border-gray-700 pt-8">
-            <p className="text-base text-gray-400 xl:text-center">&copy; 2023 Nano Banana. All rights reserved.</p>
+            <p className="text-base text-gray-400 xl:text-center">&copy; 2025 Nano Banana. All rights reserved.</p>
           </div>
         </div>
       </footer>
