@@ -7,8 +7,8 @@ import Navbar from "@/app/components/Navbar";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Nano Banana – AI Image Editor",
-  description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
+  title: "Nano Banana – Advanced AI Image Editor | Gemini 2.5 Flash",
+  description: "Nanobanana AI image editor powered by Gemini 2.5 Flash. Edit, replace, and restyle photos with simple prompts while preserving faces and scene.",
   keywords: [
     "nanobanana",
     "nano banana",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "Google Gemini 2.5 Flash image editor"
   ],
   metadataBase: new URL("https://www.nanobanana-ai.dev"),
-  alternates: { canonical: "/" },
+  alternates: { canonical: "https://www.nanobanana-ai.dev" },
   viewport: {
     width: "device-width",
     initialScale: 1,
@@ -25,16 +25,16 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    url: "https://www.nanobanana-ai.dev/",
-    title: "Nano Banana (nanobanana) – AI Image Editor · Gemini 2.5 Flash",
-    description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
+    url: "https://www.nanobanana-ai.dev",
+    title: "Nano Banana – Advanced AI Image Editor | Gemini 2.5 Flash",
+    description: "Nanobanana AI image editor powered by Gemini 2.5 Flash. Edit, replace, and restyle photos with simple prompts while preserving faces and scene.",
     siteName: "Nano Banana",
     images: [{ url: "/og/home.png", width: 1200, height: 630, alt: "Nanobanana AI image editor · Google Gemini 2.5 Flash" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nano Banana (nanobanana) – AI Image Editor · Gemini 2.5 Flash",
-    description: "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit, replace, and restyle photos with simple text prompts while preserving faces and scene.",
+    title: "Nano Banana – Advanced AI Image Editor | Gemini 2.5 Flash",
+    description: "Nanobanana AI image editor powered by Gemini 2.5 Flash. Edit, replace, and restyle photos with simple prompts while preserving faces and scene.",
     images: ["/og/home.png"],
   },
 };
@@ -44,7 +44,7 @@ const ORG_JSONLD = {
   "@type": "Organization",
   "@id": "https://www.nanobanana-ai.dev/#org",
   "name": "Nano Banana",
-  "url": "https://www.nanobanana-ai.dev/"
+  "url": "https://www.nanobanana-ai.dev"
 };
 
 export default function RootLayout({
@@ -74,8 +74,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            "url": "https://www.nanobanana-ai.dev/",
+            "@id": "https://www.nanobanana-ai.dev/#website",
+            "url": "https://www.nanobanana-ai.dev",
             "name": "Nano Banana",
+            "publisher": { "@id": "https://www.nanobanana-ai.dev/#org" },
             "potentialAction": {
               "@type": "SearchAction",
               "target": "https://www.nanobanana-ai.dev/search?q={search_term_string}",
@@ -87,24 +89,11 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "WebApplication",
-            "name": "Nano Banana – AI Image Editor",
-            "url": "https://www.nanobanana-ai.dev/",
-            "applicationCategory": "Multimedia",
-            "operatingSystem": "Web",
-            "description": "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit with simple text prompts while preserving faces and scene.",
-            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-          }) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify({
-            "@context": "https://schema.org",
             "@type": "Product",
             "name": "Nano Banana – Text-Based Photo Editor",
             "description": "Nanobanana AI image editor powered by Google Gemini 2.5 Flash image editor—edit with simple text prompts while preserving faces and scene.",
             "brand": { "@type": "Brand", "name": "Nano Banana" },
-            "url": "https://www.nanobanana-ai.dev/",
+            "url": "https://www.nanobanana-ai.dev",
             "image": "https://www.nanobanana-ai.dev/og/home.png",
             "offers": { "@type": "Offer", "price": "5", "priceCurrency": "USD", "availability": "https://schema.org/InStock" }
           }) }}
