@@ -45,6 +45,20 @@ export default function Page() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://www.nanobanana-ai.dev" },
+              { "@type": "ListItem", position: 2, name: "16:9 Image Generator", item: "https://www.nanobanana-ai.dev/16-9-image-generator" },
+              { "@type": "ListItem", position: 3, name: "FAQ", item: "https://www.nanobanana-ai.dev/16-9-image-generator/faq" }
+            ]
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "FAQPage",
             "@id": "https://www.nanobanana-ai.dev/16-9-image-generator/faq#page",
             isPartOf: { "@id": "https://www.nanobanana-ai.dev/#website" },

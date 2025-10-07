@@ -44,7 +44,8 @@ const ORG_JSONLD = {
   "@type": "Organization",
   "@id": "https://www.nanobanana-ai.dev/#org",
   "name": "Nano Banana",
-  "url": "https://www.nanobanana-ai.dev"
+  "url": "https://www.nanobanana-ai.dev",
+  "logo": { "@type": "ImageObject", "url": "https://www.nanobanana-ai.dev/og/home.png" }
 };
 
 export default function RootLayout({
