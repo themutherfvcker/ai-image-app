@@ -15,6 +15,9 @@ export default function Page() {
           <h2 className="mt-4 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-700 font-medium">
             Instantly fix the frustrating aspect ratio issues in Gemini Nano Banana when it keeps generating square 1:1 images instead of your desired 16:9
           </h2>
+          <p className="mt-2 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-600">
+            Our Nano Banana 16:9 generator turns square or vertical outputs into real widescreen images - fixing this known issue with Nano Banana with 1 click.
+          </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a href="#app" className="inline-flex items-center justify-center px-8 py-3 rounded-md text-white bg-yellow-500 hover:bg-yellow-600 shadow">
               Try It Free
