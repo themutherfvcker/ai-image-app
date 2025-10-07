@@ -1017,7 +1017,7 @@ export default function HomePage() {
               </h2>
               <ul className="mt-3 text-sm sm:text-base md:text-lg text-gray-800 leading-snug md:leading-relaxed max-w-2xl list-disc pl-5 space-y-1.5">
                 <li>Easily transform images in Nano Banana with simple text prompts.</li>
-                <li>Nano Banana focuses on maintaining consistent characters across edits.</li>
+                <li>Nano Banana maintains consistent characters across edits.</li>
                 <li>Create stunning visuals with real Nano Banana AI from Google.</li>
               </ul>
               <h3 className="mt-2 text-base sm:text-lg text-gray-800 italic">
@@ -1044,15 +1044,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* What is Nano Banana? (explainer) */}
-      <section className="px-4 sm:px-6 lg:px-8 py-8 max-w-3xl mx-auto">
-        <h2 className="text-xl font-semibold text-gray-900">What is Nano Banana?</h2>
-        <p className="mt-2 text-gray-700">
-          “Nano Banana” is the community nickname for Google’s Gemini 2.5 Flash Image model. Nano Banana (our editor)
-          lets you edit or generate images with natural‑language prompts—remove/replace objects, change backgrounds, merge photos,
-          and keep character identity consistent—directly in your browser.
-        </p>
-      </section>
+      
 
       {/* GENERATOR (inline) */}
       <HomeGeneratorSection showSignIn={showSignIn} onShowSignIn={setShowSignIn} />
