@@ -337,7 +337,7 @@ export default function GeneratorPage() {
                 <Link href="/#pricing" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Pricing</Link>
                 <Link href="/developers" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">API</Link>
                 <a href="#faq" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">FAQ</a>
-                <Link href="/toolbox" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Toolbox</Link>
+                
                 <Link href="/account" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Account</Link>
               </div>
               <div className="flex items-center">

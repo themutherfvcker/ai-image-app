@@ -74,7 +74,6 @@ export default function Navbar() {
             <Link href="/transparent" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Transparent</Link>
             <Link href="/developers" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">API</Link>
             <Link href="/faq" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">FAQ</Link>
-            <Link href="/toolbox" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-yellow-500">Toolbox</Link>
             <Link href="/account" className="px-3 py-2 rounded-md text-sm font-medium text-gray-900 hover:text-yellow-500">Account</Link>
           </div>
           <div className="flex items-center">
@@ -110,7 +109,6 @@ export default function Navbar() {
               <Link onClick={() => setOpen(false)} href="/transparent" className="block px-3 py-3 rounded-md text-base font-medium text-gray-800 hover:bg-gray-50">Transparent</Link>
               <Link onClick={() => setOpen(false)} href="/developers" className="block px-3 py-3 rounded-md text-base font-medium text-gray-800 hover:bg-gray-50">API</Link>
               <Link onClick={() => setOpen(false)} href="/faq" className="block px-3 py-3 rounded-md text-base font-medium text-gray-800 hover:bg-gray-50">FAQ</Link>
-              <Link onClick={() => setOpen(false)} href="/toolbox" className="block px-3 py-3 rounded-md text-base font-medium text-gray-800 hover:bg-gray-50">Toolbox</Link>
               <Link onClick={() => setOpen(false)} href="/account" className="block px-3 py-3 rounded-md text-base font-medium text-gray-800 hover:bg-gray-50">Account</Link>
             </nav>
           </div>

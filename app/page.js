@@ -1401,20 +1401,20 @@ export default function HomePage() {
             <div>
               <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Product</h3>
               <ul role="list" className="mt-4 space-y-4">
-                <li><a href="#features" className="text-base text-gray-300 hover:text-white">Features</a></li>
-                <li><a href="#showcase" className="text-base text-gray-300 hover:text-white">Showcase</a></li>
-                <li><a href="#reviews" className="text-base text-gray-300 hover:text-white">Reviews</a></li>
-                <li><a href="/pricing" className="text-base text-gray-300 hover:text-white">Pricing</a></li>
+                <li><a href="#features" className="text-base text-gray-300 hover:text-white">Nano Banana Features</a></li>
+                <li><a href="#showcase" className="text-base text-gray-300 hover:text-white">Nano Banana Showcase</a></li>
+                <li><a href="#reviews" className="text-base text-gray-300 hover:text-white">Nano Banana Reviews</a></li>
+                <li><a href="/pricing" className="text-base text-gray-300 hover:text-white">Nano Banana Pricing</a></li>
               </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Company</h3>
               <ul role="list" className="mt-4 space-y-4">
-                <li><a href="/about" className="text-base text-gray-300 hover:text-white">About</a></li>
-                <li><a href="/contact" className="text-base text-gray-300 hover:text-white">Contact</a></li>
-                <li><a href="/refunds" className="text-base text-gray-300 hover:text-white">Refunds</a></li>
-                <li><a href="/terms" className="text-base text-gray-300 hover:text-white">Terms</a></li>
-                <li><a href="/privacy" className="text-base text-gray-300 hover:text-white">Privacy</a></li>
+                <li><a href="/about" className="text-base text-gray-300 hover:text-white">About Nano Banana</a></li>
+                <li><a href="/contact" className="text-base text-gray-300 hover:text-white">Contact Nano Banana</a></li>
+                <li><a href="/refunds" className="text-base text-gray-300 hover:text-white">Nano Banana Refunds</a></li>
+                <li><a href="/terms" className="text-base text-gray-300 hover:text-white">Nano Banana Terms</a></li>
+                <li><a href="/privacy" className="text-base text-gray-300 hover:text-white">Nano Banana Privacy</a></li>
               </ul>
             </div>
           </div>
