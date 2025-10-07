@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "16:9 Image Generator & Converter | NanoBanana",
+  title: "Nano Banana 16:9 — Fix Gemini Nano Banana 16:9 Aspect Ratio Problems",
   description: "Generate native 16:9 images or convert any photo to 16:9.",
 };
 
@@ -13,9 +13,9 @@ export default function Page() {
             <span className="block">Resize Any Image to</span>
             <span className="block text-yellow-500">Perfect 16:9</span>
           </h1>
-          <p className="mt-4 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-600">
-            Smart conversion that preserves composition and fills edges naturally. Perfect for YouTube thumbnails and hero banners.
-          </p>
+          <h2 className="mt-4 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-700 font-medium">
+            Instantly fix the frustrating aspect ratio issues in Gemini Nano Banana when it keeps generating square 1:1 images instead of your desired 16:9
+          </h2>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a href="#app" className="inline-flex items-center justify-center px-8 py-3 rounded-md text-white bg-yellow-500 hover:bg-yellow-600 shadow">
               Try It Free
