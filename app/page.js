@@ -1044,6 +1044,16 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* What is Nano Banana? (explainer) */}
+      <section className="px-4 sm:px-6 lg:px-8 py-8 max-w-3xl mx-auto">
+        <h2 className="text-xl font-semibold text-gray-900">What is Nano Banana?</h2>
+        <p className="mt-2 text-gray-700">
+          “Nano Banana” is the community nickname for Google’s Gemini 2.5 Flash Image model. Nano Banana (our editor)
+          lets you edit or generate images with natural‑language prompts—remove/replace objects, change backgrounds, merge photos,
+          and keep character identity consistent—directly in your browser.
+        </p>
+      </section>
+
       {/* GENERATOR (inline) */}
       <HomeGeneratorSection showSignIn={showSignIn} onShowSignIn={setShowSignIn} />
 
@@ -1095,6 +1105,24 @@ export default function HomePage() {
               Natural-language editing with unmatched consistency. Keep faces and identities while changing anything else.
             </p>
           </div>
+
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "AI Image Editing" },
+                { "@type": "ListItem", "position": 2, "name": "Gemini 2.5 Flash Engine" },
+                { "@type": "ListItem", "position": 3, "name": "Character Consistency" },
+                { "@type": "ListItem", "position": 4, "name": "Multi-Image Fusion" },
+                { "@type": "ListItem", "position": 5, "name": "Style & Color Control" },
+                { "@type": "ListItem", "position": 6, "name": "Conversational Editing" },
+                { "@type": "ListItem", "position": 7, "name": "API Access (coming soon)" },
+                { "@type": "ListItem", "position": 8, "name": "Watermark Transparency (SynthID)" }
+              ]
+            }) }}
+          />
 
           <div className="mt-10 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
             {[
@@ -1399,7 +1427,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-8 border-t border-gray-700 pt-8">
-            <p className="text-base text-gray-400 xl:text-center">&copy; 2023 Nano Banana. All rights reserved.</p>
+            <p className="text-base text-gray-400 xl:text-center">&copy; 2025 Nano Banana. All rights reserved.</p>
           </div>
         </div>
       </footer>
