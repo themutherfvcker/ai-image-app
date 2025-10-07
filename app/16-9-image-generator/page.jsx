@@ -65,6 +65,50 @@ export default function Page() {
           </div>
         </div>
       </section>
+
+      {/* 16:9 FAQ */}
+      <section id="faq" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">16:9 Image Generator – FAQ</h2>
+          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500">Tips and answers for composition, sizes, and exports.</p>
+        </div>
+        <div className="mt-8 grid gap-3 max-w-3xl mx-auto">
+          {[ 
+            { q: "What is the 16:9 Image Generator?", a: "A tool to generate native 16:9 visuals or convert images while preserving composition." },
+            { q: "Best sizes for YouTube thumbnails?", a: "1280×720 is standard; keep important elements within the central safe area for mobile." },
+            { q: "Cropping vs outpainting?", a: "Outpainting can extend edges to maintain composition; cropping trims edges and may lose context." },
+            { q: "How do I keep text crisp?", a: "Generate at target resolution, use high contrast, and avoid ultra‑thin fonts at small sizes." },
+            { q: "Will faces stay consistent across variants?", a: "Yes—use identity cues and the same references for character consistency." },
+            { q: "Can I convert vertical (9:16) to 16:9?", a: "Yes—use outpainting prompts to fill sides while matching lighting and style." },
+            { q: "What formats can I export?", a: "PNG/JPG; choose PNG for crisp graphics and JPG for photographic content." }
+          ].map(({ q, a }) => (
+            <details key={q} className="rounded-xl border border-slate-200 bg-white p-4 [&_summary]:cursor-pointer">
+              <summary className="text-lg font-semibold text-slate-900" id={q.replace(/\s+/g, '-').toLowerCase()}>{q}</summary>
+              <div className="mt-2 text-slate-700 leading-relaxed">{a}</div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "@id": "https://www.nanobanana-ai.dev/16-9-image-generator#faq",
+          isPartOf: { "@id": "https://www.nanobanana-ai.dev/#website" },
+          about: { "@id": "https://www.nanobanana-ai.dev/#app" },
+          mainEntity: [
+            { "@type": "Question", name: "What is the 16:9 Image Generator?", acceptedAnswer: { "@type": "Answer", text: "A tool to generate native 16:9 visuals or convert images while preserving composition." }},
+            { "@type": "Question", name: "Best sizes for YouTube thumbnails?", acceptedAnswer: { "@type": "Answer", text: "1280×720 is standard; keep important elements within the central safe area for mobile." }},
+            { "@type": "Question", name: "Cropping vs outpainting?", acceptedAnswer: { "@type": "Answer", text: "Outpainting can extend edges to maintain composition; cropping trims edges and may lose context." }},
+            { "@type": "Question", name: "How do I keep text crisp?", acceptedAnswer: { "@type": "Answer", text: "Generate at target resolution, use high contrast, and avoid ultra‑thin fonts at small sizes." }},
+            { "@type": "Question", name: "Will faces stay consistent across variants?", acceptedAnswer: { "@type": "Answer", text: "Yes—use identity cues and the same references for character consistency." }},
+            { "@type": "Question", name: "Can I convert vertical (9:16) to 16:9?", acceptedAnswer: { "@type": "Answer", text: "Yes—use outpainting prompts to fill sides while matching lighting and style." }},
+            { "@type": "Question", name: "What formats can I export?", acceptedAnswer: { "@type": "Answer", text: "PNG/JPG; choose PNG for crisp graphics and JPG for photographic content." }}
+          ]
+        }) }}
+      />
     </main>
   );
 }
