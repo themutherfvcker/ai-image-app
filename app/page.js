@@ -1399,12 +1399,16 @@ export default function HomePage() {
               <p className="mt-4 text-base text-gray-300">AI Image Editor</p>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Product</h3>
+              <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Menu</h3>
               <ul role="list" className="mt-4 space-y-4">
-                <li><a href="#features" className="text-base text-gray-300 hover:text-white">Nano Banana Features</a></li>
-                <li><a href="#showcase" className="text-base text-gray-300 hover:text-white">Nano Banana Showcase</a></li>
-                <li><a href="#reviews" className="text-base text-gray-300 hover:text-white">Nano Banana Reviews</a></li>
+                <li><a href="/generator" className="text-base text-gray-300 hover:text-white">Nano Banana Image Editor</a></li>
+                <li><a href="/showcase" className="text-base text-gray-300 hover:text-white">Nano Banana Showcase</a></li>
                 <li><a href="/pricing" className="text-base text-gray-300 hover:text-white">Nano Banana Pricing</a></li>
+                <li><a href="/16-9-image-generator" className="text-base text-gray-300 hover:text-white">Nano Banana 16:9 Image Generator</a></li>
+                <li><a href="/transparent" className="text-base text-gray-300 hover:text-white">Nano Banana Transparent</a></li>
+                <li><a href="/developers" className="text-base text-gray-300 hover:text-white">Nano Banana API</a></li>
+                <li><a href="/faq" className="text-base text-gray-300 hover:text-white">Nano Banana FAQ</a></li>
+                <li><a href="/account" className="text-base text-gray-300 hover:text-white">Nano Banana Account</a></li>
               </ul>
             </div>
             <div>
