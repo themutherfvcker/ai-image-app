@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import JsonLdRaw from "./components/JsonLdRaw";
 import Navbar from "@/app/components/Navbar";
+import Footer from "@/app/components/Footer";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
@@ -110,6 +111,7 @@ export default function RootLayout({
         {/* Entity JSON-LD provided via @graph in <head> */}
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );
