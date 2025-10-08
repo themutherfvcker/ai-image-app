@@ -31,3 +31,4 @@ section[loading="lazy"], .cv-lazy {
   font-size: clamp(1.25rem, 3.5vw, 2rem);
   line-height: 1.25;
 }
+/* redeploy: 2025-10-06 */
