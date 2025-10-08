@@ -1,6 +1,19 @@
 export const metadata = {
-  title: "Nano Banana 16:9 — Fix Gemini Nano Banana 16:9 Aspect Ratio Problems",
-  description: "Generate native 16:9 images or convert any photo to 16:9.",
+  title: 'Nano Banana 16:9 Image Generator | Convert Images to Perfect Widescreen',
+  description: 'Instantly convert Nano Banana images to perfect 16:9 widescreen with AI magic.',
+  openGraph: {
+    url: 'https://www.nanobanana-ai.dev/16-9-image-generator',
+    title: 'Nano Banana 16:9 Image Generator',
+    description: 'Instantly convert Nano Banana images to perfect 16:9 widescreen with AI magic.',
+    type: 'website',
+    images: [{ url: 'https://www.nanobanana-ai.dev/og/16-9.png' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@your_handle',
+    images: ['https://www.nanobanana-ai.dev/og/16-9.png'],
+  },
+  alternates: { canonical: '/16-9-image-generator' },
 };
 
 export default function Page() {
