@@ -66,6 +66,17 @@ export default function NB169Embed() {
     return () => window.removeEventListener('message', onMessage)
   }, [isAuthed])
 
+  function handleIframeFocus() {
+    if (!isAuthed) {
+      try {
+        sessionStorage.setItem('nb_redirect_after_auth', '/16-9-image-generator#app')
+        sessionStorage.setItem('nb_169_open_upload_after_auth', '1')
+      } catch {}
+      // No overlay — just route to sign-in
+      window.location.href = '/auth/signin'
+    }
+  }
+
   if (loading) {
     return (
       <div className="bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden h-[70vh] md:h-[75vh] grid place-items-center text-gray-600">
@@ -76,7 +87,7 @@ export default function NB169Embed() {
 
   return (
     <div className="relative bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden h-[70vh] md:h-[75vh]">
-      <iframe ref={iframeRef} src={appSrc} className="w-full h-full border-0" loading="eager" title="16:9 Image Generator" />
+      <iframe ref={iframeRef} src={appSrc} className="w-full h-full border-0" loading="eager" title="16:9 Image Generator" onFocus={handleIframeFocus} />
     </div>
   )
 }
