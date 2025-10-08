@@ -10,18 +10,17 @@ export default function Page() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl [-letter-spacing:-0.01em]">
-            <span className="block">Nano Banana 16:9 — Fix Gemini Nano Banana</span>
-            <span className="block text-yellow-600">16:9 Aspect Ratio Problems</span>
+            Nano Banana 16 9 Problems?
           </h1>
           <h2 className="mt-4 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-700 font-medium">
-            Instantly fix the frustrating aspect ratio issues in Gemini Nano Banana when it keeps generating square 1:1 images instead of your desired 16:9
+            Frustrated with the Wrong Aspect Ratio in Your Nano Banana Images?
           </h2>
           <p className="mt-2 max-w-prose mx-auto text-base sm:text-lg md:text-xl text-gray-600">
-            Our Nano Banana 16:9 generator turns square or vertical outputs into real widescreen images - fixing this known issue with Nano Banana with 1 click.
+            Instantly convert Nano Banana images to perfect 16:9 widescreen with AI magic
           </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a href="#app" className="inline-flex items-center justify-center px-8 py-3 rounded-md text-white bg-yellow-500 hover:bg-yellow-600 shadow transition-colors">
-              Try It Free
+              Try Now - It's Free
             </a>
             <a href="#features" className="inline-flex items-center justify-center px-8 py-3 rounded-md text-yellow-600 bg-white hover:bg-gray-50 border transition-colors">
               Learn More
