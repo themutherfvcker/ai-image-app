@@ -1,3 +1,4 @@
+import NB169Embed from "@/app/components/NB169Embed";
 export const metadata = {
   title: "Nano Banana 16:9 — Fix Gemini Nano Banana 16:9 Aspect Ratio Problems",
   description: "Generate native 16:9 images or convert any photo to 16:9.",
@@ -39,11 +40,7 @@ export default function Page() {
 
       {/* Embedded App */}
       <section id="app" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        {/* Auth-gated embed */}
-        {(() => {
-          const NB169Embed = require("@/app/components/NB169Embed").default
-          return <NB169Embed />
-        })()}
+        <NB169Embed />
       </section>
 
       {/* Narrative helper section */}
