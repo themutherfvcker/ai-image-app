@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
+import Footer from "@/app/components/Footer";
 
 export const metadata = {
   title: "Nano Banana – Advanced AI Image Editor | Gemini 2.5 Flash",
@@ -85,7 +86,10 @@ export default function RootLayout({ children }) {
           }) }}
         />
       </head>
-      <body className={`${inter.className} antialiased h-full`}>{children}</body>
+      <body className={`${inter.className} antialiased h-full`}>
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
