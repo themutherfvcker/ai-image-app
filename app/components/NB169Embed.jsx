@@ -1,14 +1,10 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
-import Link from "next/link"
-import SignInModal from "@/app/components/SignInModal"
 import { getSupabase } from "@/lib/supabaseClient"
 
 export default function NB169Embed() {
   const [isAuthed, setIsAuthed] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [showSignIn, setShowSignIn] = useState(false)
-  const [overlayActive, setOverlayActive] = useState(false)
   const iframeRef = useRef(null)
 
   useEffect(() => {
@@ -20,7 +16,6 @@ export default function NB169Embed() {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
           setIsAuthed(!!session?.user)
           if (session?.user) {
-            setOverlayActive(false)
             // If user came here intending to upload, try to ask the app to open upload
             try {
               const flag = sessionStorage.getItem('nb_169_open_upload_after_auth')
@@ -53,6 +48,24 @@ export default function NB169Embed() {
     } catch {}
   }
 
+  // Listen for upload intent coming from the iframe and route to /auth/signin if unauthenticated
+  useEffect(() => {
+    function onMessage(e) {
+      const type = e?.data?.type || e?.data
+      if (type === 'NB169_UPLOAD_CLICKED' || type === 'NB169_REQUIRE_AUTH') {
+        if (!isAuthed) {
+          try {
+            sessionStorage.setItem('nb_redirect_after_auth', '/16-9-image-generator#app')
+            sessionStorage.setItem('nb_169_open_upload_after_auth', '1')
+          } catch {}
+          window.location.href = '/auth/signin'
+        }
+      }
+    }
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [isAuthed])
+
   if (loading) {
     return (
       <div className="bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden h-[70vh] md:h-[75vh] grid place-items-center text-gray-600">
@@ -63,34 +76,7 @@ export default function NB169Embed() {
 
   return (
     <div className="relative bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden h-[70vh] md:h-[75vh]">
-      {/* The app itself */}
       <iframe ref={iframeRef} src={appSrc} className="w-full h-full border-0" loading="eager" title="16:9 Image Generator" />
-
-      {/* Click-capture overlay when not authed */}
-      {!isAuthed && (
-        <button
-          type="button"
-          onClick={() => {
-            setOverlayActive(true)
-            try { sessionStorage.setItem('nb_redirect_after_auth', '/16-9-image-generator#app'); sessionStorage.setItem('nb_169_open_upload_after_auth', '1') } catch {}
-            setShowSignIn(true)
-          }}
-          className="absolute inset-0 bg-white/80 backdrop-blur-[1px] flex flex-col items-center justify-center p-6 text-center"
-          aria-label="Sign in to upload"
-        >
-          <div className="max-w-md">
-            <h3 className="text-2xl font-bold text-gray-900">Sign in to upload an image</h3>
-            <p className="mt-2 text-gray-700">We’ll bring you right back to the upload window after you finish signing in.</p>
-            <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <span className="inline-flex items-center px-5 py-2 rounded-md text-white bg-yellow-600 hover:bg-yellow-700">Sign in</span>
-              <Link href="/pricing" className="inline-flex items-center px-5 py-2 rounded-md text-yellow-700 bg-yellow-50 hover:bg-yellow-100 border border-yellow-200">Buy credits</Link>
-            </div>
-            <p className="mt-2 text-xs text-gray-500">If the upload dialog doesn’t open automatically after login, click “Upload” again.</p>
-          </div>
-        </button>
-      )}
-
-      <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </div>
   )
 }
