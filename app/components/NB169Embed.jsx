@@ -38,12 +38,22 @@ export default function NB169Embed() {
   // Prefer env; fall back to public deployment
   const appSrc = (typeof window !== 'undefined' ? (process.env.NEXT_PUBLIC_169_APP_URL || "https://nano-banana-16-9-image-creator.vercel.app/") : "https://nano-banana-16-9-image-creator.vercel.app/")
 
+  function getChildOrigin() {
+    try {
+      const base = typeof window !== 'undefined' ? window.location.origin : 'https://www.nanobanana-ai.dev'
+      return new URL(appSrc, base).origin
+    } catch {
+      return '*'
+    }
+  }
+
   // After auth, attempt to notify the iframe to open its upload dialog.
   function requestOpenUpload() {
     try {
       const win = iframeRef.current?.contentWindow
       if (!win) return
-      win.postMessage({ type: 'NB169_OPEN_UPLOAD' }, '*')
+      const targetOrigin = getChildOrigin()
+      win.postMessage({ type: 'NB169_OPEN_UPLOAD' }, targetOrigin)
       // Note: if the embed doesn't implement this listener, nothing happens. That's OK.
     } catch {}
   }
@@ -52,6 +62,11 @@ export default function NB169Embed() {
   useEffect(() => {
     function onMessage(e) {
       const type = e?.data?.type || e?.data
+      const expectedOrigin = getChildOrigin()
+      const fromIframe = e.source === iframeRef.current?.contentWindow
+      const originOk = expectedOrigin === '*' || e.origin === expectedOrigin
+      if (!fromIframe || !originOk) return
+
       if (type === 'NB169_UPLOAD_CLICKED' || type === 'NB169_REQUIRE_AUTH') {
         if (!isAuthed) {
           try {
