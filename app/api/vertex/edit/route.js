@@ -127,21 +127,28 @@ export async function POST(req) {
 
     const { prompt, mimeType, base64 } = await readBody(req)
 
-    // Require Supabase auth (Bearer token)
+    // Prefer Supabase Bearer auth; otherwise fall back to cookie-based anonymous uid
+    let id = ""
     const authHeader = req.headers.get("authorization") || ""
     const m = /^(Bearer)\s+(.+)$/i.exec(authHeader)
     const accessToken = m?.[2] || ""
-    if (!accessToken) {
-      return NextResponse.json({ ok: false, error: "AUTH_REQUIRED" }, { status: 401 })
+    if (accessToken) {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
+      const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
+      const supabase = createClient(supabaseUrl, supabaseAnon)
+      const { data: { user: sbUser } } = await supabase.auth.getUser(accessToken)
+      if (sbUser?.id) {
+        id = sbUser.id
+      }
     }
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ""
-    const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-    const supabase = createClient(supabaseUrl, supabaseAnon)
-    const { data: { user: sbUser }, error: authErr } = await supabase.auth.getUser(accessToken)
-    if (authErr || !sbUser) {
-      return NextResponse.json({ ok: false, error: "AUTH_INVALID" }, { status: 401 })
+    if (!id) {
+      const jar = await cookies()
+      const cookieUid = jar.get('uid')?.value || ''
+      if (!cookieUid) {
+        return NextResponse.json({ ok: false, error: "AUTH_REQUIRED" }, { status: 401 })
+      }
+      id = cookieUid
     }
-    const id = sbUser.id
 
     // 1) Ensure user + check credits
     const dbUser = await ensureUser(id)
