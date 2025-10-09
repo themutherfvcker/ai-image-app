@@ -6,6 +6,7 @@ export default function NB169Embed() {
   const [isAuthed, setIsAuthed] = useState(false)
   const [loading, setLoading] = useState(true)
   const iframeRef = useRef(null)
+  const [frameLoaded, setFrameLoaded] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -58,6 +59,15 @@ export default function NB169Embed() {
     } catch {}
   }
 
+  function requestOpenUploadWithRetries(retries = 4, delayMs = 300) {
+    let sent = 0
+    const send = () => {
+      requestOpenUpload(); sent += 1
+      if (sent < retries) setTimeout(send, delayMs * Math.max(1, sent))
+    }
+    send()
+  }
+
   // Listen for upload intent coming from the iframe and route to /auth/signin if unauthenticated
   useEffect(() => {
     function onMessage(e) {
@@ -81,6 +91,17 @@ export default function NB169Embed() {
     return () => window.removeEventListener('message', onMessage)
   }, [isAuthed])
 
+  // If we're already authed when landing back here, trigger the upload once the iframe is loaded
+  useEffect(() => {
+    try {
+      const flag = sessionStorage.getItem('nb_169_open_upload_after_auth')
+      if (isAuthed && frameLoaded && flag === '1') {
+        sessionStorage.removeItem('nb_169_open_upload_after_auth')
+        requestOpenUploadWithRetries(4, 300)
+      }
+    } catch {}
+  }, [isAuthed, frameLoaded])
+
   function handleIframeFocus() {
     if (!isAuthed) {
       try {
@@ -102,7 +123,7 @@ export default function NB169Embed() {
 
   return (
     <div className="relative bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden h-[70vh] md:h-[75vh]">
-      <iframe ref={iframeRef} src={appSrc} className="w-full h-full border-0" loading="eager" title="16:9 Image Generator" onFocus={handleIframeFocus} />
+      <iframe ref={iframeRef} src={appSrc} className="w-full h-full border-0" loading="eager" title="16:9 Image Generator" onFocus={handleIframeFocus} onLoad={() => setFrameLoaded(true)} />
     </div>
   )
 }
