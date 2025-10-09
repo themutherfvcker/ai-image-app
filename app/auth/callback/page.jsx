@@ -125,6 +125,15 @@ function CallbackInner() {
               return;
             }
           } catch {}
+          // If we had a redirect hint for the 16:9 page, honor it here as well
+          try {
+            const next = sessionStorage.getItem('nb_redirect_after_auth') || ''
+            if (next && next.startsWith('/')) {
+              sessionStorage.removeItem('nb_redirect_after_auth')
+              router.replace(next)
+              return;
+            }
+          } catch {}
           router.replace("/");
         }, 250);
       } catch (e) {

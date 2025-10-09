@@ -1,3 +1,5 @@
+import ClientFrame from "./ClientFrame"
+
 export const metadata = {
   title: "Nano Banana 16:9 — Fix Gemini Nano Banana 16:9 Aspect Ratio Problems",
   description: "Generate native 16:9 images or convert any photo to 16:9.",
@@ -33,12 +35,7 @@ export default function Page() {
       {/* Embedded App */}
       <section id="app" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden h-[70vh] md:h-[75vh]">
-          <iframe
-            src={process.env.NEXT_PUBLIC_169_APP_URL || "https://nano-banana-16-9-image-creator.vercel.app/"}
-            className="w-full h-full border-0"
-            loading="eager"
-            title="16:9 Image Generator"
-          />
+          <ClientFrame />
         </div>
       </section>
 
