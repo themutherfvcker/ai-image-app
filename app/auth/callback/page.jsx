@@ -127,7 +127,7 @@ function CallbackInner() {
             }
           } catch {}
           // Final fallback: return to the 16:9 page (app section)
-          router.replace("/16-9-image-generator#app");
+          window.location.replace("/16-9-image-generator#app");
         }, 250);
       } catch (e) {
         setError(e?.message || "Authentication failed. Please try again.");

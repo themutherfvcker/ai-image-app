@@ -76,7 +76,7 @@ export default function NB169Embed() {
         sessionStorage.setItem('nb_169_open_upload_after_auth', '1')
       } catch {}
       const nextParam = encodeURIComponent('/16-9-image-generator#app')
-      window.location.href = `/auth/signin?next=${nextParam}`
+      window.location.href = `/auth/signin?next=${nextParam}&src=169`
     }
     function onMessage(e) {
       const type = e?.data?.type || e?.data
