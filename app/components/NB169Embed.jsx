@@ -1,0 +1,136 @@
+"use client"
+import { useEffect, useRef, useState } from "react"
+import { getSupabase } from "@/lib/supabaseClient"
+
+export default function NB169Embed() {
+  const [isAuthed, setIsAuthed] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const iframeRef = useRef(null)
+  const [frameLoaded, setFrameLoaded] = useState(false)
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const supabase = getSupabase()
+        const { data: { user } } = await supabase.auth.getUser()
+        setIsAuthed(!!user)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+          setIsAuthed(!!session?.user)
+          if (session?.user) {
+            // If user came here intending to upload, try to ask the app to open upload
+            try {
+              const flag = sessionStorage.getItem('nb_169_open_upload_after_auth')
+              if (flag === '1') {
+                sessionStorage.removeItem('nb_169_open_upload_after_auth')
+                requestOpenUpload()
+              }
+            } catch {}
+          }
+        })
+        return () => subscription?.unsubscribe()
+      } catch {
+        // ignore
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }, [])
+
+  // Prefer env; fall back to bundled static build under /public/nb169-app/
+  const appSrc = (typeof window !== 'undefined'
+    ? (process.env.NEXT_PUBLIC_169_APP_URL || "/nb169-app/index.html")
+    : "/nb169-app/index.html")
+
+  function getChildOrigin() {
+    try {
+      const base = typeof window !== 'undefined' ? window.location.origin : 'https://www.nanobanana-ai.dev'
+      return new URL(appSrc, base).origin
+    } catch {
+      return '*'
+    }
+  }
+
+  // After auth, attempt to notify the iframe to open its upload dialog.
+  function requestOpenUpload() {
+    try {
+      const win = iframeRef.current?.contentWindow
+      if (!win) return
+      const targetOrigin = getChildOrigin()
+      win.postMessage({ type: 'NB169_OPEN_UPLOAD' }, targetOrigin)
+      // Note: if the embed doesn't implement this listener, nothing happens. That's OK.
+    } catch {}
+  }
+
+  function requestOpenUploadWithRetries(retries = 4, delayMs = 300) {
+    let sent = 0
+    const send = () => {
+      requestOpenUpload(); sent += 1
+      if (sent < retries) setTimeout(send, delayMs * Math.max(1, sent))
+    }
+    send()
+  }
+
+  // Listen for upload intent coming from the iframe and route to /auth/signin if unauthenticated
+  useEffect(() => {
+    function goToSignIn() {
+      try {
+        sessionStorage.setItem('nb_redirect_after_auth', '/16-9-image-generator#app')
+        sessionStorage.setItem('nb_169_open_upload_after_auth', '1')
+      } catch {}
+      const nextParam = encodeURIComponent('/16-9-image-generator#app')
+      window.location.href = `/auth/signin?next=${nextParam}&src=169`
+    }
+    function onMessage(e) {
+      const type = e?.data?.type || e?.data
+      const expectedOrigin = getChildOrigin()
+      const fromIframe = e.source === iframeRef.current?.contentWindow
+      const originOk = expectedOrigin === '*' || e.origin === expectedOrigin
+      if (!fromIframe || !originOk) return
+
+      if (type === 'NB169_UPLOAD_CLICKED' || type === 'NB169_REQUIRE_AUTH') {
+        if (!isAuthed) {
+          goToSignIn()
+        }
+      }
+    }
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [isAuthed])
+
+  // If we're already authed when landing back here, trigger the upload once the iframe is loaded
+  useEffect(() => {
+    try {
+      const flag = sessionStorage.getItem('nb_169_open_upload_after_auth')
+      if (isAuthed && frameLoaded && flag === '1') {
+        sessionStorage.removeItem('nb_169_open_upload_after_auth')
+        requestOpenUploadWithRetries(4, 300)
+      }
+    } catch {}
+  }, [isAuthed, frameLoaded])
+
+  function handleIframeFocus() {
+    if (!isAuthed) {
+      try {
+        sessionStorage.setItem('nb_redirect_after_auth', '/16-9-image-generator#app')
+        sessionStorage.setItem('nb_169_open_upload_after_auth', '1')
+      } catch {}
+      const nextParam = encodeURIComponent('/16-9-image-generator#app')
+      window.location.href = `/auth/signin?next=${nextParam}`
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden h-[70vh] md:h-[75vh] grid place-items-center text-gray-600">
+        Loading…
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden h-[70vh] md:h-[75vh]">
+      <iframe ref={iframeRef} src={appSrc} className="w-full h-full border-0" loading="eager" title="16:9 Image Generator" onFocus={handleIframeFocus} onLoad={() => setFrameLoaded(true)} />
+    </div>
+  )
+}
+

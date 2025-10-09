@@ -1,3 +1,4 @@
+import NB169Embed from "@/app/components/NB169Embed";
 export const metadata = {
   title: "Nano Banana 16:9 — Fix Gemini Nano Banana 16:9 Aspect Ratio Problems",
   description: "Generate native 16:9 images or convert any photo to 16:9.",
@@ -5,41 +6,41 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <main className="bg-gray-50">
+    <main className="bg-white">
       {/* Hero */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-        <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl [-letter-spacing:-0.01em]">
-            <span className="block">Nano Banana 16:9 — Fix Gemini Nano Banana</span>
-            <span className="block text-yellow-600">16:9 Aspect Ratio Problems</span>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-28">
+        <div className="text-center max-w-5xl mx-auto">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl tracking-tight font-extrabold text-gray-900 [-letter-spacing:-0.01em] leading-tight">
+            {"Nano Banana "}
+            <span className="text-yellow-600">16:9</span>
+            {" Problems?"}
           </h1>
-          <h2 className="mt-4 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-700 font-medium">
-            Instantly fix the frustrating aspect ratio issues in Gemini Nano Banana when it keeps generating square 1:1 images instead of your desired 16:9
+          <h2 className="mt-5 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-700 font-medium">
+            Frustrated with the Wrong Aspect Ratio in Your Nano Banana Images?
           </h2>
-          <p className="mt-2 max-w-prose mx-auto text-base sm:text-lg md:text-xl text-gray-600">
-            Our Nano Banana 16:9 generator turns square or vertical outputs into real widescreen images - fixing this known issue with Nano Banana with 1 click.
+          <p className="mt-3 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-600">
+            Instantly convert Nano Banana images to perfect 16:9 widescreen with AI magic
           </p>
-          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a href="#app" className="inline-flex items-center justify-center px-8 py-3 rounded-md text-white bg-yellow-500 hover:bg-yellow-600 shadow transition-colors">
-              Try It Free
+              Try Now - It's Free
             </a>
-            <a href="#features" className="inline-flex items-center justify-center px-8 py-3 rounded-md text-yellow-600 bg-white hover:bg-gray-50 border transition-colors">
+            <a href="#features" className="inline-flex items-center justify-center px-8 py-3 rounded-md text-yellow-700 bg-white hover:bg-yellow-50 border-2 border-yellow-500 transition-colors">
               Learn More
             </a>
           </div>
+          <a href="#app" aria-label="Scroll to app" className="mt-12 inline-flex items-center justify-center text-yellow-600 hover:text-yellow-700">
+            <svg className="w-6 h-6 mx-auto animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14" />
+              <path d="m19 12-7 7-7-7" />
+            </svg>
+          </a>
         </div>
       </section>
 
       {/* Embedded App */}
       <section id="app" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden h-[70vh] md:h-[75vh]">
-          <iframe
-            src={process.env.NEXT_PUBLIC_169_APP_URL || "https://nano-banana-16-9-image-creator.vercel.app/"}
-            className="w-full h-full border-0"
-            loading="eager"
-            title="16:9 Image Generator"
-          />
-        </div>
+        <NB169Embed />
       </section>
 
       {/* Narrative helper section */}

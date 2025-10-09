@@ -53,7 +53,8 @@ function CallbackInner() {
           const next = (qsNext && qsNext.startsWith('/')) ? qsNext : (redir || '')
           if (next) {
             sessionStorage.removeItem('nb_redirect_after_auth')
-            router.replace(next)
+            // Use location.replace to avoid Next history quirks
+            window.location.replace(next)
             return;
           }
         } catch {}
@@ -125,7 +126,8 @@ function CallbackInner() {
               return;
             }
           } catch {}
-          router.replace("/");
+          // Final fallback: return to the 16:9 page (app section)
+          window.location.replace("/16-9-image-generator#app");
         }, 250);
       } catch (e) {
         setError(e?.message || "Authentication failed. Please try again.");
