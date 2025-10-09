@@ -1,9 +1,62 @@
+"use client"
+
+import { useEffect, useRef, useCallback } from "react"
+import { getSupabase } from "@/lib/supabaseClient"
+
 export const metadata = {
   title: "Nano Banana 16:9 — Fix Gemini Nano Banana 16:9 Aspect Ratio Problems",
   description: "Generate native 16:9 images or convert any photo to 16:9.",
 };
 
 export default function Page() {
+  const iframeRef = useRef(null)
+
+  const postToChild = useCallback((message) => {
+    try {
+      const w = iframeRef.current?.contentWindow
+      if (!w) return
+      w.postMessage(message, window.location.origin)
+    } catch {}
+  }, [])
+
+  // Handle messages from child iframe: login on upload intent; auto-open after return
+  useEffect(() => {
+    const onMsg = async (e) => {
+      // Only accept same-origin messages
+      if (e.origin !== window.location.origin) return
+      const type = e?.data?.type
+      if (!type) return
+
+      if (type === 'NB169_UPLOAD_CLICKED') {
+        // Persist intent so we can auto-open after auth completes
+        try { sessionStorage.setItem('nb_redirect_after_auth', '/16-9-image-generator#app') } catch {}
+        const supabase = getSupabase()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          const baseUrl = window.location.origin
+          const redirectTo = `${baseUrl}/auth/callback?next=${encodeURIComponent('/16-9-image-generator#app')}`
+          // Begin OAuth (Google). Browser will redirect away.
+          await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } })
+          return
+        }
+        // Already authed: allow child to open picker immediately
+        postToChild({ type: 'NB169_OPEN_UPLOAD' })
+      }
+
+      if (type === 'NB169_CHILD_READY') {
+        // After auth return, child is ready: auto-open if we set the flag previously
+        let shouldAuto = false
+        try { shouldAuto = (sessionStorage.getItem('nb_redirect_after_auth') || '') !== '' } catch {}
+        if (shouldAuto) {
+          postToChild({ type: 'NB169_OPEN_UPLOAD' })
+          try { sessionStorage.removeItem('nb_redirect_after_auth') } catch {}
+        }
+      }
+    }
+    window.addEventListener('message', onMsg)
+    return () => window.removeEventListener('message', onMsg)
+  }, [postToChild])
+
   return (
     <main className="bg-gray-50">
       {/* Hero */}
@@ -34,7 +87,8 @@ export default function Page() {
       <section id="app" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden h-[70vh] md:h-[75vh]">
           <iframe
-            src={process.env.NEXT_PUBLIC_169_APP_URL || "https://nano-banana-16-9-image-creator.vercel.app/"}
+            ref={iframeRef}
+            src={process.env.NEXT_PUBLIC_169_APP_URL || "/nb169-app/index.html"}
             className="w-full h-full border-0"
             loading="eager"
             title="16:9 Image Generator"
