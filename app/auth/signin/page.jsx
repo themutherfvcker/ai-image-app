@@ -1,23 +1,21 @@
 "use client"
 import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
 import SignInModal from "@/app/components/SignInModal"
 import Link from "next/link"
 
 export default function SignInPage() {
   const [open, setOpen] = useState(true)
-  const searchParams = useSearchParams()
 
   useEffect(() => {
     // If a redirect target wasn't set already, default to returning to the 16:9 app upload window
     try {
       const existing = sessionStorage.getItem('nb_redirect_after_auth')
-      const qsNext = searchParams?.get('next') || ''
+      const qsNext = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('next') || '') : ''
       const validQs = qsNext && qsNext.startsWith('/') ? qsNext : ''
       if (validQs) sessionStorage.setItem('nb_redirect_after_auth', validQs)
       else if (!existing) sessionStorage.setItem('nb_redirect_after_auth', '/16-9-image-generator#app')
     } catch {}
-  }, [searchParams])
+  }, [])
 
   return (
     <main className="min-h-screen bg-white">
