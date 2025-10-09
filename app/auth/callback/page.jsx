@@ -40,10 +40,20 @@ function CallbackInner() {
 
         const { getSupabase } = await import("@/lib/supabaseClient");
         const supabase = getSupabase();
-        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(window.location.href);
-        if (exchangeError) {
-          setError(exchangeError.message || "Authentication failed.");
-          return;
+        const hasCode = !!(searchParams?.get('code') || '');
+        if (hasCode) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(window.location.href);
+          if (exchangeError) {
+            setError(exchangeError.message || "Authentication failed.");
+            return;
+          }
+        } else {
+          // No authorization code present in URL; attempt to proceed if a session already exists,
+          // otherwise fall through to redirect logic without blocking on an error view.
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            // Gracefully continue to the intended page; the client will retry auth if needed.
+          }
         }
 
         // If a redirect target was explicitly requested in either sessionStorage or the querystring, honor it first
