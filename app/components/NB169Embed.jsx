@@ -36,8 +36,10 @@ export default function NB169Embed() {
     })()
   }, [])
 
-  // Prefer env; fall back to public deployment
-  const appSrc = (typeof window !== 'undefined' ? (process.env.NEXT_PUBLIC_169_APP_URL || "https://nano-banana-16-9-image-creator.vercel.app/") : "https://nano-banana-16-9-image-creator.vercel.app/")
+  // Prefer env; fall back to bundled static build under /public/nb169-app/
+  const appSrc = (typeof window !== 'undefined'
+    ? (process.env.NEXT_PUBLIC_169_APP_URL || "/nb169-app/index.html")
+    : "/nb169-app/index.html")
 
   function getChildOrigin() {
     try {

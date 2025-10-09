@@ -50,3 +50,20 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## 16:9 Image Generator Embed
+
+The 16:9 app is loaded in an iframe. Prefer bundling it same‑origin to avoid cross‑domain auth/iframe issues.
+
+- Default local path: `/nb169-app/index.html` (served from `public/nb169-app/`)
+- Override via env:
+
+```bash
+NEXT_PUBLIC_169_APP_URL=/nb169-app/index.html
+```
+
+To bundle `themutherfvcker/NanoBanana_16-9_image_creator` here:
+
+1) Build that repo for production (e.g., `npm run build`).
+2) Copy its static output directory into `public/nb169-app/`.
+3) Deploy this app; the embed will be same‑origin, and postMessage + auth redirects will work reliably.
