@@ -70,6 +70,14 @@ export default function NB169Embed() {
 
   // Listen for upload intent coming from the iframe and route to /auth/signin if unauthenticated
   useEffect(() => {
+    function goToSignIn() {
+      try {
+        sessionStorage.setItem('nb_redirect_after_auth', '/16-9-image-generator#app')
+        sessionStorage.setItem('nb_169_open_upload_after_auth', '1')
+      } catch {}
+      const nextParam = encodeURIComponent('/16-9-image-generator#app')
+      window.location.href = `/auth/signin?next=${nextParam}`
+    }
     function onMessage(e) {
       const type = e?.data?.type || e?.data
       const expectedOrigin = getChildOrigin()
@@ -79,11 +87,7 @@ export default function NB169Embed() {
 
       if (type === 'NB169_UPLOAD_CLICKED' || type === 'NB169_REQUIRE_AUTH') {
         if (!isAuthed) {
-          try {
-            sessionStorage.setItem('nb_redirect_after_auth', '/16-9-image-generator#app')
-            sessionStorage.setItem('nb_169_open_upload_after_auth', '1')
-          } catch {}
-          window.location.href = '/auth/signin'
+          goToSignIn()
         }
       }
     }
@@ -108,8 +112,8 @@ export default function NB169Embed() {
         sessionStorage.setItem('nb_redirect_after_auth', '/16-9-image-generator#app')
         sessionStorage.setItem('nb_169_open_upload_after_auth', '1')
       } catch {}
-      // No overlay — just route to sign-in
-      window.location.href = '/auth/signin'
+      const nextParam = encodeURIComponent('/16-9-image-generator#app')
+      window.location.href = `/auth/signin?next=${nextParam}`
     }
   }
 
