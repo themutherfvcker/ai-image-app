@@ -40,10 +40,10 @@ export default function Page() {
       </section>
 
       {/* Narrative helper section */}
-      <section className="bg-gray-100">
+      <section id="features" className="bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Nano Banana Square Images? Get 16:9 with 1-click</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Nano Banana Square Images? Get <span className="text-yellow-600">16:9</span> with 1-click</h2>
           <p className="mt-4 text-gray-800 text-lg sm:text-xl"><strong>Have you tried Nano Banana, felt amazed… and then totally stuck?</strong></p>
           <p className="mt-3 text-gray-700 text-lg">
             You get a gorgeous image, but when you need 16:9 for a banner or YouTube thumbnail, the editor keeps spitting out 1:1.
@@ -54,36 +54,29 @@ export default function Page() {
             Skip the hacks. Our 1-click 16:9 tool converts or generates true widescreen, outpaints the edges, and keeps your subject and
             composition—so you can ship the image you already love.
           </p>
+          {/* Feature cards inline with narrative, matching the screenshot */}
+          <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="bg-white rounded-xl shadow p-6 border hover:shadow-md transition duration-200 hover:-translate-y-1">
+              <div className="h-12 w-12 rounded-md bg-yellow-500 text-white grid place-items-center">16:9</div>
+              <h3 className="mt-6 text-lg font-medium text-gray-900">Any Aspect Ratio</h3>
+              <p className="mt-3 text-gray-600">Upload any image—convert to perfect 16:9 while keeping your subject centered.</p>
+            </div>
+            <div className="bg-white rounded-xl shadow p-6 border hover:shadow-md transition duration-200 hover:-translate-y-1">
+              <div className="h-12 w-12 rounded-md bg-yellow-500 text-white grid place-items-center">★</div>
+              <h3 className="mt-6 text-lg font-medium text-gray-900">Smart Fill</h3>
+              <p className="mt-3 text-gray-600">Extend backgrounds naturally to fill edges without stretching or warping.</p>
+            </div>
+            <div className="bg-white rounded-xl shadow p-6 border hover:shadow-md transition duration-200 hover:-translate-y-1">
+              <div className="h-12 w-12 rounded-md bg-yellow-500 text-white grid place-items-center">↓</div>
+              <h3 className="mt-6 text-lg font-medium text-gray-900">Multiple Formats</h3>
+              <p className="mt-3 text-gray-600">Download as JPEG, PNG, WEBP, or GIF to suit your workflow.</p>
+            </div>
+          </div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">Smart Image Conversion</h2>
-          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
-            Adjusts images to 16:9 without distortion using composition-aware framing and natural background fill.
-          </p>
-        </div>
-        <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="bg-white rounded-xl shadow p-6 border hover:shadow-md transition duration-200 hover:-translate-y-1">
-            <div className="h-12 w-12 rounded-md bg-yellow-500 text-white grid place-items-center">16:9</div>
-            <h3 className="mt-6 text-lg font-medium text-gray-900">Any Aspect Ratio</h3>
-            <p className="mt-3 text-gray-600">Upload any image—convert to perfect 16:9 while keeping your subject centered.</p>
-          </div>
-          <div className="bg-white rounded-xl shadow p-6 border hover:shadow-md transition duration-200 hover:-translate-y-1">
-            <div className="h-12 w-12 rounded-md bg-yellow-500 text-white grid place-items-center">AI</div>
-            <h3 className="mt-6 text-lg font-medium text-gray-900">Smart Fill</h3>
-            <p className="mt-3 text-gray-600">Extend backgrounds naturally to fill edges without stretching or warping.</p>
-          </div>
-          <div className="bg-white rounded-xl shadow p-6 border hover:shadow-md transition duration-200 hover:-translate-y-1">
-            <div className="h-12 w-12 rounded-md bg-yellow-500 text-white grid place-items-center">DL</div>
-            <h3 className="mt-6 text-lg font-medium text-gray-900">Multiple Formats</h3>
-            <p className="mt-3 text-gray-600">Download as JPEG, PNG, WEBP, or GIF to suit your workflow.</p>
-          </div>
-        </div>
-      </section>
+      
 
       {/* 16:9 FAQ */}
       <section id="faq" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
