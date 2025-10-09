@@ -18,6 +18,14 @@ export default function SignInModal({ open, onClose }) {
     try {
       let nextPath = ''
       try { nextPath = sessionStorage.getItem('nb_redirect_after_auth') || '' } catch {}
+      if (!nextPath && typeof window !== 'undefined') {
+        try {
+          const sp = new URLSearchParams(window.location.search)
+          const qsNext = sp.get('next') || ''
+          if (qsNext && qsNext.startsWith('/')) nextPath = qsNext
+        } catch {}
+      }
+      if (!nextPath) nextPath = '/16-9-image-generator#app'
       const nextParam = nextPath && nextPath.startsWith('/') ? `?next=${encodeURIComponent(nextPath)}` : ''
       const redirectTo = `${callbackUrl}${nextParam}`
       const { error } = await supabase.auth.signInWithOAuth({
@@ -37,6 +45,14 @@ export default function SignInModal({ open, onClose }) {
     const supabase = getSupabase()
     let nextPath = ''
     try { nextPath = sessionStorage.getItem('nb_redirect_after_auth') || '' } catch {}
+    if (!nextPath && typeof window !== 'undefined') {
+      try {
+        const sp = new URLSearchParams(window.location.search)
+        const qsNext = sp.get('next') || ''
+        if (qsNext && qsNext.startsWith('/')) nextPath = qsNext
+      } catch {}
+    }
+    if (!nextPath) nextPath = '/16-9-image-generator#app'
     const nextParam = nextPath && nextPath.startsWith('/') ? `?next=${encodeURIComponent(nextPath)}` : ''
     const emailRedirectTo = `${callbackUrl}${nextParam}`
     const { error } = await supabase.auth.signInWithOtp({

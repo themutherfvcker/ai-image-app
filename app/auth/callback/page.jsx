@@ -53,7 +53,8 @@ function CallbackInner() {
           const next = (qsNext && qsNext.startsWith('/')) ? qsNext : (redir || '')
           if (next) {
             sessionStorage.removeItem('nb_redirect_after_auth')
-            router.replace(next)
+            // Use location.replace to avoid Next history quirks
+            window.location.replace(next)
             return;
           }
         } catch {}
