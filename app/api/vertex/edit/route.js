@@ -61,7 +61,7 @@ function parseDataUrl(d) {
 }
 
 async function readBody(req) {
-  // Returns { prompt, mimeType, base64 } or throws
+  // Returns { prompt, mimeType, base64, targetMimeType?, targetBase64? } or throws
   const ct = (req.headers.get("content-type") || "").toLowerCase()
 
   // multipart/form-data: fields prompt + image (file)
@@ -78,14 +78,20 @@ async function readBody(req) {
     return { prompt, mimeType, base64 }
   }
 
-  // JSON: { prompt, imageDataUrl }
+  // JSON: { prompt, imageDataUrl, targetDataUrl? }
   if (ct.includes("application/json")) {
     const j = await req.json().catch(() => ({}))
     const prompt = (j?.prompt || "").toString().trim()
     if (!prompt) throw new Error("Missing prompt")
     const d = parseDataUrl(j?.imageDataUrl || "")
     if (!d) throw new Error("Missing imageDataUrl (data:...;base64,...)")
-    return { prompt, mimeType: d.mimeType, base64: d.base64 }
+    const t = parseDataUrl(j?.targetDataUrl || "")
+    const out = { prompt, mimeType: d.mimeType, base64: d.base64 }
+    if (t) {
+      out.targetMimeType = t.mimeType
+      out.targetBase64 = t.base64
+    }
+    return out
   }
 
   // x-www-form-urlencoded (rare)
@@ -94,10 +100,17 @@ async function readBody(req) {
     const p = new URLSearchParams(raw)
     const prompt = (p.get("prompt") || "").trim()
     const imageDataUrl = p.get("imageDataUrl") || ""
+    const targetDataUrl = p.get("targetDataUrl") || ""
     if (!prompt) throw new Error("Missing prompt")
     const d = parseDataUrl(imageDataUrl)
     if (!d) throw new Error("Missing imageDataUrl (data:...;base64,...)")
-    return { prompt, mimeType: d.mimeType, base64: d.base64 }
+    const t = parseDataUrl(targetDataUrl)
+    const out = { prompt, mimeType: d.mimeType, base64: d.base64 }
+    if (t) {
+      out.targetMimeType = t.mimeType
+      out.targetBase64 = t.base64
+    }
+    return out
   }
 
   throw new Error("Unsupported content-type")
@@ -171,14 +184,18 @@ export async function POST(req) {
 
       let resp
       try {
+        // If the client provided a targetDataUrl (blank 16:9 canvas,
+        // or any specific target), include it as a second image part to
+        // encourage outpainting/extension rather than mere overlay.
+        const parts = [{ inlineData: { mimeType, data: base64 } }]
+        if (typeof targetBase64 === 'string' && targetBase64.length > 0 && typeof targetMimeType === 'string' && targetMimeType) {
+          parts.push({ inlineData: { mimeType: targetMimeType, data: targetBase64 } })
+        }
+        parts.push({ text: prompt })
+
         resp = await ai.models.generateContent({
           model: env.model,
-          contents: [
-            { role: "user", parts: [
-              { inlineData: { mimeType, data: base64 } },
-              { text: prompt },
-            ] }
-          ],
+          contents: [ { role: "user", parts } ],
           config: { responseModalities: ["IMAGE"], safetySettings, temperature: 0.9 },
         })
       } catch (e) {
