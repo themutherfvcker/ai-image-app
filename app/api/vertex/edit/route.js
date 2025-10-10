@@ -138,7 +138,7 @@ export async function POST(req) {
       )
     }
 
-    const { prompt, mimeType, base64 } = await readBody(req)
+    const { prompt, mimeType, base64, targetMimeType, targetBase64 } = await readBody(req)
 
     // Prefer Supabase Bearer auth; otherwise fall back to cookie-based anonymous uid
     let id = ""
@@ -206,7 +206,7 @@ export async function POST(req) {
             { status: 429 }
           )
         }
-        return NextResponse.json({ ok: false, error: msg || "GENERATION_FAILED" }, { status: 500 })
+        return NextResponse.json({ ok: false, error: msg || "GENERATION_FAILED", details: { promptPreview: prompt?.slice?.(0, 160) || '', hasTarget: !!targetBase64 } }, { status: 500 })
       }
 
       const parts = resp?.candidates?.[0]?.content?.parts || []
@@ -222,7 +222,7 @@ export async function POST(req) {
       }
       if (!dataUrl) {
         return NextResponse.json(
-          { ok: false, error: "GENERATE_FAILED (no image in response)", partsPreview: parts?.slice?.(0, 2) || [] },
+          { ok: false, error: "GENERATE_FAILED (no image in response)", partsPreview: parts?.slice?.(0, 2) || [], details: { promptPreview: prompt?.slice?.(0, 160) || '', hasTarget: !!targetBase64 } },
           { status: 500 }
         )
       }
