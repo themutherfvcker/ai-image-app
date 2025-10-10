@@ -1,16 +1,19 @@
 "use server";
 
 import { GoogleGenAI, Modality } from "@google/genai";
-// If you prefer a file in /public/ratio16/blank-1920x1080.png, you can
-// swap this inline data URL with an fs.readFile as needed.
+import { promises as fs } from "node:fs";
+import path from "node:path";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
-// Inline 1x1 black PNG; small but sufficient as a target cue for 16:9.
-// The model doesn't require the template to be 1920x1080; it's just a target.
-const ONE_BY_ONE_BLACK = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9U4gq/0AAAAASUVORK5CYII=";
+// Cache the real 1920×1080 template (PNG in /public). Loaded once per runtime.
+let cachedBlankBase64: string | null = null;
 async function getBlank1920x1080DataUrl() {
-  return `data:image/png;base64,${ONE_BY_ONE_BLACK}`;
+  if (cachedBlankBase64) return cachedBlankBase64;
+  const p = path.join(process.cwd(), "public", "ratio16", "blank-1920x1080.png");
+  const buf = await fs.readFile(p);
+  cachedBlankBase64 = `data:image/png;base64,${buf.toString("base64")}`;
+  return cachedBlankBase64;
 }
 
 function dataUrlToParts(dataUrl: string): { base64Data: string; mimeType: string } {
@@ -31,7 +34,7 @@ export async function editTo16x9(originalDataUrl: string, prompt: string): Promi
       parts: [
         { inlineData: { data: src.base64Data, mimeType: src.mimeType } },
         { inlineData: { data: tmpl.base64Data, mimeType: tmpl.mimeType } },
-        { text: prompt },
+        { text: "Outpaint the first image into the second image's full 1920×1080 frame; fill all edges naturally, no borders or frames; preserve subject and lighting.\n\nUser request: " + prompt },
       ],
     },
     config: { responseModalities: [Modality.IMAGE, Modality.TEXT] },
