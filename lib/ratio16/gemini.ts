@@ -4,11 +4,16 @@ import { GoogleGenAI, Modality } from "@google/genai";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-const apiKey = process.env.GOOGLE_GENAI_API_KEY || process.env.API_KEY;
+// Use server-only API key (do not expose client-side)
+const apiKey = process.env.API_KEY;
 if (!apiKey) {
-  throw new Error('Missing GOOGLE_GENAI_API_KEY (or API_KEY)');
+  throw new Error("Missing API_KEY");
 }
 const ai = new GoogleGenAI({ apiKey });
+
+// Model config with optional fallback
+const MODEL_PRIMARY = process.env.GENAI_MODEL_PRIMARY || "gemini-2.5-flash-image";
+const MODEL_FALLBACK = process.env.GENAI_MODEL_FALLBACK || "";
 
 // Cache the real 1920×1080 template (PNG in /public). Loaded once per runtime.
 let cachedBlankBase64: string | null = null;
@@ -27,35 +32,72 @@ function dataUrlToParts(dataUrl: string): { base64Data: string; mimeType: string
   return { base64Data: data, mimeType: m[1] };
 }
 
-export async function editTo16x9(originalDataUrl: string, prompt: string): Promise<string> {
-  const src = dataUrlToParts(originalDataUrl);
-  const tmplDataUrl = await getBlank1920x1080DataUrl();
-  const tmpl = dataUrlToParts(tmplDataUrl);
+const SYSTEM_HINT =
+  "Outpaint the first image into the second image's full 1920×1080 frame; fill edges naturally; no borders or frames; preserve subject and lighting.";
 
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-image",
-    contents: {
-      parts: [
-        { inlineData: { data: src.base64Data, mimeType: src.mimeType } },
-        { inlineData: { data: tmpl.base64Data, mimeType: tmpl.mimeType } },
-        { text: "Outpaint the first image into the second image's full 1920×1080 frame; fill all edges naturally, no borders or frames; preserve subject and lighting.\n\nUser request: " + prompt },
-      ],
-    },
-    config: { responseModalities: [Modality.IMAGE, Modality.TEXT] },
-  });
-
-  const cand = (response as any)?.candidates?.[0];
+function preferInlineImage(response: any): string | null {
+  const cand = response?.candidates?.[0];
   for (const part of cand?.content?.parts ?? []) {
-    const anyPart = part as any;
-    if (anyPart.inlineData?.mimeType?.startsWith("image/")) {
-      const mime = anyPart.inlineData.mimeType;
-      const data = anyPart.inlineData.data;
-      return `data:${mime};base64,${data}`;
+    const anyp: any = part;
+    if (anyp.inlineData?.mimeType?.startsWith("image/")) {
+      return `data:${anyp.inlineData.mimeType};base64,${anyp.inlineData.data}`;
     }
   }
-
   const fallback = (response as any)?.generatedImages?.[0]?.image?.imageBytes;
   if (fallback) return `data:image/png;base64,${fallback}`;
+  return null;
+}
 
-  throw new Error("No image returned from model");
+async function callModel(model: string, parts: any[]) {
+  return ai.models.generateContent({
+    model,
+    contents: { parts },
+    config: { responseModalities: [Modality.IMAGE, Modality.TEXT] },
+  });
+}
+
+export async function editTo16x9(originalDataUrl: string, prompt: string): Promise<string> {
+  const src = dataUrlToParts(originalDataUrl);
+  const tmpl = dataUrlToParts(await getBlank1920x1080DataUrl());
+  const parts = [
+    { inlineData: { data: src.base64Data, mimeType: src.mimeType } },
+    { inlineData: { data: tmpl.base64Data, mimeType: tmpl.mimeType } },
+    { text: `${SYSTEM_HINT}\n\nUser request: ${prompt}` },
+  ];
+  try {
+    const resp = await callModel(MODEL_PRIMARY, parts);
+    const out = preferInlineImage(resp);
+    if (out) return out;
+    throw new Error("No image returned from model");
+  } catch (e: any) {
+    const code = e?.error?.code || e?.response?.data?.error?.code;
+    if (code === 429 && MODEL_FALLBACK) {
+      const resp2 = await callModel(MODEL_FALLBACK, parts);
+      const out2 = preferInlineImage(resp2);
+      if (out2) return out2;
+    }
+    throw e;
+  }
+}
+
+export async function textTo16x9(prompt: string): Promise<string> {
+  const tmpl = dataUrlToParts(await getBlank1920x1080DataUrl());
+  const parts = [
+    { inlineData: { data: tmpl.base64Data, mimeType: tmpl.mimeType } },
+    { text: `Generate a photorealistic scene that completely fills a 1920×1080 frame. No borders or frames. Natural perspective and lighting.\n\nUser request: ${prompt}` },
+  ];
+  try {
+    const resp = await callModel(MODEL_PRIMARY, parts);
+    const out = preferInlineImage(resp);
+    if (out) return out;
+    throw new Error("No image returned from model");
+  } catch (e: any) {
+    const code = e?.error?.code || e?.response?.data?.error?.code;
+    if (code === 429 && MODEL_FALLBACK) {
+      const resp2 = await callModel(MODEL_FALLBACK, parts);
+      const out2 = preferInlineImage(resp2);
+      if (out2) return out2;
+    }
+    throw e;
+  }
 }
