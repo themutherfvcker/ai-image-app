@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { editTo16x9 } from "@/lib/ratio16/gemini";
 
+export const runtime = "nodejs";
+
 export async function POST(req: Request) {
   try {
     const { imageDataUrl, prompt } = await req.json();
