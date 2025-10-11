@@ -4,12 +4,18 @@ import { GoogleGenAI, Modality } from "@google/genai";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-// Use server-only API key (do not expose client-side)
-const apiKey = process.env.API_KEY;
-if (!apiKey) {
-  throw new Error("Missing API_KEY");
+// Lazy-init AI client to avoid throwing at import/build time
+let aiClient: GoogleGenAI | null = null;
+function getAi(): GoogleGenAI {
+  if (aiClient) return aiClient;
+  const key = process.env.API_KEY;
+  if (!key) {
+    // Only throw at request time, not during module import
+    throw new Error("Missing API_KEY");
+  }
+  aiClient = new GoogleGenAI({ apiKey: key });
+  return aiClient;
 }
-const ai = new GoogleGenAI({ apiKey });
 
 // Model config with optional fallback
 const MODEL_PRIMARY = process.env.GENAI_MODEL_PRIMARY || "gemini-2.5-flash-image";
@@ -49,6 +55,7 @@ function preferInlineImage(response: any): string | null {
 }
 
 async function callModel(model: string, parts: any[]) {
+  const ai = getAi();
   return ai.models.generateContent({
     model,
     contents: { parts },
