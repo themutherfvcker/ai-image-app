@@ -4,7 +4,11 @@ import { GoogleGenAI, Modality } from "@google/genai";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const apiKey = process.env.GOOGLE_GENAI_API_KEY || process.env.API_KEY;
+if (!apiKey) {
+  throw new Error('Missing GOOGLE_GENAI_API_KEY (or API_KEY)');
+}
+const ai = new GoogleGenAI({ apiKey });
 
 // Cache the real 1920×1080 template (PNG in /public). Loaded once per runtime.
 let cachedBlankBase64: string | null = null;
