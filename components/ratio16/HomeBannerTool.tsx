@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
+import NextImage from "next/image";
 
 async function editImageAndEnforceAspectRatio(imageDataUrl: string, prompt: string): Promise<string> {
   const res = await fetch("/api/ratio16/edit", {
@@ -39,7 +39,7 @@ export default function HomeBannerTool() {
 
   const toDataUrlMax = React.useCallback(async (file: File, maxSide = 2048) => {
     const url = URL.createObjectURL(file);
-    const img = new Image();
+    const img = document.createElement('img') as HTMLImageElement;
     img.src = url;
     await new Promise<void>((ok, err) => {
       img.onload = () => ok();
@@ -130,7 +130,7 @@ export default function HomeBannerTool() {
           <div className="mb-2 text-xs uppercase tracking-wide text-zinc-400">Original</div>
           <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-zinc-800/60 ring-1 ring-inset ring-zinc-700/20">
             {s.srcDataUrl ? (
-              <Image
+              <NextImage
                 src={s.srcDataUrl}
                 alt="Original"
                 fill
@@ -150,7 +150,7 @@ export default function HomeBannerTool() {
           </div>
           <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-zinc-800/60 ring-1 ring-inset ring-zinc-700/20">
             {s.outDataUrl ? (
-              <Image
+              <NextImage
                 src={s.outDataUrl}
                 alt="Result"
                 fill
