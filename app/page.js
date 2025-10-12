@@ -1186,13 +1186,10 @@ export default function HomePage() {
             <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">YouTube & Hero Banners, Perfectly Framed</p>
             <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Generate native 16:9 or convert any image while preserving composition.</p>
           </div>
-          <div className="mt-6 h-[calc(100vh-6rem)]">
-            <iframe
-              src="https://nano-banana-16-9-image-creator.vercel.app/"
-              className="w-full h-full border-0 rounded-lg shadow-sm"
-              loading="eager"
-              title="16:9 Image Generator"
-            />
+          {/* Embedded lightweight 16:9 tool for homepage */}
+          <div className="mt-6">
+            {/* ssr: false to keep it client-only */}
+            {(() => { const Dynamic = require('next/dynamic').default; const HomeBannerTool = Dynamic(() => import('@/components/ratio16/HomeBannerTool'), { ssr: false }); return <HomeBannerTool /> })()}
           </div>
         </div>
       </section>
