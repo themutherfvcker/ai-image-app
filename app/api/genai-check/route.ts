@@ -5,9 +5,9 @@ export const runtime = 'nodejs';
 
 export async function GET() {
   try {
-    const apiKey = process.env.GOOGLE_API_KEY;
+    const apiKey = process.env.GOOGLE_GENAI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ ok: false, error: 'GOOGLE_API_KEY missing' }, { status: 500 });
+      return NextResponse.json({ ok: false, error: 'GOOGLE_GENAI_API_KEY missing' }, { status: 500 });
     }
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });

@@ -8,18 +8,18 @@ import path from "node:path";
 let aiClient: GoogleGenAI | null = null;
 function getAi(): GoogleGenAI {
   if (aiClient) return aiClient;
-  const key = process.env.API_KEY;
+  const key = process.env.GOOGLE_GENAI_API_KEY;
   if (!key) {
     // Only throw at request time, not during module import
-    throw new Error("Missing API_KEY");
+    throw new Error("Missing GOOGLE_GENAI_API_KEY");
   }
   aiClient = new GoogleGenAI({ apiKey: key });
   return aiClient;
 }
 
 // Model config with optional fallback
-const MODEL_PRIMARY = process.env.GENAI_MODEL_PRIMARY || "gemini-2.5-flash-image";
-const MODEL_FALLBACK = process.env.GENAI_MODEL_FALLBACK || "";
+const MODEL_PRIMARY = process.env.GENAI_IMAGE_MODEL || "gemini-2.5-flash-image";
+const MODEL_FALLBACK = process.env.GENAI_IMAGE_MODEL_FALLBACK || "";
 
 // Cache the real 1920×1080 template (PNG in /public). Loaded once per runtime.
 let cachedBlankBase64: string | null = null;
