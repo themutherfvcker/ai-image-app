@@ -19,11 +19,11 @@ export const runtime = "nodejs"
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { createClient } from "@supabase/supabase-js"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@/lib/db"
+import { createCreditLedger } from "@/lib/ledger"
 import { randomUUID } from "crypto"
 import { GoogleGenAI } from "@google/genai"
 
-const prisma = new PrismaClient()
 const DEBUG_SKIP = (process.env.IMAGINE_DEBUG || "").toLowerCase() === "novertex"
 
 function cfg() {
@@ -38,13 +38,7 @@ function tinyPngDataUrl() {
   return `data:image/png;base64,${b64}`
 }
 
-async function createLedger(tx, data) {
-  if (tx.ledger?.create) { try { return await tx.ledger.create({ data }) } catch {}
-  }
-  if (tx.creditLedger?.create) { try { return await tx.creditLedger.create({ data }) } catch {}
-  }
-  return null
-}
+// ledger writes handled via lib/ledger
 
 async function ensureUser(id) {
   return prisma.user.upsert({
@@ -229,22 +223,18 @@ export async function POST(req) {
     }
 
     const startedAt = Date.now()
-    // 3) Short transaction: -1 credit + ledger + job log
+    // 3) Short transaction: atomic -1 credit + ledger + job log
     const out = await prisma.$transaction(async (tx) => {
-      const fresh = await tx.user.findUnique({ where: { id } })
-      if (!fresh || fresh.credits < 1) {
-        return { balance: fresh?.credits ?? 0 }
-      }
-      const updated = await tx.user.update({
-        where: { id },
+      const updated = await tx.user.updateMany({
+        where: { id, credits: { gte: 1 } },
         data: { credits: { decrement: 1 } },
       })
-      await createLedger(tx, {
-        userId: id,
-        amount: -1,
-        reason: "image_edit",
-        meta: { modelName: env.model, prompt, inputMime: mimeType },
-      })
+      if (updated.count === 0) {
+        const after = await tx.user.findUnique({ where: { id }, select: { credits: true } })
+        return { balance: after?.credits ?? 0 }
+      }
+
+      await createCreditLedger(tx, { userId: id, delta: -1, reason: "image_edit" })
       try {
         await tx.generationJob.create({
           data: {
@@ -256,7 +246,8 @@ export async function POST(req) {
           },
         })
       } catch {}
-      return { balance: updated.credits }
+      const after = await tx.user.findUnique({ where: { id }, select: { credits: true } })
+      return { balance: after?.credits ?? 0 }
     }, { timeout: 15000 })
 
     return NextResponse.json({ ok: true, dataUrl, balance: out.balance })

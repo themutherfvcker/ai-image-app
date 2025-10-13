@@ -49,6 +49,9 @@ CREATE UNIQUE INDEX "User_stripeId_key" ON "public"."User"("stripeId");
 -- CreateIndex
 CREATE UNIQUE INDEX "User_ghlContactId_key" ON "public"."User"("ghlContactId");
 
+-- Ensure idempotency of Stripe sessions when used as ref
+CREATE UNIQUE INDEX IF NOT EXISTS "CreditLedger_ref_key" ON "public"."CreditLedger"("ref");
+
 -- AddForeignKey
 ALTER TABLE "public"."GenerationJob" ADD CONSTRAINT "GenerationJob_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
