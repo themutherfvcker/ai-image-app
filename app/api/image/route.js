@@ -32,12 +32,12 @@ export async function POST(req) {
     const accessToken = m?.[2] || ''
     if (!accessToken) return NextResponse.json({ ok: false, error: 'AUTH_REQUIRED' }, { status: 401 })
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '')
-    const { data: { user }, error: authErr } = await supabase.auth.getUser(accessToken)
-    if (authErr || !user) return NextResponse.json({ ok: false, error: 'AUTH_INVALID' }, { status: 401 })
-    const uid = user.id
+    const { data: { user: sbUser }, error: authErr } = await supabase.auth.getUser(accessToken)
+    if (authErr || !sbUser) return NextResponse.json({ ok: false, error: 'AUTH_INVALID' }, { status: 401 })
+    const uid = sbUser.id
 
-    const user = await prisma.user.findUnique({ where: { id: uid }, select: { credits: true } });
-    if (!user || user.credits < 1) {
+    const dbUser = await prisma.user.findUnique({ where: { id: uid }, select: { credits: true } });
+    if (!dbUser || dbUser.credits < 1) {
       return NextResponse.json({ ok: false, error: 'Not enough credits' }, { status: 402 });
     }
 
