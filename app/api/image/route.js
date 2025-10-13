@@ -2,8 +2,8 @@
 export const runtime = 'nodejs';
 
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/db';
+import { createClient } from '@supabase/supabase-js'
 
 export async function POST(req) {
   try {
@@ -26,13 +26,18 @@ export async function POST(req) {
     const prompt = (body.prompt || '').slice(0, 2000).trim();
     if (!prompt) return NextResponse.json({ ok: false, error: 'Missing prompt' }, { status: 400 });
 
-    // 1) Session & credits
-    const jar = await cookies();
-    const uid = jar.get('uid')?.value;
-    if (!uid) return NextResponse.json({ ok: false, error: 'No session' }, { status: 401 });
+    // 1) Auth & credits
+    const authHeader = req.headers.get('authorization') || ''
+    const m = /^(Bearer)\s+(.+)$/i.exec(authHeader)
+    const accessToken = m?.[2] || ''
+    if (!accessToken) return NextResponse.json({ ok: false, error: 'AUTH_REQUIRED' }, { status: 401 })
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '')
+    const { data: { user: sbUser }, error: authErr } = await supabase.auth.getUser(accessToken)
+    if (authErr || !sbUser) return NextResponse.json({ ok: false, error: 'AUTH_INVALID' }, { status: 401 })
+    const uid = sbUser.id
 
-    const user = await prisma.user.findUnique({ where: { id: uid }, select: { credits: true } });
-    if (!user || user.credits < 1) {
+    const dbUser = await prisma.user.findUnique({ where: { id: uid }, select: { credits: true } });
+    if (!dbUser || dbUser.credits < 1) {
       return NextResponse.json({ ok: false, error: 'Not enough credits' }, { status: 402 });
     }
 
@@ -61,15 +66,11 @@ export async function POST(req) {
     const b64 = img?.bytesBase64Encoded || img?.base64Data || img?.imageBytes;
     if (!b64) return NextResponse.json({ ok: false, error: 'No image returned' }, { status: 502 });
 
-    // 3) Deduct 1 credit & record ledger (same pattern you already use)
+    // 3) Deduct 1 credit (atomic) & record ledger
     await prisma.$transaction(async (tx) => {
-      await tx.user.update({
-        where: { id: uid },
-        data: { credits: { decrement: 1 } },
-      });
-      await tx.ledger.create({
-        data: { userId: uid, delta: -1, reason: 'usage:generate' },
-      });
+      const updated = await tx.user.updateMany({ where: { id: uid, credits: { gte: 1 } }, data: { credits: { decrement: 1 } } })
+      if (updated.count === 0) throw new Error('INSUFFICIENT_CREDITS')
+      await tx.creditLedger.create({ data: { userId: uid, delta: -1, reason: 'usage:generate' } })
     });
 
     // Send data URL for easy <img src="...">

@@ -6,6 +6,17 @@ import { prisma } from '@/lib/db';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+// Convert paid amount to credits. Defaults to 20 credits per currency unit.
+function creditsForAmount(amountCents, currency) {
+  const curr = String(currency || 'aud').toLowerCase();
+  const perUnit = curr === 'aud'
+    ? Number(process.env.CREDITS_PER_AUD || process.env.CREDITS_PER_UNIT || '20')
+    : Number(process.env.CREDITS_PER_UNIT || '20');
+  const wholeUnits = Math.floor(Math.max(0, Number(amountCents) || 0) / 100);
+  const credits = Math.floor(wholeUnits * perUnit);
+  return Math.max(1, credits);
+}
+
 export async function POST(request) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   const key = process.env.STRIPE_SECRET_KEY;
@@ -38,11 +49,16 @@ export async function POST(request) {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object; // Stripe.Checkout.Session
       const uid = session?.metadata?.userId;
-      const credits = Number(session?.metadata?.credits || '0') || 0;
+      const currency = session?.currency || 'aud';
+      const amountTotal = session?.amount_total || 0; // cents
+      const credits = creditsForAmount(amountTotal, currency);
 
-      // One-time credits purchase flow remains supported
       if (uid && credits > 0) {
         await prisma.$transaction(async (tx) => {
+          // Idempotency: skip if we've already recorded this session
+          const already = await tx.creditLedger.findFirst({ where: { ref: session.id ?? '' } });
+          if (already) return;
+
           await tx.user.update({
             where: { id: uid },
             data: { credits: { increment: credits } },

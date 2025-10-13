@@ -38,6 +38,6 @@ model CreditLedger {
   user      User     @relation(fields: [userId], references: [id])
   delta     Int      // + on purchase, -1 per successful generation
   reason    String   // e.g., 'purchase:starter' | 'generation'
-  ref       String?  // e.g., stripe session id or job id
+  ref       String?  @unique // e.g., stripe session id or job id (unique when present)
 }
 

@@ -6,6 +6,18 @@ import { createClient } from '@supabase/supabase-js'
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+// Determine how many credits to award based on the paid amount
+function creditsForAmount(amountCents, currency) {
+  const curr = String(currency || 'aud').toLowerCase();
+  // Default: 20 credits per 1 currency unit (e.g., 5 AUD -> 100 credits)
+  const perUnit = curr === 'aud'
+    ? Number(process.env.CREDITS_PER_AUD || process.env.CREDITS_PER_UNIT || '20')
+    : Number(process.env.CREDITS_PER_UNIT || '20');
+  const wholeUnits = Math.floor(Math.max(0, Number(amountCents) || 0) / 100);
+  const credits = Math.floor(wholeUnits * perUnit);
+  return Math.max(1, credits);
+}
+
 async function handleCheckout(req) {
   try {
     // Load Stripe at runtime
@@ -29,22 +41,15 @@ async function handleCheckout(req) {
     const uid = user.id
 
     // Parse inputs
-    let credits = 100;
     const method = req.method || 'GET';
     let successUrl = '';
     let cancelUrl = '';
     if (method === 'GET') {
       const url = new URL(req.url);
-      credits = Math.max(
-        1,
-        Math.min(100000, parseInt(url.searchParams.get('credits') || '100', 10))
-      );
       successUrl = url.searchParams.get('success_url') || '';
       cancelUrl = url.searchParams.get('cancel_url') || '';
     } else {
       const body = await req.json().catch(() => ({}));
-      const c = parseInt(String(body.credits ?? '100'), 10);
-      credits = Math.max(1, Math.min(100000, isNaN(c) ? 100 : c));
       successUrl = typeof body.success_url === 'string' ? body.success_url : '';
       cancelUrl = typeof body.cancel_url === 'string' ? body.cancel_url : '';
     }
@@ -56,22 +61,26 @@ async function handleCheckout(req) {
     const origin = `${proto}://${host}`;
 
     const stripe = new Stripe(secret);
+    // Fixed price item: 500 AUD cents. Compute displayed credits based on amount and currency.
+    const unitAmountCents = 500; // $5 AUD
+    const currency = 'aud';
+    const displayCredits = creditsForAmount(unitAmountCents, currency);
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       success_url: successUrl || `${origin}/success`,
       cancel_url: cancelUrl || `${origin}/cancel`,
-      // Keep a fixed $5 AUD price; let credits vary (e.g., 25, 100, etc.)
       line_items: [
         {
           price_data: {
-            currency: 'aud',
-            product_data: { name: `${credits} AI credits` },
-            unit_amount: 500, // $5 AUD total
+            currency,
+            product_data: { name: `${displayCredits} AI credits` },
+            unit_amount: unitAmountCents,
           },
           quantity: 1,
         },
       ],
-      metadata: { userId: uid, credits: String(credits) },
+      // Do not trust client inputs for credits; award in webhook from amount_total
+      metadata: { userId: uid },
       client_reference_id: uid,
     });
 

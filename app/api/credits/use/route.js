@@ -1,18 +1,22 @@
 // app/api/credits/use/route.js
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/db';
+import { createClient } from '@supabase/supabase-js'
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
   try {
-    const jar = await cookies();
-    const uid = jar.get('uid')?.value;
-    if (!uid) {
-      return NextResponse.json({ ok: false, error: 'No uid cookie. Visit /api/session first.' }, { status: 400 });
-    }
+    // Require Supabase Bearer auth for credit-affecting action
+    const authHeader = request.headers.get('authorization') || ''
+    const m = /^(Bearer)\s+(.+)$/i.exec(authHeader)
+    const accessToken = m?.[2] || ''
+    if (!accessToken) return NextResponse.json({ ok: false, error: 'AUTH_REQUIRED' }, { status: 401 })
+    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || '', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '')
+    const { data: { user }, error: authErr } = await supabase.auth.getUser(accessToken)
+    if (authErr || !user) return NextResponse.json({ ok: false, error: 'AUTH_INVALID' }, { status: 401 })
+    const uid = user.id
 
     const { amount } = await request.json().catch(() => ({ amount: 1 }));
     const spend = Number.isFinite(amount) ? Math.max(1, Math.min(1000, Math.floor(amount))) : 1;
