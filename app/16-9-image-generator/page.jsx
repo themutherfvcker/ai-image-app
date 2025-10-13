@@ -1,5 +1,4 @@
-import dynamic from "next/dynamic";
-const FullEditor = dynamic(() => import("@/components/ratio16/FullEditor"), { ssr: false });
+import FullEditor from "@/components/ratio16/FullEditor";
 
 export const metadata = {
   title: "Nano Banana 16:9 — Fix Gemini Nano Banana 16:9 Aspect Ratio Problems",
