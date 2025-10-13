@@ -1,4 +1,3 @@
-"use client";
 import dynamic from "next/dynamic";
 const FullEditor = dynamic(() => import("@/components/ratio16/FullEditor"), { ssr: false });
 
