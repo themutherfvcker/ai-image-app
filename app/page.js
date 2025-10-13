@@ -9,6 +9,9 @@ import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
 import JsonLdRaw from "@/app/components/JsonLdRaw";
 import PricingSection from "@/app/components/PricingSection";
+import dynamic from "next/dynamic";
+
+const FullEditorHome = dynamic(() => import("@/components/ratio16/FullEditor"), { ssr: false });
 
 function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
   const containerRef = useRef(null);
@@ -1188,7 +1191,7 @@ export default function HomePage() {
           </div>
           {/* Embedded full editor on homepage (client-only) */}
           <div className="mt-6">
-            {(() => { const Dynamic = require('next/dynamic').default; const FullEditor = Dynamic(() => import('@/components/ratio16/FullEditor'), { ssr: false }); return <FullEditor /> })()}
+            <FullEditorHome />
           </div>
         </div>
       </section>
