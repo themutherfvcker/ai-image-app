@@ -1,8 +1,8 @@
 import ClientFrame from "./ClientFrame"
 
 export const metadata = {
-  title: "Nano Banana 16:9 — Fix Gemini Nano Banana 16:9 Aspect Ratio Problems",
-  description: "Generate native 16:9 images or convert any photo to 16:9.",
+  title: "Nano Banana 16:9 — How To Fix Nano Banana 16:9 Aspect Ratio Problems",
+  description: "Generate native Nano Banana 16:9 images or convert any photo to 16:9 with 1 Click.",
 };
 
 export default function Page() {
@@ -12,14 +12,14 @@ export default function Page() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl [-letter-spacing:-0.01em]">
-            <span className="block">Nano Banana 16:9 — Fix Gemini Nano Banana</span>
-            <span className="block text-yellow-600">16:9 Aspect Ratio Problems</span>
+            <span className="block">Nano Banana 16:9 Problem — How To Fix Nano Banana 16:9 Aspect Ratio Problems </span>
+            <span className="block text-yellow-600">Nano Banana 16:9 Aspect Ratio Problems Fixed </span>
           </h1>
           <h2 className="mt-4 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-gray-700 font-medium">
-            Instantly fix the frustrating aspect ratio issues in Gemini Nano Banana when it keeps generating square 1:1 images instead of your desired 16:9
+            Instantly fix the frustrating aspect ratio issues in Nano Banana when it keeps generating 9:16 images instead of your desired 16:9
           </h2>
           <p className="mt-2 max-w-prose mx-auto text-base sm:text-lg md:text-xl text-gray-600">
-            Our Nano Banana 16:9 generator turns square or vertical outputs into real widescreen images - fixing this known issue with Nano Banana with 1 click.
+            Our Nano Banana 16:9 image generator turns square or vertical outputs into real widescreen images - fixing this known issue with Nano Banana with 1 click.
           </p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a href="#app" className="inline-flex items-center justify-center px-8 py-3 rounded-md text-white bg-yellow-500 hover:bg-yellow-600 shadow transition-colors">
@@ -118,12 +118,12 @@ export default function Page() {
           isPartOf: { "@id": "https://www.nanobanana-ai.dev/#website" },
           about: { "@id": "https://www.nanobanana-ai.dev/#app" },
           mainEntity: [
-            { "@type": "Question", name: "What is the 16:9 Image Generator?", acceptedAnswer: { "@type": "Answer", text: "A tool to generate native 16:9 visuals or convert images while preserving composition." }},
-            { "@type": "Question", name: "Best sizes for YouTube thumbnails?", acceptedAnswer: { "@type": "Answer", text: "1280×720 is standard; keep important elements within the central safe area for mobile." }},
+            { "@type": "Question", name: "What is the Nano Banana 16:9 Image Generator?", acceptedAnswer: { "@type": "Answer", text: "A tool to generate native 16:9 visuals or convert images while preserving composition." }},
+            { "@type": "Question", name: "What are the best sizes for YouTube thumbnails?", acceptedAnswer: { "@type": "Answer", text: "1280×720 is standard; keep important elements within the central safe area for mobile." }},
             { "@type": "Question", name: "Cropping vs outpainting?", acceptedAnswer: { "@type": "Answer", text: "Outpainting can extend edges to maintain composition; cropping trims edges and may lose context." }},
             { "@type": "Question", name: "How do I keep text crisp?", acceptedAnswer: { "@type": "Answer", text: "Generate at target resolution, use high contrast, and avoid ultra‑thin fonts at small sizes." }},
             { "@type": "Question", name: "Will faces stay consistent across variants?", acceptedAnswer: { "@type": "Answer", text: "Yes—use identity cues and the same references for character consistency." }},
-            { "@type": "Question", name: "Can I convert vertical (9:16) to 16:9?", acceptedAnswer: { "@type": "Answer", text: "Yes—use outpainting prompts to fill sides while matching lighting and style." }},
+            { "@type": "Question", name: "Can I convert vertical (9:16) to 16:9 using this Nano Banana 16:9 image tool?", acceptedAnswer: { "@type": "Answer", text: "Yes—use outpainting prompts to fill sides while matching lighting and style." }},
             { "@type": "Question", name: "What formats can I export?", acceptedAnswer: { "@type": "Answer", text: "PNG/JPG; choose PNG for crisp graphics and JPG for photographic content." }}
           ]
         }) }}
