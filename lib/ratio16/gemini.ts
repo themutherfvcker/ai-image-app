@@ -12,7 +12,13 @@ async function ensureExact1920x1080(dataUrl: string): Promise<string> {
   const buf = Buffer.from(b64, "base64");
   const meta = await sharp(buf).metadata();
   if (meta.width === 1920 && meta.height === 1080) return dataUrl;
-  const out = await sharp(buf).resize(1920, 1080, { fit: "cover" }).png().toBuffer();
+
+  // Never crop: keep all content, pad if needed (transparent BG).
+  const out = await sharp(buf)
+    .resize(1920, 1080, { fit: "contain", withoutEnlargement: false, background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png()
+    .toBuffer();
+
   return `data:image/png;base64,${out.toString("base64")}`;
 }
 
@@ -61,8 +67,9 @@ async function getBlank1920x1080DataUrl() {
   return cachedBlankBase64;
 }
 
+
 const SYSTEM_HINT =
-  "Outpaint the first image into the second image's full 1920×1080 frame; fill edges naturally; no borders or frames; preserve subject and lighting.";
+  "Outpaint the first image into the second image's full 1920×1080 frame; Do not crop or zoom the original subject. Keep the entire original image fully visible inside the 1920×1080 frame.fill edges naturally; no borders or frames; preserve subject and lighting.";
 
 // ---------- Model Call ----------
 
