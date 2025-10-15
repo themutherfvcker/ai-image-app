@@ -1,6 +1,9 @@
 "use client";
 // page has a server shell; client islands are used where needed
 
+import HomeBannerTool from "@/components/ratio16/HomeBannerTool";
+
+
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
@@ -94,6 +97,8 @@ function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
     </div>
   );
 }
+
+
 
 function ExamplesSection() {
   function tryExample(tab, prompt) {
@@ -1043,6 +1048,22 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+              
+{/* 16:9 BANNERS (inline) */}
+<section id="ratio16" className="py-12 bg-white">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
+      YouTube &amp; Hero Banners, Perfectly Framed
+    </h3>
+    <p className="mt-2 text-gray-600">
+      Upload any photo — we’ll outpaint to a true 1920×1080 without cropping faces or adding borders.
+    </p>
+
+    <div className="mt-6 rounded-2xl border border-zinc-800/40 bg-zinc-900/40 p-4 md:p-6">
+      <HomeBannerTool />
+    </div>
+  </div>
+</section>
 
       
 
@@ -1178,13 +1199,7 @@ export default function HomePage() {
         </div>
       </section>
 
-// app/page.tsx (or page.jsx)
-import dynamic from "next/dynamic";
 
-// client-only to avoid server render weight
-const HomeBannerTool = dynamic(() => import("@/components/ratio16/HomeBannerTool"), {
-  ssr: false,
-});
 
 export default function Page() {
   return (
