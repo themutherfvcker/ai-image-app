@@ -3,7 +3,6 @@
 
 import HomeBannerTool from "@/components/ratio16/HomeBannerTool";
 
-
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Script from "next/script";
@@ -98,14 +97,12 @@ function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
   );
 }
 
-
-
 function ExamplesSection() {
   function tryExample(tab, prompt) {
-    const u = new URL(location.origin + "/generator")
-    u.searchParams.set("tab", tab)
-    u.searchParams.set("prompt", prompt)
-    window.location.href = u.toString()
+    const u = new URL(location.origin + "/generator");
+    u.searchParams.set("tab", tab);
+    u.searchParams.set("prompt", prompt);
+    window.location.href = u.toString();
   }
 
   const EXAMPLE_ITEMS = [
@@ -178,16 +175,16 @@ function ExamplesSection() {
             const before = c.beforeFile ? `/examples/${c.beforeFile}` : `/examples/${c.slug}-before.jpg`;
             const after = c.afterFile ? `/examples/${c.afterFile}` : `/examples/${c.slug}-after.jpg`;
             return (
-            <div key={i} className="bg-white rounded-xl shadow hover:shadow-lg transition">
-              <BeforeAfter beforeSrc={before} afterSrc={after} altBefore={`${c.title} before`} altAfter={`${c.title} after`} />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-900">{c.title}</h3>
-                <p className="text-sm text-gray-600 mt-1">{c.desc}</p>
-                <button onClick={() => tryExample(c.tab, c.prompt)} className="mt-3 inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border hover:bg-gray-50">
-                  Try this
-                </button>
+              <div key={i} className="bg-white rounded-xl shadow hover:shadow-lg transition">
+                <BeforeAfter beforeSrc={before} afterSrc={after} altBefore={`${c.title} before`} altAfter={`${c.title} after`} />
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold text-gray-900">{c.title}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{c.desc}</p>
+                  <button onClick={() => tryExample(c.tab, c.prompt)} className="mt-3 inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border hover:bg-gray-50">
+                    Try this
+                  </button>
+                </div>
               </div>
-            </div>
             );
           })}
         </div>
@@ -362,14 +359,14 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
             setError("");
             setResultUrl(null);
             try {
-                      const { data: { session: sess } } = await supabase.auth.getSession();
-                      const authHeaders = { "Content-Type": "application/json" };
-                      if (sess?.access_token) authHeaders["Authorization"] = `Bearer ${sess.access_token}`;
-                      const resp = await fetch("/api/vertex/edit", {
-                        method: "POST",
-                        headers: authHeaders,
-                        body: JSON.stringify({ prompt: pending.prompt || "", imageDataUrl: pending.imageDataUrl })
-                      });
+              const { data: { session: sess } } = await supabase.auth.getSession();
+              const authHeaders = { "Content-Type": "application/json" };
+              if (sess?.access_token) authHeaders["Authorization"] = `Bearer ${sess.access_token}`;
+              const resp = await fetch("/api/vertex/edit", {
+                method: "POST",
+                headers: authHeaders,
+                body: JSON.stringify({ prompt: pending.prompt || "", imageDataUrl: pending.imageDataUrl })
+              });
               const data = await resp.json();
               if (!resp.ok || !data?.ok) throw new Error(data?.error || `HTTP ${resp.status}`);
               setResultUrl(data.dataUrl);
@@ -389,14 +386,14 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
           setError("");
           setResultUrl(null);
           try {
-                    const { data: { session: sess } } = await supabase.auth.getSession();
-                    const authHeaders = { "Content-Type": "application/json" };
-                    if (sess?.access_token) authHeaders["Authorization"] = `Bearer ${sess.access_token}`;
-                    const resp = await fetch("/api/vertex/imagine", {
-                      method: "POST",
-                      headers: authHeaders,
-                      body: JSON.stringify({ prompt: pending.prompt || "" })
-                    });
+            const { data: { session: sess } } = await supabase.auth.getSession();
+            const authHeaders = { "Content-Type": "application/json" };
+            if (sess?.access_token) authHeaders["Authorization"] = `Bearer ${sess.access_token}`;
+            const resp = await fetch("/api/vertex/imagine", {
+              method: "POST",
+              headers: authHeaders,
+              body: JSON.stringify({ prompt: pending.prompt || "" })
+            });
             const data = await resp.json();
             if (!resp.ok) throw new Error(data?.error || `HTTP ${resp.status}`);
             setResultUrl(data.dataUrl);
@@ -465,8 +462,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
       if (activeTab === "t2i") {
         if (!t2iPrompt) { setError("Please enter a prompt."); return; }
         {
-          const supabase = getSupabase();
-          const { data: { session } } = await supabase.auth.getSession();
+          const { data: { session } } = await getSupabase().auth.getSession();
           const authHeaders = { "Content-Type": "application/json" };
           if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`;
           response = await fetch("/api/vertex/imagine", {
@@ -484,8 +480,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
         formData.append("image", i2iFile);
 
         {
-          const supabase = getSupabase();
-          const { data: { session } } = await supabase.auth.getSession();
+          const { data: { session } } = await getSupabase().auth.getSession();
           const authHeaders = {};
           if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`;
           response = await fetch("/api/vertex/edit", {
@@ -542,8 +537,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
 
   async function startSubscription() {
     try {
-      const supabase = getSupabase();
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await getSupabase().auth.getSession();
       const authHeaders = { "Content-Type": "application/json" };
       if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`;
       const res = await fetch("/api/subscription", { method: "POST", headers: authHeaders, body: JSON.stringify({}) });
@@ -585,7 +579,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
       { "@type": "Question", "name": "What makes Nano Banana different from other image generators?", "acceptedAnswer": { "@type": "Answer", "text": "Nano Banana focuses on character consistency and precision, helping keep facial features and scene details coherent across edits." } },
       { "@type": "Question", "name": "What kind of prompts work best with Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "Both simple and detailed prompts work. For best results, describe the specific changes you want in natural language." } },
       { "@type": "Question", "name": "How accurate is the image editing?", "acceptedAnswer": { "@type": "Answer", "text": "Edits are highly realistic, especially for identity consistency and scene preservation. Provide reference images for even tighter control." } },
-      { "@type": "Question", "name": "What file formats does it support?", "acceptedAnswer": { "@type": "Answer", "text": "Upload PNG/JPEG/WEBP and export high‑resolution PNG or JPG. Common aspect ratios (16:9, 1:1, 4:3, more) are supported." } },
+      { "@type": "Question", "name": "What file formats does it support?", "acceptedAnswer": { "@type": "Answer", "text": "Upload PNG/JPEG/WEBP and export high-resolution PNG or JPG. Common aspect ratios (16:9, 1:1, 4:3, more) are supported." } },
       { "@type": "Question", "name": "Can I use Nano Banana for commercial projects?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Nano Banana AI image editor is great for UGC, social, and marketing where brand and identity consistency matters." } },
       { "@type": "Question", "name": "How long does it take to generate an image?", "acceptedAnswer": { "@type": "Answer", "text": "Most edits complete in about 15–30 seconds, depending on image complexity and settings." } },
       { "@type": "Question", "name": "Is there a limit to how many images I can generate?", "acceptedAnswer": { "@type": "Answer", "text": "Flexible plans and batch support scale from solo creators to teams. See the Pricing page for details." } },
@@ -597,7 +591,7 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
       { "@type": "Question", "name": "Will unused credits roll over?", "acceptedAnswer": { "@type": "Answer", "text": "On paid tiers, unused credits may roll into the next cycle depending on plan—see Pricing for specifics." } },
       { "@type": "Question", "name": "What payment methods do you accept?", "acceptedAnswer": { "@type": "Answer", "text": "Major credit/debit cards via Stripe; taxes/VAT may apply based on your location." } }
     ]
-  }
+  };
 
   return (
     <section id="generator" className="py-12 bg-gray-50">
@@ -614,7 +608,6 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
               <>Sign in to get free credits and start generating images.</>
             )}
           </p>
-          
         </div>
 
         <div className="mt-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -1004,11 +997,9 @@ export default function HomePage() {
         @keyframes nb-float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
       `}</style>
 
-
       {/* HERO */}
       <div className="hero-gradient relative overflow-hidden">
         <div ref={vantaRef} id="home" className="absolute inset-0 pointer-events-none" aria-hidden="true" />
-        
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             {/* Copy */}
@@ -1028,10 +1019,9 @@ export default function HomePage() {
               <h3 className="mt-2 text-base sm:text-lg text-gray-800 italic">
                 Easy-to-use service utilizing Google's Nano Banana API technology.
               </h3>
-              
             </div>
 
-            {/* Banana visual (stacks on mobile; absolute only on lg+) */}
+            {/* Banana visual */}
             <div className="relative min-h-[280px] sm:min-h-[360px] lg:min-h-[460px]">
               <img
                 className="banana-float absolute inset-x-0 bottom-0 mx-auto w-64 sm:w-80 lg:w-[520px] lg:bottom-[-24px] lg:right-0 lg:left-auto lg:mx-0"
@@ -1048,62 +1038,60 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-              
-{/* 16:9 BANNERS (inline) */}
-<section id="ratio16" className="py-12 bg-white">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
-      YouTube &amp; Hero Banners, Perfectly Framed
-    </h3>
-    <p className="mt-2 text-gray-600">
-      Upload any photo — we’ll outpaint to a true 1920×1080 without cropping faces or adding borders.
-    </p>
 
-    <div className="mt-6 rounded-2xl border border-zinc-800/40 bg-zinc-900/40 p-4 md:p-6">
-      <HomeBannerTool />
-    </div>
-  </div>
-</section>
+      {/* 16:9 BANNERS (inline) */}
+      <section id="ratio16" className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
+            YouTube &amp; Hero Banners, Perfectly Framed
+          </h3>
+          <p className="mt-2 text-gray-600">
+            Upload any photo — we’ll outpaint to a true 1920×1080 without cropping faces or adding borders.
+          </p>
 
-      
+          <div className="mt-6 rounded-2xl border border-zinc-800/40 bg-zinc-900/40 p-4 md:p-6">
+            <HomeBannerTool />
+          </div>
+        </div>
+      </section>
 
       {/* GENERATOR (inline) */}
       <HomeGeneratorSection showSignIn={showSignIn} onShowSignIn={setShowSignIn} />
 
-  {/* WHAT IS NANO BANANA */}
-  <section id="what-is-nano-banana" className="py-12 bg-white">
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="lg:text-center mb-6">
-        <p className="text-sm text-yellow-700 font-semibold tracking-wide uppercase">What is Nano Banana?</p>
-        <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">What is Nano Banana?</h2>
-        <p className="mt-2 text-gray-700">Fast, high‑quality AI image generation and editing</p>
-      </div>
-      <div className="prose prose-gray max-w-none">
-        <p>
-          “Nano Banana” is the community nickname for Google’s Gemini 2.5 Flash Image model—a fast, high-quality AI for image generation and text‑based image editing (remove/replace objects, change backgrounds, merge images, keep character identity consistent, etc.). All outputs include SynthID provenance watermarking.
-        </p>
-      </div>
-      <div className="mt-6 grid md:grid-cols-2 gap-6">
-        <div className="bg-gray-50 rounded-lg p-5 border">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <span>What it can do</span>
-          </h3>
-          <ul className="mt-3 list-disc pl-5 text-gray-800 space-y-1">
-            <li>Text → image and image → image edits with natural‑language prompts.</li>
-            <li>Character consistency across multiple edits/shots.</li>
-            <li>Multi‑image fusion (blend/compose images).</li>
-            <li>Low latency and broad aspect‑ratio support; available via Gemini API, AI Studio/Vertex AI, and consumer Gemini surfaces.</li>
-          </ul>
+      {/* WHAT IS NANO BANANA */}
+      <section id="what-is-nano-banana" className="py-12 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:text-center mb-6">
+            <p className="text-sm text-yellow-700 font-semibold tracking-wide uppercase">What is Nano Banana?</p>
+            <h2 className="mt-2 text-2xl sm:text-3xl font-extrabold text-gray-900">What is Nano Banana?</h2>
+            <p className="mt-2 text-gray-700">Fast, high-quality AI image generation and editing</p>
+          </div>
+          <div className="prose prose-gray max-w-none">
+            <p>
+              “Nano Banana” is the community nickname for Google’s Gemini 2.5 Flash Image model—a fast, high-quality AI for image generation and text-based image editing (remove/replace objects, change backgrounds, merge images, keep character identity consistent, etc.). All outputs include SynthID provenance watermarking.
+            </p>
+          </div>
+          <div className="mt-6 grid md:grid-cols-2 gap-6">
+            <div className="bg-gray-50 rounded-lg p-5 border">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <span>What it can do</span>
+              </h3>
+              <ul className="mt-3 list-disc pl-5 text-gray-800 space-y-1">
+                <li>Text → image and image → image edits with natural-language prompts.</li>
+                <li>Character consistency across multiple edits/shots.</li>
+                <li>Multi-image fusion (blend/compose images).</li>
+                <li>Low latency and broad aspect-ratio support; available via Gemini API, AI Studio/Vertex AI, and consumer Gemini surfaces.</li>
+              </ul>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-5 border">
+              <h3 className="text-lg font-semibold text-gray-900">Why people call it “Nano Banana”</h3>
+              <p className="mt-3 text-gray-800">
+                It started as a shorthand used by developers and creators online for Gemini 2.5 Flash Image, and the name stuck as the model went mainstream.
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="bg-gray-50 rounded-lg p-5 border">
-          <h3 className="text-lg font-semibold text-gray-900">Why people call it “Nano Banana”</h3>
-          <p className="mt-3 text-gray-800">
-            It started as a shorthand used by developers and creators online for Gemini 2.5 Flash Image, and the name stuck as the model went mainstream.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+      </section>
 
       {/* EXAMPLES (Before/After) */}
       <ExamplesSection />
@@ -1196,23 +1184,6 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-
-
-export default function Page() {
-  return (
-    <>
-      {/* ...your existing homepage content... */}
-
-      {/* Find the section with this heading */}
-      <section className="...">
-        <h3 className="...">YouTube &amp; Hero Banners, Perfectly Framed</h3>
-
-        {/* NEW: embed the editor */}
-        <div className="mt-6 rounded-2xl border border-zinc-800/40 bg-zinc-900/40 p-4 md:p-6">
-          <HomeBannerTool />
         </div>
       </section>
 
@@ -1320,7 +1291,7 @@ export default function Page() {
               <div>
                 <dt className="text-lg leading-6 font-medium text-gray-900">What file formats does it support?</dt>
                 <dd className="mt-2 text-base text-gray-500">
-                  Upload PNG/JPEG/WEBP; export high‑resolution PNG or JPG. Common aspect ratios (16:9, 1:1, 4:3 and more) are supported.
+                  Upload PNG/JPEG/WEBP; export high-resolution PNG or JPG. Common aspect ratios (16:9, 1:1, 4:3 and more) are supported.
                 </dd>
               </div>
               <div>
@@ -1409,9 +1380,7 @@ export default function Page() {
         </div>
       </section>
 
-      
       <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
     </>
   );
 }
-
