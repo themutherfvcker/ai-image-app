@@ -1178,19 +1178,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 16:9 CREATOR (embedded app) */}
-      <section id="sixteen-nine" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center">
-            <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">16:9 Image Creator</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">YouTube & Hero Banners, Perfectly Framed</p>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Generate native 16:9 or convert any image while preserving composition.</p>
-          </div>
-          {/* Embedded lightweight 16:9 tool for homepage */}
-          <div className="mt-6">
-            {/* ssr: false to keep it client-only */}
-            {(() => { const Dynamic = require('next/dynamic').default; const HomeBannerTool = Dynamic(() => import('@/components/ratio16/HomeBannerTool'), { ssr: false }); return <HomeBannerTool /> })()}
-          </div>
+// app/page.tsx (or page.jsx)
+import dynamic from "next/dynamic";
+
+// client-only to avoid server render weight
+const HomeBannerTool = dynamic(() => import("@/components/ratio16/HomeBannerTool"), {
+  ssr: false,
+});
+
+export default function Page() {
+  return (
+    <>
+      {/* ...your existing homepage content... */}
+
+      {/* Find the section with this heading */}
+      <section className="...">
+        <h3 className="...">YouTube &amp; Hero Banners, Perfectly Framed</h3>
+
+        {/* NEW: embed the editor */}
+        <div className="mt-6 rounded-2xl border border-zinc-800/40 bg-zinc-900/40 p-4 md:p-6">
+          <HomeBannerTool />
         </div>
       </section>
 
