@@ -58,10 +58,22 @@ async function callModel(model: string, parts: any[]) {
   const ai = getAi();
   return ai.models.generateContent({
     model,
-    contents: { parts },
-    config: { responseModalities: [Modality.IMAGE, Modality.TEXT] },
+
+    // 👇 most SDKs expect an array with a role
+    contents: [{ role: "user", parts }],
+
+    // 👇 ask for 16:9 and PNG back (if supported by your version)
+    generationConfig: {
+      aspectRatio: "16:9",
+      responseMimeType: "image/png",
+    },
+
+    // keep this minimal; IMAGE is enough
+    config: { responseModalities: [Modality.IMAGE] },
   });
 }
+
+
 
 export async function editTo16x9(originalDataUrl: string, prompt: string): Promise<string> {
   const src = dataUrlToParts(originalDataUrl);
