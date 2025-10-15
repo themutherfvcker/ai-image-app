@@ -59,21 +59,18 @@ async function callModel(model: string, parts: any[]) {
   return ai.models.generateContent({
     model,
 
-    // 👇 most SDKs expect an array with a role
+    // Most SDK versions expect an ARRAY with a role:
     contents: [{ role: "user", parts }],
 
-    // 👇 ask for 16:9 and PNG back (if supported by your version)
-    generationConfig: {
-      aspectRatio: "16:9",
-      responseMimeType: "image/png",
-    },
+    // ✅ Use this with your SDK version
+    // (older typings expose imageGenerationConfig, not generationConfig)
+    // @ts-expect-error: field exists on backend but may be missing in local types
+    imageGenerationConfig: { aspectRatio: "16:9" },
 
-    // keep this minimal; IMAGE is enough
+    // Keep minimal; IMAGE is enough
     config: { responseModalities: [Modality.IMAGE] },
   });
 }
-
-
 
 export async function editTo16x9(originalDataUrl: string, prompt: string): Promise<string> {
   const src = dataUrlToParts(originalDataUrl);
