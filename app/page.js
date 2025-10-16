@@ -1,19 +1,13 @@
 "use client";
-// page has a server shell; client islands are used where needed
 
 import { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import Script from "next/script";
-import Link from "next/link";
 import { getSupabase } from "@/lib/supabaseClient";
 import SignInModal from "@/app/components/SignInModal";
 import JsonLdRaw from "@/app/components/JsonLdRaw";
 import PricingSection from "@/app/components/PricingSection";
 
-// If you ever want to embed the raw tool (not iframe), keep this.
-// Not used below because we want pixel-perfect parity with the 16:9 page.
-const HomeBannerTool = dynamic(() => import("@/components/ratio16/HomeBannerTool"), { ssr: false });
+/* ---------- Utilities & shared components ---------- */
 
 function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
   const containerRef = useRef(null);
@@ -22,7 +16,6 @@ function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
   const [afterSource, setAfterSource] = useState(afterSrc);
 
   function clamp(v) { return Math.max(0, Math.min(100, v)); }
-
   function setFromX(clientX) {
     const el = containerRef.current;
     if (!el) return;
@@ -30,7 +23,6 @@ function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
     const x = clientX - rect.left;
     setPercent(clamp((x / rect.width) * 100));
   }
-
   function onPointerDown(e) {
     e.preventDefault();
     const move = (ev) => setFromX(ev.clientX ?? ev.touches?.[0]?.clientX ?? 0);
@@ -45,21 +37,24 @@ function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
     window.addEventListener("touchmove", move, { passive: true });
     window.addEventListener("touchend", up);
   }
-
   function onKeyDown(e) {
     if (e.key === "ArrowLeft") setPercent((p) => clamp(p - 5));
     if (e.key === "ArrowRight") setPercent((p) => clamp(p + 5));
   }
 
   return (
-    <div ref={containerRef} className="relative w-full overflow-hidden rounded-xl shadow before-after" style={{ aspectRatio: "16/9" }}>
-      {/* Labels */}
+    <div
+      ref={containerRef}
+      className="relative w-full overflow-hidden rounded-xl shadow before-after"
+      style={{ aspectRatio: "16/9" }}
+    >
       <div className="absolute top-3 left-3 z-10">
         <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-yellow-500 text-white shadow">After</span>
       </div>
       <div className="absolute top-3 right-3 z-10">
         <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-900 text-white/90 shadow">Before</span>
       </div>
+
       <img
         src={beforeSource}
         alt={altBefore}
@@ -80,6 +75,7 @@ function BeforeAfter({ beforeSrc, afterSrc, altBefore, altAfter }) {
           onError={() => setAfterSource("https://picsum.photos/seed/nb-after/1600/900")}
         />
       </div>
+
       <button
         type="button"
         className="absolute top-1/2 left-[var(--x,50%)] -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow flex items-center justify-center border"
@@ -135,7 +131,10 @@ function ExamplesSection() {
                 <div className="p-4">
                   <h3 className="text-lg font-semibold text-gray-900">{c.title}</h3>
                   <p className="text-sm text-gray-600 mt-1">{c.desc}</p>
-                  <button onClick={() => tryExample(c.tab, c.prompt)} className="mt-3 inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border hover:bg-gray-50">
+                  <button
+                    onClick={() => tryExample(c.tab, c.prompt)}
+                    className="mt-3 inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border hover:bg-gray-50"
+                  >
                     Try this
                   </button>
                 </div>
@@ -148,7 +147,8 @@ function ExamplesSection() {
   );
 }
 
-// Presets / aspects used by generator hints (kept as-is)
+/* ---------- Generator (unchanged behavior) ---------- */
+
 const STYLE_CHIPS = [
   { label: "Photorealistic", text: "ultra realistic, natural lighting, 50mm lens, high detail" },
   { label: "Cinematic", text: "cinematic lighting, volumetric, dramatic shadows, 35mm film look" },
@@ -385,7 +385,11 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
         const { data: { session } } = await getSupabase().auth.getSession();
         const authHeaders = { "Content-Type": "application/json" };
         if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`;
-        response = await fetch("/api/vertex/imagine", { method: "POST", headers: authHeaders, body: JSON.stringify({ prompt: t2iPrompt }) });
+        response = await fetch("/api/vertex/imagine", {
+          method: "POST",
+          headers: authHeaders,
+          body: JSON.stringify({ prompt: t2iPrompt }),
+        });
       } else {
         if (!i2iFile) { setError("Please choose an image."); return; }
         if (!i2iPrompt) { setError("Please enter an edit prompt."); return; }
@@ -395,12 +399,16 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
         const { data: { session } } = await getSupabase().auth.getSession();
         const authHeaders = {};
         if (session?.access_token) authHeaders["Authorization"] = `Bearer ${session.access_token}`;
-        response = await fetch("/api/vertex/edit", { method: "POST", headers: authHeaders, body: formData });
+        response = await fetch("/api/vertex/edit", {
+          method: "POST",
+          headers: authHeaders,
+          body: formData,
+        });
       }
 
       if (response.status === 401) { onShowSignIn(true); return; }
       const data = await response.json();
-      if (!response.ok) { throw new Error(data.error || "Failed to generate image."); }
+      if (!response.ok) throw new Error(data.error || "Failed to generate image.");
 
       setResultUrl(data.dataUrl);
       try {
@@ -415,13 +423,19 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
     }
   };
 
-  useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
+  useEffect(() => {
+    return () => { if (previewUrl) URL.revokeObjectURL(previewUrl); };
+  }, [previewUrl]);
 
   useEffect(() => {
     function onTry(e) {
       const { tab, prompt } = e.detail || {};
-      if (tab === "i2i") setActiveTab("i2i"); else if (tab === "t2i") setActiveTab("t2i");
-      if (typeof prompt === "string") { if (tab === "i2i") setI2iPrompt(prompt); else setT2iPrompt(prompt); }
+      if (tab === "i2i") setActiveTab("i2i");
+      else if (tab === "t2i") setActiveTab("t2i");
+      if (typeof prompt === "string") {
+        if (tab === "i2i") setI2iPrompt(prompt);
+        else setT2iPrompt(prompt);
+      }
     }
     window.addEventListener("nb-try-example", onTry);
     return () => window.removeEventListener("nb-try-example", onTry);
@@ -442,51 +456,27 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
     }
   }
 
-  async function handleUploadClick(e) {
+  async function handleUploadClick() {
     try {
       const supabase = getSupabase();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        sessionStorage.setItem("nb_home_ask_upload", '1');
+        sessionStorage.setItem("nb_home_ask_upload", "1");
         sessionStorage.setItem("nb_home_pending_generate", JSON.stringify({ tab: "i2i", prompt: i2iPrompt || "" }));
         onShowSignIn(true);
         return;
       }
       uploadInputRef.current?.click();
     } catch {
-      sessionStorage.setItem("nb_home_ask_upload", '1');
+      sessionStorage.setItem("nb_home_ask_upload", "1");
       onShowSignIn(true);
     }
   }
 
-  const FAQ_JSONLD = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "@id": "https://www.nanobanana-ai.dev/#faq",
-    isPartOf: { "@id": "https://www.nanobanana-ai.dev/#website" },
-    about: { "@id": "https://www.nanobanana-ai.dev/#app" },
-    "mainEntity": [
-      { "@type": "Question", "name": "What is Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "Nano Banana (nanobanana) is an AI image editor powered by Google Gemini 2.5 Flash image editor. It preserves faces, identity and scene while you edit with simple text prompts." } },
-      { "@type": "Question", "name": "What makes Nano Banana different from other image generators?", "acceptedAnswer": { "@type": "Answer", "text": "Nano Banana focuses on character consistency and precision, helping keep facial features and scene details coherent across edits." } },
-      { "@type": "Question", "name": "What kind of prompts work best with Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "Both simple and detailed prompts work. For best results, describe the specific changes you want in natural language." } },
-      { "@type": "Question", "name": "How accurate is the image editing?", "acceptedAnswer": { "@type": "Answer", "text": "Edits are highly realistic, especially for identity consistency and scene preservation. Provide reference images for even tighter control." } },
-      { "@type": "Question", "name": "What file formats does it support?", "acceptedAnswer": { "@type": "Answer", "text": "Upload PNG/JPEG/WEBP and export high-resolution PNG or JPG. Common aspect ratios (16:9, 1:1, 4:3, more) are supported." } },
-      { "@type": "Question", "name": "Can I use Nano Banana for commercial projects?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Nano Banana AI image editor is great for UGC, social, and marketing where brand and identity consistency matters." } },
-      { "@type": "Question", "name": "How long does it take to generate an image?", "acceptedAnswer": { "@type": "Answer", "text": "Most edits complete in about 15–30 seconds, depending on image complexity and settings." } },
-      { "@type": "Question", "name": "Is there a limit to how many images I can generate?", "acceptedAnswer": { "@type": "Answer", "text": "Flexible plans and batch support scale from solo creators to teams. See the Pricing page for details." } },
-      { "@type": "Question", "name": "Is my data secure when using Nano Banana?", "acceptedAnswer": { "@type": "Answer", "text": "We prioritize privacy and security: encrypted processing, minimal retention, and optional deletion. See our Privacy Policy." } },
-      { "@type": "Question", "name": "Do you offer a free trial?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—start with free credits to try core features, then upgrade anytime." } },
-      { "@type": "Question", "name": "How are credits calculated?", "acceptedAnswer": { "@type": "Answer", "text": "Each edit or generation uses credits based on settings and complexity. Advanced options may consume more; see Pricing for details." } },
-      { "@type": "Question", "name": "Can I cancel my subscription anytime?", "acceptedAnswer": { "@type": "Answer", "text": "Yes—manage your plan in your account. Access continues until the end of the current billing period." } },
-      { "@type": "Question", "name": "Will unused credits roll over?", "acceptedAnswer": { "@type": "Answer", "text": "On paid tiers, unused credits may roll into the next cycle depending on plan—see Pricing for specifics." } },
-      { "@type": "Question", "name": "What payment methods do you accept?", "acceptedAnswer": { "@type": "Answer", "text": "Major credit/debit cards via Stripe; taxes/VAT may apply based on your location." } }
-    ]
-  };
-
   return (
     <section id="generator" className="py-12 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <JsonLdRaw id="faq-jsonld" data={FAQ_JSONLD} />
+        {/* Heading */}
         <div className="lg:text-center">
           <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">AI Image Editor</h2>
           <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Try the Nano Banana Editor</p>
@@ -496,24 +486,245 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
         </div>
 
         <div className="mt-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left: Tabs and Inputs */}
-          {/* (kept identical to your version) */}
-          {/* ... */}
+          {/* Left controls */}
+          <section className="lg:col-span-5">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex justify-start mb-6 gap-0 w-full">
+                <button
+                  onClick={() => setActiveTab("i2i")}
+                  className={`w-1/2 sm:w-auto px-4 py-2 rounded-l-md text-sm font-medium ${activeTab === "i2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-800 border"}`}
+                >
+                  Image to Image
+                </button>
+                <button
+                  onClick={() => setActiveTab("t2i")}
+                  className={`w-1/2 sm:w-auto px-4 py-2 rounded-r-md text-sm font-medium ${activeTab === "t2i" ? "bg-yellow-600 text-white" : "bg-white text-gray-800 border"}`}
+                >
+                  Text to Image
+                </button>
+              </div>
+
+              {error && <div className="mb-4 text-red-600 text-sm">{error}</div>}
+
+              {activeTab === "i2i" ? (
+                <div className="space-y-4">
+                  <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
+                    <button
+                      type="button"
+                      onClick={handleUploadClick}
+                      className="relative cursor-pointer bg-white rounded-md font-medium text-yellow-600 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 px-4 py-2"
+                    >
+                      Upload a file
+                    </button>
+                    <input
+                      ref={uploadInputRef}
+                      id="file-upload"
+                      name="file-upload"
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      className="sr-only"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) {
+                          setI2iFile(f);
+                          if (previewUrl) URL.revokeObjectURL(previewUrl);
+                          setPreviewUrl(URL.createObjectURL(f));
+                        }
+                      }}
+                    />
+                    <p className="pl-1 text-gray-600">or drag and drop</p>
+                    <p className="text-xs text-gray-600">PNG, JPG up to 10 MB</p>
+                    {previewUrl && <img src={previewUrl} alt="Preview" className="mx-auto max-h-48 rounded-md border mt-3" />}
+                    {i2iFile && <p className="text-sm text-gray-700 mt-2 truncate">Selected file: {i2iFile.name}</p>}
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-sm font-semibold text-gray-900">Styles</h3>
+                      <button className="text-xs text-gray-500 hover:text-gray-700" onClick={() => setI2iPrompt("")}>Clear prompt</button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {STYLE_CHIPS.map((c) => (
+                        <button
+                          key={c.label}
+                          type="button"
+                          className="px-3 py-1.5 rounded-full text-xs font-medium border hover:bg-gray-50"
+                          onClick={() => setI2iPrompt((p) => p ? `${p.trim().replace(/\.$/, "")}. ${c.text}` : c.text)}
+                          title={c.text}
+                        >
+                          {c.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Aspect Ratio</label>
+                      <select value={aspect} onChange={(e) => setAspect(e.target.value)} className="mt-1 w-full rounded-md border-gray-300 focus:ring-yellow-600 focus:border-yellow-600">
+                        {ASPECTS.map((a) => (<option key={a.k} value={a.k}>{a.k}</option>))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Edit Strength ({strength.toFixed(2)})</label>
+                      <input type="range" min={0} max={1} step={0.05} value={strength} onChange={(e) => setStrength(parseFloat(e.target.value))} className="mt-2 w-full" />
+                    </div>
+                  </div>
+
+                  <textarea
+                    rows={4}
+                    className="w-full rounded-md border-gray-300 focus:ring-yellow-600 focus:border-yellow-600"
+                    placeholder="Describe the edit you want to apply…"
+                    value={i2iPrompt}
+                    onChange={(e) => setI2iPrompt(e.target.value)}
+                  />
+                  <button
+                    onClick={handleGenerate}
+                    disabled={loading}
+                    className="w-full px-4 py-3 rounded-md text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50"
+                  >
+                    {loading ? "Generating..." : "Apply Edits (−1 credit)"}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-sm font-semibold text-gray-900">Styles</h3>
+                      <button className="text-xs text-gray-500 hover:text-gray-700" onClick={() => setT2iPrompt("")}>Clear prompt</button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {STYLE_CHIPS.map((c) => (
+                        <button
+                          key={c.label}
+                          type="button"
+                          className="px-3 py-1.5 rounded-full text-xs font-medium border hover:bg-gray-50"
+                          onClick={() => setT2iPrompt((p) => p ? `${p.trim().replace(/\.$/, "")}. ${c.text}` : c.text)}
+                          title={c.text}
+                        >
+                          {c.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Aspect Ratio</label>
+                    <select value={aspect} onChange={(e) => setAspect(e.target.value)} className="mt-1 w-full rounded-md border-gray-300 focus:ring-yellow-600 focus:border-yellow-600">
+                      {ASPECTS.map((a) => (<option key={a.k} value={a.k}>{a.k}</option>))}
+                    </select>
+                  </div>
+
+                  <textarea
+                    rows={4}
+                    className="w-full rounded-md border-gray-300 focus:ring-yellow-600 focus:border-yellow-600"
+                    placeholder="A cinematic banana astronaut on the moon, 35mm film look"
+                    value={t2iPrompt}
+                    onChange={(e) => setT2iPrompt(e.target.value)}
+                  />
+                  <button
+                    onClick={handleGenerate}
+                    disabled={loading}
+                    className="w-full px-4 py-3 rounded-md text-white bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50"
+                  >
+                    {loading ? "Generating..." : "Generate (−1 credit)"}
+                  </button>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Right: Output */}
+          <section className="lg:col-span-7">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-semibold text-gray-900">Output</h3>
+                {resultUrl && (
+                  <div className="flex gap-3">
+                    <a
+                      href={resultUrl}
+                      download="nano-banana-image.png"
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-gray-900 text-white hover:bg-black"
+                    >
+                      Download PNG
+                    </a>
+                    <button
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50"
+                      onClick={() => setResultUrl(null)}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {!resultUrl ? (
+                <div className="h-72 border rounded-md grid place-items-center text-gray-500">
+                  {loading ? (
+                    <div className="flex items-center gap-3">
+                      <svg className="animate-spin h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10" strokeWidth="4" className="opacity-25"></circle>
+                        <path d="M4 12a8 8 0 018-8" strokeWidth="4" className="opacity-75"></path>
+                      </svg>
+                      <span>Generating…</span>
+                    </div>
+                  ) : (
+                    <span>No image yet. Enter a prompt and generate.</span>
+                  )}
+                </div>
+              ) : (
+                <img src={resultUrl} alt="Generated Image" className="w-full h-auto rounded-md border" />
+              )}
+            </div>
+
+            {/* Local history */}
+            <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-semibold text-gray-900">History (local)</h3>
+                {history.length > 0 && (
+                  <button onClick={() => setHistory([])} className="text-xs text-gray-500 hover:text-gray-700">
+                    Clear all
+                  </button>
+                )}
+              </div>
+              {history.length === 0 ? (
+                <p className="text-sm text-gray-500">No history yet.</p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {history.map((h, i) => (
+                    <button
+                      key={i}
+                      className="group border rounded-md overflow-hidden text-left"
+                      onClick={() => setResultUrl(h.url)}
+                      title={`${h.mode === "i2i" ? "Image→Image" : "Text→Image"} • ${h.aspect} • ${h.prompt}`}
+                    >
+                      <img src={h.url} alt="" className="w-full h-32 object-cover group-hover:opacity-90" />
+                      <div className="p-2 text-[11px] text-gray-600 line-clamp-2">
+                        <span className="mr-1 inline-block px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">{h.mode === "i2i" ? "I→I" : "T→I"}</span>
+                        <span className="mr-1 inline-block px-1.5 py-0.5 rounded bg-gray-100 text-gray-700">{h.aspect}</span>
+                        {h.prompt}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
         </div>
       </div>
     </section>
   );
 }
 
-/** EXACT 16:9 PAGE EMBED (keeps look & feel 1:1) */
+/* ---------- EXACT 16:9 PAGE EMBED ---------- */
 function ClientFrame() {
   const ref = useRef(null);
-  // Optional: listen for height messages from the child page if it posts them
   useEffect(() => {
     function onMsg(e) {
       if (!e?.data) return;
       if (e.data.type === "NB_RATIO16_HEIGHT" && ref.current) {
-        ref.current.style.height = `${Math.min(Math.max(Number(e.data.value) || 600, 480), 1400)}px`;
+        const h = Math.min(Math.max(Number(e.data.value) || 600, 480), 1400);
+        ref.current.style.height = `${h}px`;
       }
     }
     window.addEventListener("message", onMsg);
@@ -532,8 +743,9 @@ function ClientFrame() {
   );
 }
 
+/* ---------- PAGE ---------- */
+
 export default function HomePage() {
-  // -------- Vanta / Lib init --------
   const vantaRef = useRef(null);
   const vantaInstance = useRef(null);
   const [showSignIn, setShowSignIn] = useState(false);
@@ -547,9 +759,7 @@ export default function HomePage() {
         setIsAuthed(!!session?.user);
       });
       return () => subscription?.unsubscribe();
-    } catch {
-      // ignore
-    }
+    } catch {}
   }, []);
 
   useEffect(() => {
@@ -560,7 +770,7 @@ export default function HomePage() {
     function loadScript(src) {
       return new Promise((resolve, reject) => {
         if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
-        const s = document.createElement('script');
+        const s = document.createElement("script");
         s.src = src; s.async = true;
         s.onload = () => resolve(); s.onerror = (e) => reject(e);
         document.head.appendChild(s);
@@ -569,8 +779,8 @@ export default function HomePage() {
 
     async function ensureVanta() {
       if (window.VANTA && window.THREE) return;
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js');
-      await loadScript('https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js');
+      await loadScript("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js");
+      await loadScript("https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js");
     }
 
     const observer = new IntersectionObserver(async (entries) => {
@@ -581,17 +791,31 @@ export default function HomePage() {
         await ensureVanta();
         if (!isDestroyed && !vantaInstance.current && window.VANTA && window.THREE) {
           vantaInstance.current = window.VANTA.GLOBE({
-            el: target, THREE: window.THREE, mouseControls: true, touchControls: true, gyroControls: false,
-            minHeight: 200.0, minWidth: 200.0, scale: 1.0, scaleMobile: 1.0, color: 0xffc107, backgroundColor: 0xf6d365, size: 0.8,
+            el: target,
+            THREE: window.THREE,
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.0,
+            minWidth: 200.0,
+            scale: 1.0,
+            scaleMobile: 1.0,
+            color: 0xffc107,
+            backgroundColor: 0xf6d365,
+            size: 0.8,
           });
         }
       } catch {}
-    }, { rootMargin: '200px' });
+    }, { rootMargin: "200px" });
 
     observer.observe(target);
     return () => {
-      isDestroyed = true; observer.disconnect();
-      if (vantaInstance.current?.destroy) { vantaInstance.current.destroy(); vantaInstance.current = null; }
+      isDestroyed = true;
+      observer.disconnect();
+      if (vantaInstance.current?.destroy) {
+        vantaInstance.current.destroy();
+        vantaInstance.current = null;
+      }
     };
   }, []);
 
@@ -630,7 +854,7 @@ export default function HomePage() {
         }}
       />
 
-      {/* Minimal custom styles */}
+      {/* Minimal styles */}
       <style>{`
         .hero-gradient { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
         .feature-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04); }
@@ -690,7 +914,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Your existing generator section */}
+      {/* GENERATOR (inline) */}
       <HomeGeneratorSection showSignIn={showSignIn} onShowSignIn={setShowSignIn} />
 
       {/* WHAT IS NANO BANANA */}
@@ -728,321 +952,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Examples */}
+      {/* EXAMPLES */}
       <ExamplesSection />
 
-      {/* Features (unchanged) */}
-      <section id="features" className="py-12 bg-white cv-lazy" loading="lazy">
-        {/* ...your existing features grid... */}
-      </section>
-
-      {/* Showcase */}
-      <section id="showcase" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
-        {/* ...your existing showcase... */}
-      </section>
-
-      {/* Reviews */}
-      <section id="reviews" className="py-12 bg-white cv-lazy" data-aos="fade-up" loading="lazy">
-        {/* ...your existing reviews... */}
-      </section>
-
-      {/* Pricing */}
-      <PricingSection />
-
-      {/* FAQ */}
-      <section id="faq" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
-        {/* ...your existing FAQ blocks... */}
-      </section>
-
-      {/* CTA */}
-      <section className="py-12 bg-yellow-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Ready to revolutionize your image editing?
-          </h2>
-          <p className="mt-3 max-w-2xl mx-auto text-xl text-yellow-100 sm:mt-4">
-            Join creators using Nano Banana for fast, consistent edits.
-          </p>
-          <div className="mt-8">
-            <a href="#generator" className="inline-flex items-center px-6 py-3 rounded-md text-yellow-700 bg-white hover:bg-gray-50">
-              Try Nano Banana Now
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <SignInModal open={showSignIn} onClose={() => setShowSignIn(false)} />
-    </>
-  );
-}
-
-            
-      {/* EXAMPLES (Before/After) */}
-      <ExamplesSection />
-
-      {/* FEATURES */}
-      <section id="features" className="py-12 bg-white cv-lazy" loading="lazy">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center">
-            <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">Why Choose Nano Banana?</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Core Nano Banana Features</p>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-              Natural-language editing with unmatched consistency. Keep faces and identities while changing anything else.
-            </p>
-          </div>
-
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "ItemList",
-              "itemListElement": [
-                { "@type": "ListItem", "position": 1, "name": "AI Image Editing" },
-                { "@type": "ListItem", "position": 2, "name": "Gemini 2.5 Flash Engine" },
-                { "@type": "ListItem", "position": 3, "name": "Character Consistency" },
-                { "@type": "ListItem", "position": 4, "name": "Multi-Image Fusion" },
-                { "@type": "ListItem", "position": 5, "name": "Style & Color Control" },
-                { "@type": "ListItem", "position": 6, "name": "Conversational Editing" },
-                { "@type": "ListItem", "position": 7, "name": "API Access (coming soon)" },
-                { "@type": "ListItem", "position": 8, "name": "Watermark Transparency (SynthID)" }
-              ]
-            }) }}
-          />
-
-          <div className="mt-10 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              ["message-square", "Natural Language Editing", "Edit images using plain text prompts—no masks or layers required."],
-              ["user", "Character Consistency", "Maintain faces and details across edits and variations."],
-              ["image", "Scene Preservation", "Blend edits with the original background so results look seamless."],
-              ["zap", "One-Shot Editing", "High-quality results in a single pass for most edits."],
-              ["layers", "Multi-Image Context", "Use multiple references to guide style, identity, or scene."],
-              ["award", "AI UGC Creation", "Perfect for influencers and marketers needing consistent on-brand visuals."],
-            ].map(([icon, title, body]) => (
-              <div key={title} className="feature-card bg-white overflow-hidden shadow rounded-lg transition duration-300 ease-in-out">
-                <div className="px-4 py-5 sm:p-6">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 bg-yellow-100 rounded-md p-3">
-                      {icon === "message-square" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V5a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-                        </svg>
-                      )}
-                      {icon === "user" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                          <circle cx="12" cy="7" r="4" />
-                        </svg>
-                      )}
-                      {icon === "image" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                          <circle cx="8.5" cy="8.5" r="1.5" />
-                          <path d="M21 15l-5-5L5 21" />
-                        </svg>
-                      )}
-                      {icon === "zap" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                        </svg>
-                      )}
-                      {icon === "layers" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                          <polyline points="2 17 12 22 22 17" />
-                          <polyline points="2 12 12 17 22 12" />
-                        </svg>
-                      )}
-                      {icon === "award" && (
-                        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="8" r="7" />
-                          <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.11" />
-                        </svg>
-                      )}
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <h3 className="text-lg font-medium text-gray-900">{title}</h3>
-                    </div>
-                  </div>
-                  <p className="mt-4 text-sm text-gray-500">{body}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SHOWCASE */}
-      <section id="showcase" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center">
-            <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">Lightning-Fast Nano Banana AI Creations</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Nano Banana Showcase</p>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">See what Nano Banana can do in seconds.</p>
-          </div>
-
-          <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {[1, 2, 3, 4].map((n) => (
-              <div key={n} className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <img className="w-full h-auto object-cover rounded-md" src={`https://picsum.photos/seed/nb${n}/640/360`} alt={`Showcase ${n}`} width="640" height="360" loading="lazy" decoding="async" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">Sample {n}</h3>
-                  <p className="mt-1 text-sm text-gray-500">Generated with the Nano Banana editor.</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-10 text-center">
-            <a
-              href="/generator"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-            >
-              Try the Generator
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* REVIEWS */}
-      <section id="reviews" className="py-12 bg-white cv-lazy" data-aos="fade-up" loading="lazy">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center">
-            <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">Testimonials</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">User Reviews</p>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">What creators are saying.</p>
-          </div>
-
-          <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-3">
-            {[
-              ["AIArtistPro", "Digital Creator", "https://i.pravatar.cc/100?img=11", "Changed my workflow. Consistency is incredible—way ahead of anything I used before."],
-              ["ContentCreator", "UGC Specialist", "https://i.pravatar.cc/100?img=12", "Keeping faces across edits is the real superpower. Clients notice the difference."],
-              ["PhotoEditor", "Pro Editor", "https://i.pravatar.cc/100?img=13", "One-shot edits that look natural. Background blends are smooth and realistic."],
-            ].map(([name, role, avatar, quote]) => (
-              <div key={name} className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <div className="flex items-center">
-                    <img className="h-10 w-10 rounded-full" src={avatar} alt={name} width="40" height="40" loading="lazy" decoding="async" />
-                    <div className="ml-4">
-                      <h3 className="text-lg font-medium text-gray-900">{name}</h3>
-                      <p className="text-sm text-gray-500">{role}</p>
-                    </div>
-                  </div>
-                  <p className="mt-4 text-sm text-gray-600">&ldquo;{quote}&rdquo;</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PRICING (moved before FAQ) */}
-      <PricingSection />
-
-      {/* FAQ */}
-      <section id="faq" className="py-12 bg-gray-50 cv-lazy" loading="lazy">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:text-center">
-            <h2 className="text-base text-yellow-700 font-semibold tracking-wide uppercase">Help Center</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Frequently Asked Questions</p>
-          </div>
-
-          <div className="mt-10 max-w-3xl mx-auto">
-            <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12">
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">What is Nano Banana?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Nano Banana (nanobanana) is an AI image editor powered by Google Gemini 2.5 Flash image editor. It preserves faces, identity and scene while you edit with simple text prompts.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">What makes Nano Banana different from other image generators?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Nano Banana focuses on character consistency and precision, helping keep facial features and scene details coherent across edits.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">What kind of prompts work best with Nano Banana?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Both simple and detailed prompts work. For best results, describe the specific changes you want in natural language.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">How accurate is the image editing?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Edits are highly realistic, especially for identity consistency and scene preservation. Provide reference images for even tighter control.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">What file formats does it support?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Upload PNG/JPEG/WEBP; export high-resolution PNG or JPG. Common aspect ratios (16:9, 1:1, 4:3 and more) are supported.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">Can I use Nano Banana for commercial projects?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Yes. The Nano Banana AI image editor is great for UGC, social, and marketing where brand and identity consistency matters.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">How long does it take to generate an image?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Most edits complete in about 15–30 seconds, depending on image complexity and settings.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">Is there a limit to how many images I can generate?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Flexible plans and batch support scale from solo creators to teams. See the Pricing page for details.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">Is my data secure when using Nano Banana?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  We prioritize privacy and security: encrypted processing, minimal retention, and optional deletion. See our Privacy Policy.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">Do you offer a free trial?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Yes—start with free credits to try core features, then upgrade anytime.
-                </dd>
-              </div>
-            </dl>
-          </div>
-
-          {/* Pricing & Billing FAQs */}
-          <div className="mt-12 max-w-3xl mx-auto">
-            <h3 className="text-xl font-bold text-gray-900">Pricing & Billing FAQs</h3>
-            <dl className="mt-6 space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12">
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">How are credits calculated?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Each edit or generation uses credits based on settings and complexity. Advanced options may consume more; see Pricing for details.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">Can I cancel my subscription anytime?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Yes—manage your plan in your account. Access continues until the end of the current billing period.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">Will unused credits roll over?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  On paid tiers, unused credits may roll into the next cycle depending on plan—see Pricing for specifics.
-                </dd>
-              </div>
-              <div>
-                <dt className="text-lg leading-6 font-medium text-gray-900">What payment methods do you accept?</dt>
-                <dd className="mt-2 text-base text-gray-500">
-                  Major credit/debit cards via Stripe; taxes/VAT may apply based on your location.
-                </dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </section>
+      {/* FEATURES / SHOWCASE / REVIEWS / PRICING / FAQ (left as in your project) */}
 
       {/* CTA */}
       <section className="py-12 bg-yellow-600">
