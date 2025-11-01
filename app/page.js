@@ -716,6 +716,69 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
   );
 }
 
+<!-- Add this where you want the editor to appear -->
+<iframe
+  id="image-editor-iframe"
+  src="URL_OF_YOUR_DEPLOYED_REACT_APP"
+  style="width: 100%; height: 100vh; border: none;"
+  allow="camera; microphone"
+></iframe>
+
+<script>
+  // This script runs on your main website (nanobanana-ai.dev)
+
+  // 1. Get a reference to the iFrame
+  const iframe = document.getElementById('image-editor-iframe');
+
+  // This is a placeholder for your actual authentication logic.
+  // After a user logs in and you verify their payment, you'll have their API key.
+  function getApiKeyFromYourBackend() {
+    // In a real scenario, this would be an async call to your server
+    // that returns the Gemini API key for an authenticated, paid user.
+    // For now, we simulate it. IMPORTANT: Do not expose your key directly on the client.
+    // This function should be called *after* your auth/Stripe check.
+    return 'YOUR_GEMINI_API_KEY_FROM_YOUR_SERVER';
+  }
+
+  // 2. Listen for messages FROM the iFrame
+  window.addEventListener('message', (event) => {
+    // IMPORTANT: Always verify the origin of the message for security
+    if (event.origin !== "URL_OF_YOUR_DEPLOYED_REACT_APP") {
+      return;
+    }
+
+    const data = event.data;
+
+    if (data.type === 'NB169_READY') {
+      console.log('Image editor is ready. Authenticating user...');
+      // Your user auth and Stripe check logic goes here.
+      // If the user is authenticated and has credits:
+      const apiKey = getApiKeyFromYourBackend();
+      if (apiKey) {
+        iframe.contentWindow.postMessage({ type: 'NB169_AUTH_SUCCESS', apiKey: apiKey }, '*');
+      } else {
+         iframe.contentWindow.postMessage({ type: 'NB169_AUTH_FAIL' }, '*');
+      }
+    }
+
+    if (data.type === 'NB169_GENERATE_REQUEST') {
+        // Here you would check the user's Stripe credits on your backend.
+        console.log('Editor requests to generate. Checking credits...');
+        // For example: const hasCredits = await checkUserCredits();
+        const hasCredits = true; // Placeholder
+        if (hasCredits) {
+            iframe.contentWindow.postMessage({ type: 'NB169_GENERATE_APPROVED' }, '*');
+            // Then, call your backend to deduct a credit.
+        } else {
+            iframe.contentWindow.postMessage({ type: 'NB169_INSUFFICIENT_CREDITS' }, '*');
+            // Here you could trigger your Stripe checkout flow on the parent page.
+        }
+    }
+  });
+</script>
+
+
+
 /* ---------- EXACT 16:9 PAGE EMBED ---------- */
 function ClientFrame() {
   const ref = useRef(null);
