@@ -1,3 +1,87 @@
+// Make sure this is at the top of your app/page.js file
+'use client';
+
+import React, { useEffect, useRef } from 'react';
+
+export default function ImageGeneratorPage() {
+  const iframeRef = useRef(null);
+
+  // IMPORTANT: Replace this with the actual URL of your deployed image editor app
+  const imageEditorAppUrl = 'URL_OF_YOUR_DEPLOYED_IMAGE_EDITOR_APP';
+
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    // This is a placeholder for your actual authentication logic.
+    // After a user logs in and you verify their payment, you'll have their API key.
+    const getApiKeyFromYourBackend = () => {
+      // In a real scenario, this would be an async call to your server
+      // that returns the Gemini API key for an authenticated, paid user.
+      // This function should be called *after* your auth/Stripe check.
+      // IMPORTANT: Never expose your key directly in client-side code like this.
+      // This key should come from a secure, authenticated backend endpoint.
+      return process.env.NEXT_PUBLIC_GEMINI_API_KEY; // Example of using a Next.js env var
+    };
+
+    const handleMessage = (event) => {
+      // IMPORTANT: Always verify the origin of the message for security
+      if (event.origin !== new URL(imageEditorAppUrl).origin) {
+        return;
+      }
+
+      const data = event.data;
+
+      if (data.type === 'NB169_READY') {
+        console.log('Image editor is ready. Authenticating user...');
+        // Your user auth and Stripe check logic goes here.
+        // If the user is authenticated and has credits:
+        const apiKey = getApiKeyFromYourBackend();
+        if (apiKey) {
+          iframe.contentWindow.postMessage({ type: 'NB169_AUTH_SUCCESS', apiKey: apiKey }, imageEditorAppUrl);
+        } else {
+          console.error("API Key not found for user.");
+          iframe.contentWindow.postMessage({ type: 'NB169_AUTH_FAIL' }, imageEditorAppUrl);
+        }
+      }
+
+      if (data.type === 'NB169_GENERATE_REQUEST') {
+        console.log('Editor requests to generate. Checking credits...');
+        // Here you would check the user's Stripe credits on your backend.
+        // For example: const hasCredits = await checkUserCredits();
+        const hasCredits = true; // Placeholder
+        if (hasCredits) {
+          iframe.contentWindow.postMessage({ type: 'NB169_GENERATE_APPROVED' }, imageEditorAppUrl);
+          // Then, call your backend to deduct a credit.
+        } else {
+          iframe.contentWindow.postMessage({ type: 'NB169_INSUFFICIENT_CREDITS' }, imageEditorAppUrl);
+          // Here you could trigger your Stripe checkout flow on the parent page.
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    // Cleanup the event listener when the component unmounts
+    return () => window.removeEventListener('message', handleMessage);
+  }, [imageEditorAppUrl]);
+
+  return (
+    <div>
+      {/* This iframe embeds your image editor application */}
+      <iframe
+        ref={iframeRef}
+        id="image-editor-iframe"
+        src={imageEditorAppUrl}
+        style={{ width: '100%', height: '100vh', border: 'none' }}
+        allow="camera; microphone"
+      ></iframe>
+    </div>
+  );
+}
+
+
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
