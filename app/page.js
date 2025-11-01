@@ -1,95 +1,28 @@
-// Make sure this is at the top of your app/page.js file
-'use client';
-
-import React, { useEffect, useRef } from 'react';
-
-export default function ImageGeneratorPage() {
-  const iframeRef = useRef(null);
-
-  // IMPORTANT: Replace this with the actual URL of your deployed image editor app
-  const imageEditorAppUrl = 'URL_OF_YOUR_DEPLOYED_IMAGE_EDITOR_APP';
-
-  useEffect(() => {
-    const iframe = iframeRef.current;
-    if (!iframe) return;
-
-    // This is a placeholder for your actual authentication logic.
-    // After a user logs in and you verify their payment, you'll have their API key.
-    const getApiKeyFromYourBackend = () => {
-      // In a real scenario, this would be an async call to your server
-      // that returns the Gemini API key for an authenticated, paid user.
-      // This function should be called *after* your auth/Stripe check.
-      // IMPORTANT: Never expose your key directly in client-side code like this.
-      // This key should come from a secure, authenticated backend endpoint.
-      return process.env.NEXT_PUBLIC_GEMINI_API_KEY; // Example of using a Next.js env var
-    };
-
-    const handleMessage = (event) => {
-      // IMPORTANT: Always verify the origin of the message for security
-      if (event.origin !== new URL(imageEditorAppUrl).origin) {
-        return;
-      }
-
-      const data = event.data;
-
-      if (data.type === 'NB169_READY') {
-        console.log('Image editor is ready. Authenticating user...');
-        // Your user auth and Stripe check logic goes here.
-        // If the user is authenticated and has credits:
-        const apiKey = getApiKeyFromYourBackend();
-        if (apiKey) {
-          iframe.contentWindow.postMessage({ type: 'NB169_AUTH_SUCCESS', apiKey: apiKey }, imageEditorAppUrl);
-        } else {
-          console.error("API Key not found for user.");
-          iframe.contentWindow.postMessage({ type: 'NB169_AUTH_FAIL' }, imageEditorAppUrl);
-        }
-      }
-
-      if (data.type === 'NB169_GENERATE_REQUEST') {
-        console.log('Editor requests to generate. Checking credits...');
-        // Here you would check the user's Stripe credits on your backend.
-        // For example: const hasCredits = await checkUserCredits();
-        const hasCredits = true; // Placeholder
-        if (hasCredits) {
-          iframe.contentWindow.postMessage({ type: 'NB169_GENERATE_APPROVED' }, imageEditorAppUrl);
-          // Then, call your backend to deduct a credit.
-        } else {
-          iframe.contentWindow.postMessage({ type: 'NB169_INSUFFICIENT_CREDITS' }, imageEditorAppUrl);
-          // Here you could trigger your Stripe checkout flow on the parent page.
-        }
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-
-    // Cleanup the event listener when the component unmounts
-    return () => window.removeEventListener('message', handleMessage);
-  }, [imageEditorAppUrl]);
-
-  return (
-    <div>
-      {/* This iframe embeds your image editor application */}
-      <iframe
-        ref={iframeRef}
-        id="image-editor-iframe"
-        src={imageEditorAppUrl}
-        style={{ width: '100%', height: '100vh', border: 'none' }}
-        allow="camera; microphone"
-      ></iframe>
-    </div>
-  );
-}
-
-
 
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getSupabase } from "@/lib/supabaseClient";
-import SignInModal from "@/app/components/SignInModal";
-import JsonLdRaw from "@/app/components/JsonLdRaw";
-import PricingSection from "@/app/components/PricingSection";
+// Note: The following imports are assumed to exist in your project structure.
+// import { getSupabase } from "@/lib/supabaseClient";
+// import SignInModal from "@/app/components/SignInModal";
+// import JsonLdRaw from "@/app/components/JsonLdRaw";
+// import PricingSection from "@/app/components/PricingSection";
+
+// Mock Supabase until it's provided
+const getSupabase = () => ({
+  auth: {
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    getUser: async () => ({ data: { user: null } }),
+    getSession: async () => ({ data: { session: null } }),
+  }
+});
+
+// Mock Components until they are provided
+const SignInModal = ({ open, onClose }) => open ? <div style={{position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 100}}><button onClick={onClose}>Close Modal</button></div> : null;
+const JsonLdRaw = ({ data }) => <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
+const PricingSection = () => <div></div>;
+
 
 /* ---------- Utilities & shared components ---------- */
 
@@ -799,69 +732,6 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
     </section>
   );
 }
-
-<!-- Add this where you want the editor to appear -->
-<iframe
-  id="image-editor-iframe"
-  src="URL_OF_YOUR_DEPLOYED_REACT_APP"
-  style="width: 100%; height: 100vh; border: none;"
-  allow="camera; microphone"
-></iframe>
-
-<script>
-  // This script runs on your main website (nanobanana-ai.dev)
-
-  // 1. Get a reference to the iFrame
-  const iframe = document.getElementById('image-editor-iframe');
-
-  // This is a placeholder for your actual authentication logic.
-  // After a user logs in and you verify their payment, you'll have their API key.
-  function getApiKeyFromYourBackend() {
-    // In a real scenario, this would be an async call to your server
-    // that returns the Gemini API key for an authenticated, paid user.
-    // For now, we simulate it. IMPORTANT: Do not expose your key directly on the client.
-    // This function should be called *after* your auth/Stripe check.
-    return 'YOUR_GEMINI_API_KEY_FROM_YOUR_SERVER';
-  }
-
-  // 2. Listen for messages FROM the iFrame
-  window.addEventListener('message', (event) => {
-    // IMPORTANT: Always verify the origin of the message for security
-    if (event.origin !== "URL_OF_YOUR_DEPLOYED_REACT_APP") {
-      return;
-    }
-
-    const data = event.data;
-
-    if (data.type === 'NB169_READY') {
-      console.log('Image editor is ready. Authenticating user...');
-      // Your user auth and Stripe check logic goes here.
-      // If the user is authenticated and has credits:
-      const apiKey = getApiKeyFromYourBackend();
-      if (apiKey) {
-        iframe.contentWindow.postMessage({ type: 'NB169_AUTH_SUCCESS', apiKey: apiKey }, '*');
-      } else {
-         iframe.contentWindow.postMessage({ type: 'NB169_AUTH_FAIL' }, '*');
-      }
-    }
-
-    if (data.type === 'NB169_GENERATE_REQUEST') {
-        // Here you would check the user's Stripe credits on your backend.
-        console.log('Editor requests to generate. Checking credits...');
-        // For example: const hasCredits = await checkUserCredits();
-        const hasCredits = true; // Placeholder
-        if (hasCredits) {
-            iframe.contentWindow.postMessage({ type: 'NB169_GENERATE_APPROVED' }, '*');
-            // Then, call your backend to deduct a credit.
-        } else {
-            iframe.contentWindow.postMessage({ type: 'NB169_INSUFFICIENT_CREDITS' }, '*');
-            // Here you could trigger your Stripe checkout flow on the parent page.
-        }
-    }
-  });
-</script>
-
-
 
 /* ---------- EXACT 16:9 PAGE EMBED ---------- */
 function ClientFrame() {
