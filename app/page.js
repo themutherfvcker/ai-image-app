@@ -750,7 +750,7 @@ function ClientFrame() {
   return (
     <iframe
       ref={ref}
-      src="/16-9-image-generator"
+      src="https://nano-banana-16-9-image-creator.vercel.app/"
       title="Nano Banana 16:9 Editor"
       className="w-full h-full border-0"
       loading="lazy"
@@ -931,6 +931,7 @@ export default function HomePage() {
         </div>
       </section>
 
+             
       {/* GENERATOR (inline) */}
       <HomeGeneratorSection showSignIn={showSignIn} onShowSignIn={setShowSignIn} />
 
