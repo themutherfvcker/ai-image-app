@@ -14,7 +14,7 @@ export default function Page() {
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl [-letter-spacing:-0.01em]">
             <span className="block">
-              Fix Nano Banana 16:9 Problems — Get True Widescreen Images for Your Weabsite or YouTube Thumbnails
+              Fix Nano Banana 16:9 Problems — Get True Widescreen Images for Your Website or YouTube Thumbnails
             </span>
             <span className="block text-yellow-600">
               Nano Banana 16:9 Aspect Ratio Issues Solved
