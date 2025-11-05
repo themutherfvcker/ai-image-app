@@ -86,6 +86,42 @@ export default function Page() {
       </section>
 
       {/* 16:9 FAQ */}
+<section id="faq" class="mt-10">
+  <h2>Frequently Asked Questions about Nano Banana 16:9</h2>
+
+  <h3>Can Nano Banana do 16:9 images?</h3>
+  <p>
+    Yes! Nano Banana can produce 16:9 images if you use the correct generation
+    parameters or tools. Our <a href="/16-9-image-generator">Nano Banana 16:9 Image Generator</a>
+    automatically fixes aspect ratio issues and ensures your output is true
+    widescreen (1920×1080) for YouTube thumbnails and banners.
+  </p>
+
+  <h3>How to change ratio in Nano Banana?</h3>
+  <p>
+    You can change the aspect ratio in Nano Banana by adjusting the “ratio” or “dimensions”
+    setting. However, many users still get cropped or square results — which is
+    why we built this 16:9 converter that forces a proper widescreen frame
+    without distortion.
+  </p>
+
+  <h3>How to convert a picture to 16:9?</h3>
+  <p>
+    You can use Nano Banana’s crop tool or our 16:9 Generator to automatically
+    resize and pad your existing images into perfect 16:9 ratio. Just upload any
+    photo and it will instantly adjust to 1920×1080 resolution.
+  </p>
+
+  <h3>Is it better to use 4:3 or 16:9?</h3>
+  <p>
+    For most modern displays, social platforms, and video thumbnails, 16:9 is
+    the best choice. It fills widescreen monitors and YouTube frames perfectly,
+    while 4:3 is more suited for legacy content or prints.
+  </p>
+</section>
+
+
+      
       <section id="faq" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">16:9 Image Generator – FAQ</h2>
