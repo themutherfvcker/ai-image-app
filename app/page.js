@@ -925,9 +925,9 @@ export default function HomePage() {
       {/* --- EXACT 16:9 APP (iframe) --- */}
       <section id="ratio16" className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900">YouTube &amp; Hero Banners, Perfectly Framed</h3>
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Want to Fix Nano Banana 16:9 Aspect Ratio Problems</h3>
           <p className="mt-2 text-gray-600">
-            Upload any photo — we’ll outpaint to a true 1920×1080 without cropping faces or adding borders.
+            Upload Any Photo And Get A True 16:9 Image In ! Click.
           </p>
           <div className="mt-6 rounded-2xl border border-zinc-800/40 bg-zinc-900/40 p-0 overflow-hidden h-[70vh] md:h-[75vh]">
             <ClientFrame />
