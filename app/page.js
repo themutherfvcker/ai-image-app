@@ -734,10 +734,6 @@ function HomeGeneratorSection({ showSignIn, onShowSignIn }) {
 }
 
 /* ---------- EXACT 16:9 PAGE EMBED ---------- */
-
-“Having trouble getting real 16:9 Nano Banana images?
-Try our Nano Banana 16:9 Image Generator https://www.nanobanana-ai.dev/16-9-image-generator
-.”
 function ClientFrame() {
   const ref = useRef(null);
   useEffect(() => {
@@ -763,6 +759,16 @@ function ClientFrame() {
     />
   );
 }
+<p className="text-sm text-muted-foreground mt-4">
+  Having trouble getting real 16:9 Nano Banana images?{" "}
+  <a
+    href="/16-9-image-generator"
+    className="underline underline-offset-4 hover:no-underline"
+  >
+    Try our Nano Banana 16:9 Image Generator
+  </a>
+  .
+</p>
 
 /* ---------- PAGE ---------- */
 
